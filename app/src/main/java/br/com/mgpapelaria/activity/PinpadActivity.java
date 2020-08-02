@@ -1,4 +1,4 @@
-package br.com.mgpapelaria;
+package br.com.mgpapelaria.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
+import br.com.mgpapelaria.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

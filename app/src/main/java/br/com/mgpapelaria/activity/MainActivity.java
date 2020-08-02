@@ -1,10 +1,11 @@
-package br.com.mgpapelaria;
+package br.com.mgpapelaria.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import br.com.mgpapelaria.R;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
