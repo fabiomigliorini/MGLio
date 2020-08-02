@@ -65,7 +65,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/venda_avulsa_button"
+            android:id="@+id/valor_avulso_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="true"
