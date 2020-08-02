@@ -20,6 +20,12 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/vendas_recylcer_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/venda_registrada_item_list_view"/>
         <!--<ListView
             android:id="@android:id/list"
             android:visibility="gone"
