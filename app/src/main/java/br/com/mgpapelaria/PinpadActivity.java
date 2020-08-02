@@ -1,6 +1,7 @@
 package br.com.mgpapelaria;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import java.text.DecimalFormat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 public class PinpadActivity extends AppCompatActivity {
     @BindView(R.id.valor_textView)
@@ -31,6 +33,17 @@ public class PinpadActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.setValor(this.valorLimpo);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @OnClick(R.id.n1_button)
@@ -92,7 +105,13 @@ public class PinpadActivity extends AppCompatActivity {
             this.valorLimpo = 0;
         }
 
-        this.setValor(valorLimpo);
+        this.setValor(this.valorLimpo);
+    }
+
+    @OnLongClick(R.id.back_button)
+    void onBackspaceButtonLongClicked(){
+        this.valorLimpo = 0;
+        this.setValor(this.valorLimpo);
     }
 
     @OnClick(R.id.calculator_button)

@@ -31,6 +31,7 @@
         app:rowCount="2">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/venda_registrada_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="true"
@@ -59,11 +60,12 @@
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VENDA ..." />
+                    android:text="VENDA REGISTRADA" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/venda_avulsa_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="true"
@@ -86,13 +88,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    app:srcCompat="@drawable/ic_baseline_shopping_cart_48" />
+                    app:srcCompat="@drawable/ic_baseline_attach_money_48" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VENDA AVULSA" />
+                    android:text="VALOR AVULSO" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 
