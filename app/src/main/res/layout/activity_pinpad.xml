@@ -293,7 +293,8 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="PAGAR"
-            android:backgroundTint="@color/colorPrimary"
+            android:enabled="false"
+            android:backgroundTint="@drawable/pagar_button_color_state"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent" />

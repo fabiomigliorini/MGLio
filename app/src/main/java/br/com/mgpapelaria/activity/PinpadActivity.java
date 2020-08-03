@@ -2,6 +2,7 @@ package br.com.mgpapelaria.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ public class PinpadActivity extends AppCompatActivity {
     public static final String DESCRICAO = "descricao";
     @BindView(R.id.valor_textView)
     TextView valorTextView;
+    @BindView(R.id.pagar_button)
+    Button pagarButton;
     private Integer valorLimpo = 0;
 
     @Override
@@ -146,6 +149,7 @@ public class PinpadActivity extends AppCompatActivity {
 
     private void setValor(Integer valor){
         BigDecimal valorDecimal = new BigDecimal(valor).divide(new BigDecimal("100"));
+        this.pagarButton.setEnabled(!valorDecimal.equals(new BigDecimal(0)));
         valorTextView.setText(DecimalFormat.getCurrencyInstance().format(valorDecimal));
     }
 }
