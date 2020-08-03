@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,6 +62,14 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         this.recyclerViewAdapter = new VendasRegistradasAdapter(new ArrayList<>());
+        this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
+            Intent intent = new Intent(this, PinpadActivity.class);
+            VendaRegistrada venda = recyclerViewAdapter.getVendas().get(position);
+            intent.putExtra(PinpadActivity.DESCRICAO, venda.getDescricao());
+            intent.putExtra(PinpadActivity.VALOR, venda.getValor().floatValue());
+
+            startActivity(intent);
+        });
         this.vendasRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
@@ -88,15 +97,15 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                recyclerViewAdapter.clearItens();
-                recyclerViewAdapter.insertItem(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
-                recyclerViewAdapter.insertItem(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
-                recyclerViewAdapter.insertItem(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
+                recyclerViewAdapter.apagaVendas();
+                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
+                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
+                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
 
                 swipeRefreshLayout.setRefreshing(false);
                 vendasRecyclerView.setVisibility(View.VISIBLE);
                 noResultsView.setVisibility(View.INVISIBLE);
             }
-        }, 2000);
+        }, 1000);
     }
 }

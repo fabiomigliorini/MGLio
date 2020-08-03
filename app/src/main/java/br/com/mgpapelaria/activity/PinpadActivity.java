@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import br.com.mgpapelaria.R;
 import butterknife.BindView;
@@ -18,6 +19,8 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 
 public class PinpadActivity extends AppCompatActivity {
+    public static final String VALOR = "valor";
+    public static final String DESCRICAO = "descricao";
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     private Integer valorLimpo = 0;
@@ -28,8 +31,22 @@ public class PinpadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pinpad);
         ButterKnife.bind(this);
 
+        String titulo = "";
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            if(bundle.containsKey(DESCRICAO)){
+                titulo = bundle.getString(DESCRICAO);
+            }
+            if(bundle.containsKey(VALOR)){
+                Float valor = bundle.getFloat(VALOR);
+                NumberFormat df = DecimalFormat.getInstance();
+                df.setMinimumFractionDigits(2);
+                this.valorLimpo = Integer.valueOf(df.format(valor).replaceAll("[.,]", ""));
+            }
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+        toolbar.setTitle(titulo);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
