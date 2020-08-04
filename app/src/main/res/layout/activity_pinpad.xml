@@ -26,8 +26,7 @@
         app:autoSizeTextType="uniform"
         app:autoSizeMinTextSize="12sp"
         app:autoSizeMaxTextSize="100sp"
-        app:autoSizeStepGranularity="2sp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:autoSizeStepGranularity="2sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -269,7 +268,7 @@
                     android:textSize="36sp"/>
             </RelativeLayout>
             <RelativeLayout
-                android:id="@+id/back_button"
+                android:id="@+id/backspace_button"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/white"
@@ -288,15 +287,15 @@
             </RelativeLayout>
         </androidx.gridlayout.widget.GridLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/pagar_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="PAGAR"
             android:enabled="false"
-            android:backgroundTint="@drawable/pagar_button_color_state"
-            android:textColor="@android:color/white"
             android:textSize="18sp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

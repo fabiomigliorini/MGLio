@@ -1,5 +1,6 @@
 package br.com.mgpapelaria.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -117,7 +118,7 @@ public class PinpadActivity extends AppCompatActivity {
         this.setValor(concatDigito(0));
     }
 
-    @OnClick(R.id.back_button)
+    @OnClick(R.id.backspace_button)
     void onBackspaceButtonClicked(){
         String valorString = this.valorLimpo.toString();
         if(valorString.length() > 1) {
@@ -129,7 +130,7 @@ public class PinpadActivity extends AppCompatActivity {
         this.setValor(this.valorLimpo);
     }
 
-    @OnLongClick(R.id.back_button)
+    @OnLongClick(R.id.backspace_button)
     void onBackspaceButtonLongClicked(){
         this.valorLimpo = 0;
         this.setValor(this.valorLimpo);
@@ -138,6 +139,12 @@ public class PinpadActivity extends AppCompatActivity {
     @OnClick(R.id.calculator_button)
     void onCalculatorButtonClicked(){
         Toast.makeText(this, "Implementar uma calculadora", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.pagar_button)
+    void onOagarButtonClicked(){
+        Intent intent = new Intent(this, PagamentoActivity.class);
+        startActivity(intent);
     }
 
     private Integer concatDigito(Integer digito){

@@ -94,18 +94,15 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     }
 
     private void buscaVendasRegistradas(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                recyclerViewAdapter.apagaVendas();
-                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
-                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
-                recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
+        new Handler().postDelayed(() -> {
+            recyclerViewAdapter.apagaVendas();
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
 
-                swipeRefreshLayout.setRefreshing(false);
-                vendasRecyclerView.setVisibility(View.VISIBLE);
-                noResultsView.setVisibility(View.INVISIBLE);
-            }
+            swipeRefreshLayout.setRefreshing(false);
+            vendasRecyclerView.setVisibility(View.VISIBLE);
+            noResultsView.setVisibility(View.INVISIBLE);
         }, 1000);
     }
 }
