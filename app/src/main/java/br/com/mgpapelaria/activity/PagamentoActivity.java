@@ -8,11 +8,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
@@ -53,6 +57,7 @@ public class PagamentoActivity extends AppCompatActivity {
             case android.R.id.home:
                 //cancelaOperacao();
                 //finish();
+                hideKeyboard(this);
                 onBackPressed();
                 return true;
         }
@@ -110,5 +115,16 @@ public class PagamentoActivity extends AppCompatActivity {
         Intent intent = new Intent(this, OperacaoCanceladaActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public static void hideKeyboard(Context context) {
+        try {
+            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            if ((((Activity) context).getCurrentFocus() != null) && (((Activity) context).getCurrentFocus().getWindowToken() != null)) {
+                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

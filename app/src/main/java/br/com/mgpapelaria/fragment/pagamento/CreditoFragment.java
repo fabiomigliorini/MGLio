@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import br.com.mgpapelaria.R;
+import butterknife.ButterKnife;
 
 public class CreditoFragment extends PagamentoBaseFragment {
 
@@ -27,6 +28,8 @@ public class CreditoFragment extends PagamentoBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_credito, container, false);
+        View view = inflater.inflate(R.layout.fragment_credito, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 }
