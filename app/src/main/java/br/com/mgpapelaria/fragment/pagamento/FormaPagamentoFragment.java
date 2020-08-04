@@ -13,6 +13,7 @@ import butterknife.OnClick;
 public class FormaPagamentoFragment extends PagamentoBaseFragment {
     public static final String CREDITO_OPTION = "credito";
     public static final String DEBITO_OPTION = "debito";
+    public static final String CREDIARIO_OPTION = "crediario";
     public static final String VOUCHER_OPTION = "voucher";
 
     public FormaPagamentoFragment() {
@@ -49,6 +50,13 @@ public class FormaPagamentoFragment extends PagamentoBaseFragment {
     void onDebitoButtonClicked(){
         if(optionListener != null){
             optionListener.onOptionClickListener(DEBITO_OPTION);
+        }
+    }
+
+    @OnClick(R.id.crediario_button)
+    void onCrediarioButtonClicked(){
+        if(optionListener != null){
+            optionListener.onOptionClickListener(CREDIARIO_OPTION);
         }
     }
 

@@ -3,6 +3,7 @@ package br.com.mgpapelaria.activity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,10 +15,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import br.com.mgpapelaria.R;
+import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
 import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
+import br.com.mgpapelaria.fragment.pagamento.VoucherFragment;
 import butterknife.ButterKnife;
 
 public class PagamentoActivity extends AppCompatActivity {
@@ -30,16 +33,16 @@ public class PagamentoActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_close_24);
+        //toolbar.setNavigationIcon(R.drawable.ic_baseline_close_24);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        /*this.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 cancelaOperacao();
             }
-        });
+        });*/
 
         this.initFragment();
     }
@@ -48,7 +51,9 @@ public class PagamentoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                cancelaOperacao();
+                //cancelaOperacao();
+                //finish();
+                onBackPressed();
                 return true;
         }
 
@@ -78,6 +83,12 @@ public class PagamentoActivity extends AppCompatActivity {
                 break;
             case FormaPagamentoFragment.DEBITO_OPTION:
                 proximoFragment = new DebitoFragment();
+                break;
+            case FormaPagamentoFragment.CREDIARIO_OPTION:
+                proximoFragment = new CrediarioFragment();
+                break;
+            case FormaPagamentoFragment.VOUCHER_OPTION:
+                proximoFragment = new VoucherFragment();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + option);

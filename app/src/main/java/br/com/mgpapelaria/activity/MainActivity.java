@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import br.com.mgpapelaria.R;
+import br.com.mgpapelaria.util.OrderManagerSingleton;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //getSupportActionBar().hide();
+        OrderManagerSingleton.getInstance();
     }
 
     @OnClick(R.id.valor_avulso_button)
