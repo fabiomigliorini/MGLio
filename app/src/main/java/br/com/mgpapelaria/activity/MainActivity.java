@@ -33,4 +33,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ListaVendasRegistradasActivity.class);
         startActivity(intent);
     }
+
+    @OnClick(R.id.teste_cores_button)
+    void onTesteCoresButtonClicked(){
+        Intent intent = new Intent(this, TesteCoresActivity.class);
+        startActivity(intent);
+    }
 }

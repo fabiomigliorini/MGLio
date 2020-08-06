@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.mgpapelaria">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -11,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.OperacaoCanceladaActivity"></activity>
+        <activity android:name=".activity.TesteCoresActivity"></activity>
+        <activity android:name=".activity.OperacaoCanceladaActivity" />
         <activity android:name=".activity.PagamentoActivity" />
         <activity android:name=".activity.ListaVendasRegistradasActivity" />
         <activity android:name=".activity.PinpadActivity" />
