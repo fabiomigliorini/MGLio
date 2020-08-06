@@ -33,8 +33,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/credito_button"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginBottom="12dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
                 android:text="Crédito"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_baseline_chevron_right_24"
@@ -45,8 +45,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/debito_button"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginBottom="12dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
                 android:text="Débito"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_baseline_chevron_right_24"
@@ -57,20 +57,20 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/crediario_button"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginBottom="12dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
                 android:text="Crediario"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_baseline_chevron_right_24"
                 app:iconGravity="end"
-                app:iconPadding="-24dp"
+                 app:iconPadding="-24dp"
                 android:textSize="18sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/voucher_button"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginBottom="12dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="6dp"
                 android:text="Voucher"
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 app:icon="@drawable/ic_baseline_chevron_right_24"
