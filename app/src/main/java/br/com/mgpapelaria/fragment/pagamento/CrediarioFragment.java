@@ -78,7 +78,7 @@ public class CrediarioFragment extends PagamentoBaseFragment {
             this.quantidadeEditText.setText(String.valueOf(1));
             this.quantidadeEditText.setSelection(1);
         }
-
+        this.quantidadeInputLayout.setError(null);
     }
 
     @OnClick(R.id.aumenta_parcela_button)
@@ -95,7 +95,7 @@ public class CrediarioFragment extends PagamentoBaseFragment {
             this.quantidadeEditText.setText(String.valueOf(1));
             this.quantidadeEditText.setSelection(1);
         }
-
+        this.quantidadeInputLayout.setError(null);
     }
 
     @OnClick(R.id.data_edit_text)

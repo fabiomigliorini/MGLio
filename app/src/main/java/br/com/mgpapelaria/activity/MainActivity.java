@@ -32,5 +32,6 @@ public class MainActivity extends AppCompatActivity {
     void onVendaAvulsaClicked(){
         Intent intent = new Intent(this, ListaVendasRegistradasActivity.class);
         startActivity(intent);
+        //overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_right);
     }
 }

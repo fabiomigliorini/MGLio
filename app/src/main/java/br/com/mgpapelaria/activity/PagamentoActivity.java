@@ -100,7 +100,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
     private void replaceFragment(PagamentoBaseFragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up, R.anim.slide_out_down, R.anim.slide_in_down);
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right);
         transaction.replace(R.id.fragments_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
