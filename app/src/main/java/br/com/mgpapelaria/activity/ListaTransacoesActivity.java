@@ -114,9 +114,12 @@ public class ListaTransacoesActivity extends AppCompatActivity {
             noResultsView.setVisibility(View.INVISIBLE);
         }, 1000);*/
         ResultOrders resultOrders = OrderManagerSingleton.getInstance().retrieveOrders(200, 0);
-        final List<Order> orderList = resultOrders.getResults();
 
-        if(!orderList.isEmpty()){
+
+        if(resultOrders != null){
+            final List<Order> orderList = resultOrders.getResults();
+            this.transacoesRecyclerView.setVisibility(View.VISIBLE);
+            this.noResultsView.setVisibility(View.GONE);
             recyclerViewAdapter.apagaTransacoes();
             recyclerViewAdapter.adicionaTransacoes(orderList);
         }else{

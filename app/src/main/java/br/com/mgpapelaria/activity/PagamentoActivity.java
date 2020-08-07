@@ -89,6 +89,12 @@ public class PagamentoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        orderManager.unbind();
+        super.onDestroy();
+    }
+
     private void initFragment(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
