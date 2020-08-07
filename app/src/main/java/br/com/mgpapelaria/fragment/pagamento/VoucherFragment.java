@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import br.com.mgpapelaria.R;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cielo.sdk.order.payment.PaymentCode;
 
 public class VoucherFragment extends PagamentoBaseFragment {
 
@@ -33,5 +35,15 @@ public class VoucherFragment extends PagamentoBaseFragment {
         View view = inflater.inflate(R.layout.fragment_voucher, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @OnClick(R.id.voucher_refeicao_button)
+    void onRefeicaoButtonClicked(){
+        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.VOUCHER_REFEICAO, null);
+    }
+
+    @OnClick(R.id.voucher_alimentacao_button)
+    void onAlimentacaoButtonClicked(){
+        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.VOUCHER_ALIMENTACAO, null);
     }
 }

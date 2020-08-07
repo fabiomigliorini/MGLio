@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import br.com.mgpapelaria.R;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cielo.sdk.order.payment.PaymentCode;
 
 public class CreditoFragment extends PagamentoBaseFragment {
 
@@ -31,5 +33,20 @@ public class CreditoFragment extends PagamentoBaseFragment {
         View view = inflater.inflate(R.layout.fragment_credito, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @OnClick(R.id.credito_avista_button)
+    void onRefeicaoButtonClicked(){
+        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_AVISTA, null);
+    }
+
+    @OnClick(R.id.credito_parcelado_loja_button)
+    void onCreditoParceladoLojaButtonClicked(){
+        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
+    }
+
+    @OnClick(R.id.credito_parcelado_banco_button)
+    void onCreditoParceladoBancoButtonClicked(){
+        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_BNCO, null);
     }
 }

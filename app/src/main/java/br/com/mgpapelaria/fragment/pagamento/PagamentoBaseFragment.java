@@ -2,14 +2,18 @@ package br.com.mgpapelaria.fragment.pagamento;
 
 import androidx.fragment.app.Fragment;
 
-public class PagamentoBaseFragment extends Fragment {
-    protected OptionListener optionListener;
+import cielo.sdk.order.payment.PaymentCode;
 
-    public interface OptionListener{
-        void onOptionClickListener(String option);
+public class PagamentoBaseFragment extends Fragment {
+
+    protected FormaPagamentoListener formaPagamentoListener;
+
+
+    public interface FormaPagamentoListener{
+        void onFormaSelecionadaListener(PaymentCode code, Object args);
     }
 
-    public void setOptionListener(OptionListener optionListener){
-        this.optionListener = optionListener;
+    public void setFormaPagamentoListener(FormaPagamentoListener listener){
+        this.formaPagamentoListener = listener;
     }
 }

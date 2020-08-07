@@ -30,6 +30,7 @@ import cielo.sdk.order.ServiceBindListener;
 public class PinpadActivity extends AppCompatActivity {
     public static final String VALOR = "valor";
     public static final String DESCRICAO = "descricao";
+    public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
@@ -73,6 +74,14 @@ public class PinpadActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == PAGAMENTO_EFETUADO_RESULT) {
+            finish();
+        }
     }
 
     @OnClick(R.id.n1_button)
@@ -151,21 +160,8 @@ public class PinpadActivity extends AppCompatActivity {
     @OnClick(R.id.pagar_button)
     void onPagarButtonClicked(){
         Intent intent = new Intent(this, PagamentoActivity.class);
-        startActivity(intent);
-        /*OrderManager orderManager = OrderManagerSingleton.getInstance();
-        orderManager.createDraftOrder("REFERENCIA DA ORDEM");
-        Order order = orderManager.createDraftOrder("Pedido");
-
-        order.addItem("sku", "Valor Avulso", this.valorLimpo, 1, "UNIDADE");
-        orderManager.updateOrder(order);
-
-        orderManager.placeOrder(order);
-
-        CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
-                .orderId(order.getId())
-                .amount(this.valorLimpo)
-                .paymentCode(paymentCode)
-                .installments(installments);*/
+        intent.putExtra(VALOR, this.valorLimpo);
+        startActivityForResult(intent, PAGAMENTO_EFETUADO_RESULT);
     }
 
     private long concatDigito(Integer digito){
