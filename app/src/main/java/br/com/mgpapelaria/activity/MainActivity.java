@@ -22,15 +22,21 @@ public class MainActivity extends AppCompatActivity {
         OrderManagerSingleton.getInstance();
     }
 
+    @OnClick(R.id.venda_registrada_button)
+    void onVendaAvulsaClicked(){
+        Intent intent = new Intent(this, ListaVendasRegistradasActivity.class);
+        startActivity(intent);
+    }
+
     @OnClick(R.id.valor_avulso_button)
     void onValorAvusoButtonClicked(){
         Intent intent = new Intent(this, PinpadActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.venda_registrada_button)
-    void onVendaAvulsaClicked(){
-        Intent intent = new Intent(this, ListaVendasRegistradasActivity.class);
+    @OnClick(R.id.transacoes_button)
+    void onVendasButtonClicked(){
+        Intent intent = new Intent(this, ListaTransacoesActivity.class);
         startActivity(intent);
     }
 

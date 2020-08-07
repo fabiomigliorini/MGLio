@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.TesteCoresActivity"></activity>
+        <activity android:name=".activity.ListaTransacoesActivity"></activity>
+        <activity android:name=".activity.TesteCoresActivity" />
         <activity android:name=".activity.OperacaoCanceladaActivity" />
         <activity android:name=".activity.PagamentoActivity" />
         <activity android:name=".activity.ListaVendasRegistradasActivity" />
