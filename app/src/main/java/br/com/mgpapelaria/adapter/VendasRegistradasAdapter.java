@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
     public void onBindViewHolder(ViewHolder holder, int position) {
         VendaRegistrada venda = this.vendas.get(position);
         holder.descricaoTextView.setText(venda.getDescricao());
-        holder.valorTextView.setText(nf.format(venda.getValor().floatValue()));
+        holder.valorTextView.setText(nf.format(new BigDecimal(venda.getValor()).divide(new BigDecimal(100))));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", venda.getDataCriacao()));
     }
 

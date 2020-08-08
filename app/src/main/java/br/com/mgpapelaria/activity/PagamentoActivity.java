@@ -38,9 +38,12 @@ import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.order.payment.PaymentListener;
 
 public class PagamentoActivity extends AppCompatActivity {
+    public static final String VALOR_TOTAL = "valor_total";
+    public static final String VALOR_PAGO = "valor_pago";
     public final String TAG = "PAYMENT_LISTENER";
     private Order order = null;
-    private long valor;
+    private Long valorTotal;
+    private Long valorPago;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
 
@@ -51,10 +54,13 @@ public class PagamentoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if(bundle.containsKey(PinpadActivity.VALOR)){
-                this.valor = bundle.getLong(PinpadActivity.VALOR);
-            }
+        if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
+            throw new RuntimeException("Valor pago é obrigatório");
+        }
+
+        this.valorPago = bundle.getLong(VALOR_PAGO);
+        if(bundle.containsKey(VALOR_TOTAL)){
+            this.valorTotal = bundle.getLong(VALOR_TOTAL);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,7 +69,7 @@ public class PagamentoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.configSDK();;
+        this.configSDK();
 
         /*this.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -136,9 +142,14 @@ public class PagamentoActivity extends AppCompatActivity {
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
         //OrderManager orderManager = OrderManagerSingleton.getInstance();
         orderManager.createDraftOrder("REFERENCIA DA ORDEM");
+        //TODO: Criar um nome incremental
         order = orderManager.createDraftOrder("Pedido");
 
-        order.addItem("sku", "Valor Avulso", this.valor, 1, "UNIDADE");
+        order.addItem(
+                "sku", "Produtos de papelaria",
+                this.valorTotal != null ? this.valorTotal : this.valorPago,
+                1, "QTD");
+
         orderManager.updateOrder(order);
 
         orderManager.placeOrder(order);
@@ -148,7 +159,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
         CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
                 .orderId(order.getId())
-                .amount(this.valor)
+                .amount(this.valorPago)
                 .paymentCode(paymentCode)
                 .installments(parcelas);
 

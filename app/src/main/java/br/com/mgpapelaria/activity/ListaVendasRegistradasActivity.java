@@ -29,6 +29,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ListaVendasRegistradasActivity extends AppCompatActivity {
+    public static final String VENDA_REGISTRADA = "venda_registrada";
+
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.no_results_view)
@@ -65,8 +67,7 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
             Intent intent = new Intent(this, PinpadActivity.class);
             VendaRegistrada venda = recyclerViewAdapter.getVendas().get(position);
-            intent.putExtra(PinpadActivity.DESCRICAO, venda.getDescricao());
-            intent.putExtra(PinpadActivity.VALOR, venda.getValor().floatValue());
+            intent.putExtra(VENDA_REGISTRADA, venda);
 
             startActivity(intent);
         });
@@ -96,9 +97,9 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     private void buscaVendasRegistradas(){
         new Handler().postDelayed(() -> {
             recyclerViewAdapter.apagaVendas();
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", 10000, new Date())); //R$100,00
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", 35285, new Date())); //R$325.85
+            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", 100000, new Date())); //R$1.000,00
 
             swipeRefreshLayout.setRefreshing(false);
             vendasRecyclerView.setVisibility(View.VISIBLE);

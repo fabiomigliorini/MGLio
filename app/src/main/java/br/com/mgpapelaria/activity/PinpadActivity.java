@@ -15,27 +15,20 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.util.OrderManagerSingleton;
+import br.com.mgpapelaria.model.VendaRegistrada;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
-import cielo.orders.domain.CheckoutRequest;
-import cielo.orders.domain.Credentials;
-import cielo.orders.domain.Order;
-import cielo.sdk.info.InfoManager;
-import cielo.sdk.order.OrderManager;
-import cielo.sdk.order.ServiceBindListener;
 
 public class PinpadActivity extends AppCompatActivity {
-    public static final String VALOR = "valor";
-    public static final String DESCRICAO = "descricao";
     public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
     Button pagarButton;
     private long valorLimpo = 0;
+    private VendaRegistrada vendaRegistrada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +39,13 @@ public class PinpadActivity extends AppCompatActivity {
         String titulo = "";
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            if(bundle.containsKey(DESCRICAO)){
-                titulo = bundle.getString(DESCRICAO);
-            }
-            if(bundle.containsKey(VALOR)){
-                Float valor = bundle.getFloat(VALOR);
+            if(bundle.containsKey(ListaVendasRegistradasActivity.VENDA_REGISTRADA)){
+                this.vendaRegistrada = (VendaRegistrada) bundle.getSerializable(ListaVendasRegistradasActivity.VENDA_REGISTRADA);
+                titulo = vendaRegistrada.getDescricao();
                 NumberFormat df = DecimalFormat.getInstance();
                 df.setMinimumFractionDigits(2);
-                this.valorLimpo = Integer.valueOf(df.format(valor).replaceAll("[.,]", ""));
+                //this.valorLimpo = Integer.parseInt(df.format(vendaRegistrada.getValor()).replaceAll("[.,]", ""));
+                this.valorLimpo = vendaRegistrada.getValor();
             }
         }
 
@@ -160,7 +152,10 @@ public class PinpadActivity extends AppCompatActivity {
     @OnClick(R.id.pagar_button)
     void onPagarButtonClicked(){
         Intent intent = new Intent(this, PagamentoActivity.class);
-        intent.putExtra(VALOR, this.valorLimpo);
+        intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
+        if(this.vendaRegistrada != null){
+            intent.putExtra(PagamentoActivity.VALOR_TOTAL, this.vendaRegistrada.getValor());
+        }
         startActivityForResult(intent, PAGAMENTO_EFETUADO_RESULT);
     }
 

@@ -1,18 +1,19 @@
 package br.com.mgpapelaria.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class VendaRegistrada {
+public class VendaRegistrada implements Serializable {
     private int id;
     private String descricao;
-    private BigDecimal valor;
+    private long valor;
     private Date dataCriacao;
 
     public VendaRegistrada() {
     }
 
-    public VendaRegistrada(int id, String descricao, BigDecimal valor, Date dataCriacao) {
+    public VendaRegistrada(int id, String descricao, long valor, Date dataCriacao) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -35,11 +36,11 @@ public class VendaRegistrada {
         this.descricao = descricao;
     }
 
-    public BigDecimal getValor() {
+    public long getValor() {
         return valor;
     }
 
-    public void setValor(BigDecimal valor) {
+    public void setValor(long valor) {
         this.valor = valor;
     }
 
