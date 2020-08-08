@@ -71,7 +71,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
         this.recyclerViewAdapter = new TransacoesAdapter(new ArrayList<>());
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            Intent intent = new Intent(this, TransacaoActivity.class);
+            Intent intent = new Intent(this, TransacaoJsonActivity.class);
             Order transacao = recyclerViewAdapter.getTransacoes().get(position);
             intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 

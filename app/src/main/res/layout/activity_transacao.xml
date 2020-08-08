@@ -249,21 +249,22 @@
             </LinearLayout>
 
             <!--payments-->
-            <!--<LinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="16dp">
+                android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Payments"
+                    android:text="Items"
                     android:textStyle="bold" />
-                <ListView
-                    android:id="@+id/payments"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/payments_recylcer_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>-->
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    tools:listitem="@layout/transacao_item_list_item"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

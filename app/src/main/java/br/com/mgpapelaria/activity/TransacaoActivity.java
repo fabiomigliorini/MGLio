@@ -95,14 +95,9 @@ public class TransacaoActivity extends AppCompatActivity {
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         this.recyclerViewAdapter = new TransacaoItemAdapter(transacao.getItems());
-        /*this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            Intent intent = new Intent(this, TransacaoActivity.class);
-            Order transacao = recyclerViewAdapter.getTransacoes().get(position);
-            intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 
-            startActivity(intent);
-        });*/
         this.itemsRecyclerView.setAdapter(this.recyclerViewAdapter);
+
     }
 
     @Override
