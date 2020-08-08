@@ -53,7 +53,7 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
     public VendasRegistradasAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.venda_registrada_item_list_view, parent, false);
+                .inflate(R.layout.venda_registrada_list_item, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;

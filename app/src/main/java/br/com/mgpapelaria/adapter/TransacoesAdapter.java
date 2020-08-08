@@ -9,13 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.model.Transacao;
 import cielo.orders.domain.Order;
 
 public class TransacoesAdapter extends RecyclerView.Adapter<TransacoesAdapter.ViewHolder> {
@@ -47,6 +47,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
 
     public TransacoesAdapter(List<Order> transacoes) {
         this.transacoes = transacoes;
+        //this.nf.setMinimumFractionDigits(2);
     }
 
     @NonNull
@@ -54,7 +55,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.transacao_item_list_view, parent, false);
+                .inflate(R.layout.transacao_list_item, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -64,7 +65,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Order transacao = this.transacoes.get(position);
         holder.descricaoTextView.setText(transacao.getReference());
-        holder.valorTextView.setText(nf.format(transacao.getPaidAmount()));
+        holder.valorTextView.setText(nf.format(new BigDecimal(transacao.getPaidAmount()).divide(new BigDecimal(100))));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.getCreatedAt()));
     }
 

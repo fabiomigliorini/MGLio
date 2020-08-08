@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
                 android:visibility="gone"
-                tools:listitem="@layout/transacao_item_list_view"/>
+                tools:listitem="@layout/transacao_list_item"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/no_results_view"

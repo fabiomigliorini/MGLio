@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                tools:listitem="@layout/venda_registrada_item_list_view"/>
+                tools:listitem="@layout/venda_registrada_list_item"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/no_results_view"

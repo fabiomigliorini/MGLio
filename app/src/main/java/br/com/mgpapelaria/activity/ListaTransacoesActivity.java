@@ -70,14 +70,13 @@ public class ListaTransacoesActivity extends AppCompatActivity {
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         this.recyclerViewAdapter = new TransacoesAdapter(new ArrayList<>());
-        /*this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            Intent intent = new Intent(this, PinpadActivity.class);
-            Transacao transacao = recyclerViewAdapter.getTransacoes().get(position);
-            intent.putExtra(PinpadActivity.DESCRICAO, transacao.getDescricao());
-            intent.putExtra(PinpadActivity.VALOR, transacao.getValor().floatValue());
+        this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
+            Intent intent = new Intent(this, TransacaoActivity.class);
+            Order transacao = recyclerViewAdapter.getTransacoes().get(position);
+            intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 
             startActivity(intent);
-        });*/
+        });
         this.transacoesRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
@@ -103,18 +102,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     }
 
     private void buscaTransacoes(){
-        /*new Handler().postDelayed(() -> {
-            recyclerViewAdapter.apagaVendas();
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", new BigDecimal(100), new Date()));
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", new BigDecimal(352.85), new Date()));
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", new BigDecimal(1000), new Date()));
-
-            swipeRefreshLayout.setRefreshing(false);
-            vendasRecyclerView.setVisibility(View.VISIBLE);
-            noResultsView.setVisibility(View.INVISIBLE);
-        }, 1000);*/
         ResultOrders resultOrders = OrderManagerSingleton.getInstance().retrieveOrders(200, 0);
-
 
         if(resultOrders != null){
             final List<Order> orderList = resultOrders.getResults();
