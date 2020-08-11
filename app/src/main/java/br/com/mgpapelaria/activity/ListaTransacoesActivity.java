@@ -1,5 +1,12 @@
 package br.com.mgpapelaria.activity;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -7,24 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacoesAdapter;
-import br.com.mgpapelaria.adapter.VendasRegistradasAdapter;
-import br.com.mgpapelaria.model.Transacao;
-import br.com.mgpapelaria.model.VendaRegistrada;
 import br.com.mgpapelaria.util.OrderManagerSingleton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +30,7 @@ import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.ServiceBindListener;
 
 public class ListaTransacoesActivity extends AppCompatActivity {
+    public static final Integer TRANSACAO_REQUEST = 1;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.no_results_view)
@@ -75,7 +70,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
             Order transacao = recyclerViewAdapter.getTransacoes().get(position);
             intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 
-            startActivity(intent);
+            startActivityForResult(intent, TRANSACAO_REQUEST);
         });
         this.transacoesRecyclerView.setAdapter(this.recyclerViewAdapter);
 
@@ -93,6 +88,16 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == TRANSACAO_REQUEST){
+            if (resultCode == TransacaoJsonActivity.CANCELAMENTO_EFETUADO_RESULT) {
+                this.onRefreshButtonClicked();
+            }
+        }
     }
 
     @OnClick(R.id.refresh_button)

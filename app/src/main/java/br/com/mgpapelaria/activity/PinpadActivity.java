@@ -22,7 +22,7 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 
 public class PinpadActivity extends AppCompatActivity {
-    public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
+    public static final Integer PAGAMENTO_REQUEST = 1;
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
@@ -71,8 +71,10 @@ public class PinpadActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == PAGAMENTO_EFETUADO_RESULT) {
-            finish();
+        if(requestCode == PAGAMENTO_REQUEST){
+            if (resultCode == PagamentoActivity.PAGAMENTO_EFETUADO_RESULT) {
+                finish();
+            }
         }
     }
 
@@ -156,7 +158,7 @@ public class PinpadActivity extends AppCompatActivity {
         if(this.vendaRegistrada != null){
             intent.putExtra(PagamentoActivity.VALOR_TOTAL, this.vendaRegistrada.getValor());
         }
-        startActivityForResult(intent, PAGAMENTO_EFETUADO_RESULT);
+        startActivityForResult(intent, PAGAMENTO_REQUEST);
     }
 
     private long concatDigito(Integer digito){

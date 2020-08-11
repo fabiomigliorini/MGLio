@@ -38,6 +38,7 @@ import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.order.payment.PaymentListener;
 
 public class PagamentoActivity extends AppCompatActivity {
+    public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
     public static final String VALOR_TOTAL = "valor_total";
     public static final String VALOR_PAGO = "valor_pago";
     public final String TAG = "PAYMENT_LISTENER";
@@ -184,7 +185,7 @@ public class PagamentoActivity extends AppCompatActivity {
                 order.markAsPaid();
                 orderManager.updateOrder(order);
 
-                setResult(PinpadActivity.PAGAMENTO_EFETUADO_RESULT);
+                setResult(PAGAMENTO_EFETUADO_RESULT);
                 finish();
             }
 
