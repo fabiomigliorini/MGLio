@@ -166,13 +166,34 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.gridlayout.widget.GridLayout>
-
+    <!--<com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/pagamento_nativo_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        app:thumbTint="@color/colorPrimary"
+        app:trackTint="@android:color/white"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Pagamento Nativo"/>-->
     <Button
+        android:id="@+id/teste_pinpad_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Teste pagamento nativo" />
+    <!--<Button
         android:id="@+id/teste_cores_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Teste cores" />
+        android:text="Teste cores" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

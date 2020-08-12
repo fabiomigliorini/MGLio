@@ -107,6 +107,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     }
 
     private void buscaTransacoes(){
+        ///TODO Fazer uma paginação aqui pra pegar de 10 em 10
         ResultOrders resultOrders = OrderManagerSingleton.getInstance().retrieveOrders(200, 0);
 
         if(resultOrders != null){

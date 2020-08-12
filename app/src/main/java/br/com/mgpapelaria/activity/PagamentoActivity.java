@@ -142,12 +142,13 @@ public class PagamentoActivity extends AppCompatActivity {
 
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
         //OrderManager orderManager = OrderManagerSingleton.getInstance();
-        orderManager.createDraftOrder("REFERENCIA DA ORDEM");
+
         //TODO: Criar um nome incremental
         order = orderManager.createDraftOrder("Pedido");
 
         order.addItem(
-                "sku", "Produtos de papelaria",
+                "fake-sku",
+                this.valorTotal != null ? "Produtos de papelaria" : "Valor avulso",
                 this.valorTotal != null ? this.valorTotal : this.valorPago,
                 1, "QTD");
 
@@ -158,11 +159,7 @@ public class PagamentoActivity extends AppCompatActivity {
         String userEmail = email.getText().toString();*/
         int parcelas = 0;
 
-        CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
-                .orderId(order.getId())
-                .amount(this.valorPago)
-                .paymentCode(paymentCode)
-                .installments(parcelas);
+
 
         /*if (!ec.equals(""))
             requestBuilder.ec(ec);
@@ -170,7 +167,11 @@ public class PagamentoActivity extends AppCompatActivity {
         if (!userEmail.equals(""))
             requestBuilder.email(userEmail);*/
 
-        CheckoutRequest request = requestBuilder.build();
+        CheckoutRequest request = new CheckoutRequest.Builder()
+                .orderId(order.getId())
+                .amount(this.valorPago)
+                .paymentCode(paymentCode)
+                .installments(parcelas).build();
 
         orderManager.checkoutOrder(request, new PaymentListener() {
 
