@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         });*/
         //getSupportActionBar().hide();
-        //OrderManagerSingleton.getInstance();
+        OrderManagerSingleton.getInstance();
         this.configSDK();
     }
 
