@@ -7,8 +7,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.maltaisn.calcdialog.CalcDialog;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -21,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-public class PinpadActivity extends AppCompatActivity {
+public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
     @BindView(R.id.valor_textView)
     TextView valorTextView;
@@ -29,6 +32,7 @@ public class PinpadActivity extends AppCompatActivity {
     Button pagarButton;
     private long valorLimpo = 0;
     private VendaRegistrada vendaRegistrada;
+    private final CalcDialog calcDialog = new CalcDialog();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,11 @@ public class PinpadActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        this.calcDialog.getSettings().setNumberFormat(NumberFormat.getCurrencyInstance());
+        this.calcDialog.getSettings().setSignBtnShown(false);
+        //this.calcDialog.getSettings().setMinValue(new BigDecimal(0));
+        //this.calcDialog.getSettings().setMinValue(new BigDecimal(999999999));
+
         this.setValor(this.valorLimpo);
     }
 
@@ -75,6 +84,16 @@ public class PinpadActivity extends AppCompatActivity {
             if (resultCode == PagamentoActivity.PAGAMENTO_EFETUADO_RESULT) {
                 finish();
             }
+        }
+    }
+
+    @Override
+    public void onValueEntered(int requestCode, @Nullable BigDecimal value) {
+        if(this.isBetween(value, new BigDecimal(0), new BigDecimal(99999999))){
+            this.valorLimpo = value.multiply(new BigDecimal(100)).longValue();
+            this.setValor(this.valorLimpo);
+        }else{
+            Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -148,7 +167,9 @@ public class PinpadActivity extends AppCompatActivity {
 
     @OnClick(R.id.calculator_button)
     void onCalculatorButtonClicked(){
-        Toast.makeText(this, "Implementar uma calculadora", Toast.LENGTH_SHORT).show();
+        //calcDialog.getSettings().
+        calcDialog.getSettings().setInitialValue(new BigDecimal(this.valorLimpo).divide(new BigDecimal(100)));
+        calcDialog.show(getSupportFragmentManager(), "calc_dialog");
     }
 
     @OnClick(R.id.pagar_button)
@@ -172,5 +193,9 @@ public class PinpadActivity extends AppCompatActivity {
         BigDecimal valorDecimal = new BigDecimal(valor).divide(new BigDecimal("100"));
         this.pagarButton.setEnabled(!valorDecimal.equals(new BigDecimal(0)));
         valorTextView.setText(DecimalFormat.getCurrencyInstance().format(valorDecimal));
+    }
+
+    private boolean isBetween(BigDecimal price, BigDecimal start, BigDecimal end){
+        return price.compareTo(start) > 0 && price.compareTo(end) < 0;
     }
 }
