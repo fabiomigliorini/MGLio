@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,10 +24,15 @@ import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.VendasRegistradasAdapter;
+import br.com.mgpapelaria.api.ApiService;
+import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.model.VendaRegistrada;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ListaVendasRegistradasActivity extends AppCompatActivity {
     public static final String VENDA_REGISTRADA = "venda_registrada";
@@ -39,6 +45,7 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     RecyclerView vendasRecyclerView;
     //private List<VendaRegistrada> vendas = new ArrayList<>();
     private VendasRegistradasAdapter recyclerViewAdapter;
+    ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,8 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
         toolbar.setTitle("Vendas");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        this.apiService = RetrofitUtil.build().create(ApiService.class);
 
         this.swipeRefreshLayout.setOnRefreshListener(this::buscaVendasRegistradas);
         this.swipeRefreshLayout.setColorSchemeColors(
@@ -95,15 +104,23 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     }
 
     private void buscaVendasRegistradas(){
-        new Handler().postDelayed(() -> {
-            recyclerViewAdapter.apagaVendas();
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(1, "Venda 1", 10000, new Date())); //R$100,00
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(2, "Venda 2", 35285, new Date())); //R$325.85
-            recyclerViewAdapter.adicionaVenda(new VendaRegistrada(3, "Venda 3", 100000, new Date())); //R$1.000,00
+        Call<List<VendaRegistrada>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
+        vendas.enqueue(new Callback<List<VendaRegistrada>>() {
+            @Override
+            public void onResponse(Call<List<VendaRegistrada>> call, Response<List<VendaRegistrada>> response) {
+                recyclerViewAdapter.apagaVendas();
+                recyclerViewAdapter.setVendas(response.body());
+                swipeRefreshLayout.setRefreshing(false);
+                vendasRecyclerView.setVisibility(View.VISIBLE);
+                noResultsView.setVisibility(View.INVISIBLE);
+            }
 
-            swipeRefreshLayout.setRefreshing(false);
-            vendasRecyclerView.setVisibility(View.VISIBLE);
-            noResultsView.setVisibility(View.INVISIBLE);
-        }, 1000);
+            @Override
+            public void onFailure(Call<List<VendaRegistrada>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                vendasRecyclerView.setVisibility(View.INVISIBLE);
+                noResultsView.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

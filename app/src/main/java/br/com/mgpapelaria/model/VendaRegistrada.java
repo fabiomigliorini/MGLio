@@ -1,54 +1,70 @@
 package br.com.mgpapelaria.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class VendaRegistrada implements Serializable {
-    private int id;
-    private String descricao;
-    private long valor;
-    private Date dataCriacao;
+    private Long codnegocio;
+    private Date lancamento;
+    private String fantasia;
+    @SerializedName("valortotal")
+    private BigDecimal valorTotal;
+    @SerializedName("valorpago")
+    private BigDecimal valorPago;
+    @SerializedName("valorsaldo")
+    private BigDecimal valorSaldo;
 
     public VendaRegistrada() {
     }
 
-    public VendaRegistrada(int id, String descricao, long valor, Date dataCriacao) {
-        this.id = id;
-        this.descricao = descricao;
-        this.valor = valor;
-        this.dataCriacao = dataCriacao;
+    public Long getCodnegocio() {
+        return codnegocio;
     }
 
-    public int getId() {
-        return id;
+    public void setCodnegocio(Long codnegocio) {
+        this.codnegocio = codnegocio;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Date getLancamento() {
+        return lancamento;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public void setLancamento(Date lancamento) {
+        this.lancamento = lancamento;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public String getFantasia() {
+        return fantasia;
     }
 
-    public long getValor() {
-        return valor;
+    public void setFantasia(String fantasia) {
+        this.fantasia = fantasia;
     }
 
-    public void setValor(long valor) {
-        this.valor = valor;
+    public BigDecimal getValorTotal() {
+        return valorTotal;
     }
 
-    public Date getDataCriacao() {
-        return dataCriacao;
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
-        this.dataCriacao = dataCriacao;
+    public BigDecimal getValorPago() {
+        return valorPago;
+    }
+
+    public void setValorPago(BigDecimal valorPago) {
+        this.valorPago = valorPago;
+    }
+
+    public BigDecimal getValorSaldo() {
+        return valorSaldo;
+    }
+
+    public void setValorSaldo(BigDecimal valorSaldo) {
+        this.valorSaldo = valorSaldo;
     }
 }

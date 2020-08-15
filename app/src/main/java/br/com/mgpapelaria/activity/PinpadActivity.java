@@ -45,11 +45,11 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         if (bundle != null) {
             if(bundle.containsKey(ListaVendasRegistradasActivity.VENDA_REGISTRADA)){
                 this.vendaRegistrada = (VendaRegistrada) bundle.getSerializable(ListaVendasRegistradasActivity.VENDA_REGISTRADA);
-                titulo = vendaRegistrada.getDescricao();
+                titulo = vendaRegistrada.getCodnegocio().toString();
                 NumberFormat df = DecimalFormat.getInstance();
                 df.setMinimumFractionDigits(2);
                 //this.valorLimpo = Integer.parseInt(df.format(vendaRegistrada.getValor()).replaceAll("[.,]", ""));
-                this.valorLimpo = vendaRegistrada.getValor();
+                this.valorLimpo = vendaRegistrada.getValorSaldo().multiply(new BigDecimal(100)).longValue();
             }
         }
 
@@ -177,7 +177,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         Intent intent = new Intent(this, PagamentoActivity.class);
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
         if(this.vendaRegistrada != null){
-            intent.putExtra(PagamentoActivity.VALOR_TOTAL, this.vendaRegistrada.getValor());
+            intent.putExtra(PagamentoActivity.VALOR_TOTAL, this.vendaRegistrada.getValorTotal());
         }
         startActivityForResult(intent, PAGAMENTO_REQUEST);
     }
