@@ -5,8 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -38,8 +38,6 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     @BindView(R.id.transacoes_recylcer_view)
     RecyclerView transacoesRecyclerView;
     private TransacoesAdapter recyclerViewAdapter;
-    OrderManager orderManager;
-    private final String TAG = "ORDER_LIST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +73,8 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         this.transacoesRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
-        //this.configSDK();
-        this.buscaTransacoes();
+
+        this.configSDK();
     }
 
     @Override
@@ -111,28 +109,23 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         ResultOrders resultOrders = OrderManagerSingleton.getInstance().retrieveOrders(200, 0);
 
         if(resultOrders != null){
-            final List<Order> orderList = resultOrders.getResults();
             this.transacoesRecyclerView.setVisibility(View.VISIBLE);
             this.noResultsView.setVisibility(View.GONE);
-            recyclerViewAdapter.apagaTransacoes();
-            recyclerViewAdapter.adicionaTransacoes(orderList);
+            final List<Order> orderList = resultOrders.getResults();
+            this.recyclerViewAdapter.apagaTransacoes();
+            this.recyclerViewAdapter.adicionaTransacoes(orderList);
         }else{
-            //vazio
             this.transacoesRecyclerView.setVisibility(View.GONE);
             this.noResultsView.setVisibility(View.VISIBLE);
         }
-        swipeRefreshLayout.setRefreshing(false);
+        this.swipeRefreshLayout.setRefreshing(false);
     }
 
     public void configSDK() {
         Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        orderManager = new OrderManager(credentials, this);
-        orderManager.bind(this, new ServiceBindListener() {
+        new OrderManager(credentials, this).bind(this, new ServiceBindListener() {
             @Override
-            public void onServiceBoundError(Throwable throwable) {
-                Toast.makeText(getApplicationContext(),
-                        String.format("Erro fazendo bind do serviço de ordem -> %s",
-                                throwable.getMessage()), Toast.LENGTH_LONG).show();
+            public void onServiceBoundError(@NonNull Throwable throwable) {
             }
 
             @Override
