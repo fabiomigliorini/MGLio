@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class VendaRegistrada implements Serializable {
-    private Long codnegocio;
+    @SerializedName("codnegocio")
+    private Long codNegocio;
     private Date lancamento;
     private String fantasia;
     @SerializedName("valortotal")
@@ -20,12 +21,12 @@ public class VendaRegistrada implements Serializable {
     public VendaRegistrada() {
     }
 
-    public Long getCodnegocio() {
-        return codnegocio;
+    public Long getCodNegocio() {
+        return codNegocio;
     }
 
-    public void setCodnegocio(Long codnegocio) {
-        this.codnegocio = codnegocio;
+    public void setCodNegocio(Long codNegocio) {
+        this.codNegocio = codNegocio;
     }
 
     public Date getLancamento() {

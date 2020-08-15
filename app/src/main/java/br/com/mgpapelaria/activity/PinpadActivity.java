@@ -23,6 +23,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+import cielo.orders.domain.Credentials;
+import cielo.orders.domain.Order;
+import cielo.sdk.order.OrderManager;
+import cielo.sdk.order.ServiceBindListener;
 
 public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
@@ -33,6 +37,8 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     private long valorLimpo = 0;
     private VendaRegistrada vendaRegistrada;
     private final CalcDialog calcDialog = new CalcDialog();
+    private OrderManager orderManager = null;
+    private static boolean orderManagerServiceBinded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +51,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         if (bundle != null) {
             if(bundle.containsKey(ListaVendasRegistradasActivity.VENDA_REGISTRADA)){
                 this.vendaRegistrada = (VendaRegistrada) bundle.getSerializable(ListaVendasRegistradasActivity.VENDA_REGISTRADA);
-                titulo = vendaRegistrada.getCodnegocio().toString();
-                NumberFormat df = DecimalFormat.getInstance();
-                df.setMinimumFractionDigits(2);
-                //this.valorLimpo = Integer.parseInt(df.format(vendaRegistrada.getValor()).replaceAll("[.,]", ""));
+                titulo = vendaRegistrada.getCodNegocio().toString();
                 this.valorLimpo = vendaRegistrada.getValorSaldo().multiply(new BigDecimal(100)).longValue();
             }
         }
@@ -64,6 +67,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         //this.calcDialog.getSettings().setMinValue(new BigDecimal(999999999));
 
         this.setValor(this.valorLimpo);
+        this.configSDK();
     }
 
     @Override
@@ -176,10 +180,51 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     void onPagarButtonClicked(){
         Intent intent = new Intent(this, PagamentoActivity.class);
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
-        if(this.vendaRegistrada != null){
-            intent.putExtra(PagamentoActivity.VALOR_TOTAL, this.vendaRegistrada.getValorTotal());
-        }
+        intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaRegistrada));
         startActivityForResult(intent, PAGAMENTO_REQUEST);
+    }
+
+    private Order criarPedido(VendaRegistrada vendaRegistrada){
+        Order order;
+        if(vendaRegistrada != null){
+            String orderName = vendaRegistrada.getCodNegocio().toString();
+            order = this.orderManager.createDraftOrder(orderName);
+            order.setNumber(orderName);
+        }else{
+            order = this.orderManager.createDraftOrder("Valor avulso");
+        }
+        order.addItem("fake-sku", "Produtos de papelaria", this.valorLimpo, 1, "QTD");
+
+        this.orderManager.updateOrder(order);
+
+        return order;
+    }
+
+    protected void configSDK() {
+        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
+        this.orderManager = new OrderManager(credentials, this);
+        this.orderManager.bind(this, new ServiceBindListener() {
+
+            @Override
+            public void onServiceBoundError(Throwable throwable) {
+                orderManagerServiceBinded = false;
+
+                Toast.makeText(getApplicationContext(),
+                        String.format("Erro fazendo bind do serviço de ordem -> %s",
+                                throwable.getMessage()), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onServiceBound() {
+                orderManagerServiceBinded = true;
+                orderManager.createDraftOrder("REFERENCIA DA ORDEM");
+            }
+
+            @Override
+            public void onServiceUnbound() {
+                orderManagerServiceBinded = false;
+            }
+        });
     }
 
     private long concatDigito(Integer digito){

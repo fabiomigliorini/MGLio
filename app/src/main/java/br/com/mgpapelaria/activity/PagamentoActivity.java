@@ -16,9 +16,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
@@ -26,7 +23,6 @@ import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.fragment.pagamento.VoucherFragment;
-import br.com.mgpapelaria.util.OrderManagerSingleton;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
 import cielo.orders.domain.Credentials;
@@ -39,11 +35,10 @@ import cielo.sdk.order.payment.PaymentListener;
 
 public class PagamentoActivity extends AppCompatActivity {
     public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
-    public static final String VALOR_TOTAL = "valor_total";
+    public static final String ORDER = "order";
     public static final String VALOR_PAGO = "valor_pago";
     public final String TAG = "PAYMENT_LISTENER";
     private Order order = null;
-    private Long valorTotal;
     private Long valorPago;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
@@ -60,8 +55,8 @@ public class PagamentoActivity extends AppCompatActivity {
         }
 
         this.valorPago = bundle.getLong(VALOR_PAGO);
-        if(bundle.containsKey(VALOR_TOTAL)){
-            this.valorTotal = bundle.getLong(VALOR_TOTAL);
+        if(bundle.containsKey(ORDER)){
+            this.order = (Order) bundle.getSerializable(ORDER);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -143,18 +138,8 @@ public class PagamentoActivity extends AppCompatActivity {
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
         //OrderManager orderManager = OrderManagerSingleton.getInstance();
 
-        //TODO: Criar um nome incremental
-        order = orderManager.createDraftOrder("Pedido");
 
-        order.addItem(
-                "fake-sku",
-                this.valorTotal != null ? "Produtos de papelaria" : "Valor avulso",
-                this.valorTotal != null ? this.valorTotal : this.valorPago,
-                1, "QTD");
-
-        orderManager.updateOrder(order);
-
-        orderManager.placeOrder(order);
+        orderManager.placeOrder(this.order);
         /*String ec = merchantCode.getText().toString();
         String userEmail = email.getText().toString();*/
         int parcelas = 0;
@@ -168,7 +153,7 @@ public class PagamentoActivity extends AppCompatActivity {
             requestBuilder.email(userEmail);*/
 
         CheckoutRequest request = new CheckoutRequest.Builder()
-                .orderId(order.getId())
+                .orderId(this.order.getId())
                 .amount(this.valorPago)
                 .paymentCode(paymentCode)
                 .installments(parcelas).build();

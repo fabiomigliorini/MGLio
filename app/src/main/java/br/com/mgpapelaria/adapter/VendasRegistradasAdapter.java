@@ -63,7 +63,7 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         VendaRegistrada venda = this.vendas.get(position);
-        holder.descricaoTextView.setText(venda.getCodnegocio().toString());
+        holder.descricaoTextView.setText(venda.getCodNegocio().toString());
         holder.valorTextView.setText(nf.format(venda.getValorSaldo()));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", venda.getLancamento()));
     }
