@@ -217,7 +217,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
             @Override
             public void onServiceBound() {
                 orderManagerServiceBinded = true;
-                orderManager.createDraftOrder("REFERENCIA DA ORDEM");
             }
 
             @Override
