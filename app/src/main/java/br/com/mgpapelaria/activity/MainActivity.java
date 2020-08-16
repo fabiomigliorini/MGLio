@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         //getSupportActionBar().hide();
     }
 
-    @OnClick(R.id.venda_registrada_button)
+    @OnClick(R.id.venda_aberta_button)
     void onVendaAvulsaClicked(){
-        Intent intent = new Intent(this, ListaVendasRegistradasActivity.class);
+        Intent intent = new Intent(this, ListaVendasAbertasActivity.class);
         startActivity(intent);
     }
 

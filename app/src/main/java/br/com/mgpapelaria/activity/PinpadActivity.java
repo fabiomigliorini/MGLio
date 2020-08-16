@@ -19,7 +19,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.model.VendaRegistrada;
+import br.com.mgpapelaria.model.VendaAberta;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -36,7 +36,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     @BindView(R.id.pagar_button)
     Button pagarButton;
     private long valorLimpo = 0;
-    private VendaRegistrada vendaRegistrada;
+    private VendaAberta vendaAberta;
     private final CalcDialog calcDialog = new CalcDialog();
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
@@ -50,10 +50,10 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         String titulo = "";
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            if(bundle.containsKey(ListaVendasRegistradasActivity.VENDA_REGISTRADA)){
-                this.vendaRegistrada = (VendaRegistrada) bundle.getSerializable(ListaVendasRegistradasActivity.VENDA_REGISTRADA);
-                titulo = "Pedido: #" + vendaRegistrada.getCodNegocio().toString();
-                this.valorLimpo = vendaRegistrada.getValorSaldo().multiply(new BigDecimal(100)).longValue();
+            if(bundle.containsKey(ListaVendasAbertasActivity.VENDA_ABERTA)){
+                this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
+                titulo = "Pedido: #" + vendaAberta.getCodNegocio().toString();
+                this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
             }
         }
 
@@ -182,14 +182,14 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     void onPagarButtonClicked(){
         Intent intent = new Intent(this, PagamentoActivity.class);
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
-        intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaRegistrada));
+        intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
         startActivityForResult(intent, PAGAMENTO_REQUEST);
     }
 
-    private Order criarPedido(VendaRegistrada vendaRegistrada){
+    private Order criarPedido(VendaAberta vendaAberta){
         Order order;
-        if(vendaRegistrada != null){
-            String orderName = vendaRegistrada.getCodNegocio().toString();
+        if(vendaAberta != null){
+            String orderName = vendaAberta.getCodNegocio().toString();
             order = this.orderManager.createDraftOrder("Pedido: #" + orderName);
             order.setNumber(orderName);
         }else{

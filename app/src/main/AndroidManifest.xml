@@ -19,7 +19,7 @@
         <activity android:name=".activity.TesteCoresActivity" />
         <activity android:name=".activity.OperacaoCanceladaActivity" />
         <activity android:name=".activity.PagamentoActivity" />
-        <activity android:name=".activity.ListaVendasRegistradasActivity" />
+        <activity android:name=".activity.ListaVendasAbertasActivity" />
         <activity android:name=".activity.PinpadActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>

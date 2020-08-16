@@ -1,6 +1,5 @@
 package br.com.mgpapelaria.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -11,22 +10,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.adapter.VendasRegistradasAdapter;
+import br.com.mgpapelaria.adapter.VendasAbertasAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
-import br.com.mgpapelaria.model.VendaRegistrada;
+import br.com.mgpapelaria.model.VendaAberta;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -34,8 +29,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListaVendasRegistradasActivity extends AppCompatActivity {
-    public static final String VENDA_REGISTRADA = "venda_registrada";
+public class ListaVendasAbertasActivity extends AppCompatActivity {
+    public static final String VENDA_ABERTA = "venda_aberta";
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -43,13 +38,13 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     View noResultsView;
     @BindView(R.id.vendas_recylcer_view)
     RecyclerView vendasRecyclerView;
-    private VendasRegistradasAdapter recyclerViewAdapter;
+    private VendasAbertasAdapter recyclerViewAdapter;
     private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_vendas_registradas);
+        setContentView(R.layout.activity_lista_vendas_abertas);
 
         ButterKnife.bind(this);
 
@@ -60,7 +55,7 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
 
         this.apiService = RetrofitUtil.build().create(ApiService.class);
 
-        this.swipeRefreshLayout.setOnRefreshListener(this::buscaVendasRegistradas);
+        this.swipeRefreshLayout.setOnRefreshListener(this::buscaVendasAbertas);
         this.swipeRefreshLayout.setColorSchemeColors(
                 Color.parseColor("#3b3bcc"),
                 Color.parseColor("#e5de04"),
@@ -71,18 +66,18 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
         this.vendasRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        this.recyclerViewAdapter = new VendasRegistradasAdapter(new ArrayList<>());
+        this.recyclerViewAdapter = new VendasAbertasAdapter(new ArrayList<>());
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
             Intent intent = new Intent(this, PinpadActivity.class);
-            VendaRegistrada venda = recyclerViewAdapter.getVendas().get(position);
-            intent.putExtra(VENDA_REGISTRADA, venda);
+            VendaAberta venda = recyclerViewAdapter.getVendas().get(position);
+            intent.putExtra(VENDA_ABERTA, venda);
 
             startActivity(intent);
         });
         this.vendasRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
-        this.buscaVendasRegistradas();
+        this.buscaVendasAbertas();
     }
 
     @Override
@@ -99,14 +94,14 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     @OnClick(R.id.refresh_button)
     void onRefreshButtonClicked(){
         this.swipeRefreshLayout.setRefreshing(true);
-        this.buscaVendasRegistradas();
+        this.buscaVendasAbertas();
     }
 
-    private void buscaVendasRegistradas(){
-        Call<List<VendaRegistrada>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
-        vendas.enqueue(new Callback<List<VendaRegistrada>>() {
+    private void buscaVendasAbertas(){
+        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
+        vendas.enqueue(new Callback<List<VendaAberta>>() {
             @Override
-            public void onResponse(Call<List<VendaRegistrada>> call, Response<List<VendaRegistrada>> response) {
+            public void onResponse(Call<List<VendaAberta>> call, Response<List<VendaAberta>> response) {
                 recyclerViewAdapter.apagaVendas();
                 recyclerViewAdapter.setVendas(response.body());
                 swipeRefreshLayout.setRefreshing(false);
@@ -115,7 +110,7 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<VendaRegistrada>> call, Throwable t) {
+            public void onFailure(Call<List<VendaAberta>> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 vendasRecyclerView.setVisibility(View.INVISIBLE);
                 noResultsView.setVisibility(View.INVISIBLE);

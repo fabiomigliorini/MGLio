@@ -31,7 +31,7 @@
         app:rowCount="2">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/venda_registrada_button"
+            android:id="@+id/venda_aberta_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clickable="true"
@@ -60,7 +60,7 @@
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VENDA REGISTRADA" />
+                    android:text="VENDA ABERTA" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 

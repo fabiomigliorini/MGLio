@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.ListaVendasRegistradasActivity">
+    tools:context=".activity.ListaVendasAbertasActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                tools:listitem="@layout/venda_registrada_list_item"/>
+                tools:listitem="@layout/venda_aberta_list_item"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/no_results_view"

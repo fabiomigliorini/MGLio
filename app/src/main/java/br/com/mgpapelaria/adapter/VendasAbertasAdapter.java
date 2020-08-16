@@ -9,17 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.model.VendaRegistrada;
+import br.com.mgpapelaria.model.VendaAberta;
 
-public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistradasAdapter.ViewHolder> {
-    private List<VendaRegistrada> vendas;
+public class VendasAbertasAdapter extends RecyclerView.Adapter<VendasAbertasAdapter.ViewHolder> {
+    private List<VendaAberta> vendas;
     private static ItemClickListener clickListener;
     private NumberFormat nf = DecimalFormat.getCurrencyInstance();
 
@@ -45,16 +44,16 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
         }
     }
 
-    public VendasRegistradasAdapter(List<VendaRegistrada> vendas) {
+    public VendasAbertasAdapter(List<VendaAberta> vendas) {
         this.vendas = vendas;
     }
 
     @NonNull
     @Override
-    public VendasRegistradasAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public VendasAbertasAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.venda_registrada_list_item, parent, false);
+                .inflate(R.layout.venda_aberta_list_item, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -62,7 +61,7 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        VendaRegistrada venda = this.vendas.get(position);
+        VendaAberta venda = this.vendas.get(position);
         holder.descricaoTextView.setText(venda.getCodNegocio().toString());
         holder.valorTextView.setText(nf.format(venda.getValorSaldo()));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", venda.getLancamento()));
@@ -79,17 +78,17 @@ public class VendasRegistradasAdapter extends RecyclerView.Adapter<VendasRegistr
         notifyItemRangeRemoved(0, total);
     }
 
-    public void adicionaVenda(VendaRegistrada venda) {
+    public void adicionaVenda(VendaAberta venda) {
         this.vendas.add(venda);
         notifyItemInserted(getItemCount());
     }
 
-    public void setVendas(List<VendaRegistrada> vendas){
+    public void setVendas(List<VendaAberta> vendas){
         this.vendas = vendas;
         notifyItemRangeInserted(0, this.getItemCount());
     }
 
-    public List<VendaRegistrada> getVendas(){
+    public List<VendaAberta> getVendas(){
         return this.vendas;
     }
 
