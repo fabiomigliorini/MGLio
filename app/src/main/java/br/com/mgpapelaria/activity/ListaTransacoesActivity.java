@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     @BindView(R.id.transacoes_recylcer_view)
     RecyclerView transacoesRecyclerView;
     private TransacoesAdapter recyclerViewAdapter;
+    private OrderManager orderManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
         this.recyclerViewAdapter = new TransacoesAdapter(new ArrayList<>());
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            Intent intent = new Intent(this, TransacaoJsonActivity.class);
+            Intent intent = new Intent(this, TransacaoActivity.class);
             Order transacao = recyclerViewAdapter.getTransacoes().get(position);
             intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 
@@ -106,7 +108,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
     private void buscaTransacoes(){
         ///TODO Fazer uma paginação aqui pra pegar de 10 em 10
-        ResultOrders resultOrders = OrderManagerSingleton.getInstance().retrieveOrders(200, 0);
+        ResultOrders resultOrders = this.orderManager.retrieveOrders(200, 0);
 
         if(resultOrders != null){
             this.transacoesRecyclerView.setVisibility(View.VISIBLE);
@@ -123,9 +125,11 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
     public void configSDK() {
         Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        new OrderManager(credentials, this).bind(this, new ServiceBindListener() {
+        this.orderManager = new OrderManager(credentials, this);
+        this.orderManager.bind(this, new ServiceBindListener() {
+
             @Override
-            public void onServiceBoundError(@NonNull Throwable throwable) {
+            public void onServiceBoundError(Throwable throwable) {
             }
 
             @Override

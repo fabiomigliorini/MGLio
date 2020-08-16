@@ -6,16 +6,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoItemAdapter;
-import br.com.mgpapelaria.adapter.TransacoesAdapter;
+import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cielo.orders.domain.Order;
@@ -47,9 +44,12 @@ public class TransacaoActivity extends AppCompatActivity {
     TextView releaseDateTextView;
     @BindView(R.id.type)
     TextView typeTextView;
-    @BindView(R.id.items_recylcer_view)
+    /*@BindView(R.id.items_recylcer_view)
     RecyclerView itemsRecyclerView;
-    private TransacaoItemAdapter recyclerViewAdapter;
+    private TransacaoItemAdapter itemsrecyclerViewAdapter;*/
+    @BindView(R.id.payments_recylcer_view)
+    RecyclerView pagamentosRecyclerView;
+    private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +89,19 @@ public class TransacaoActivity extends AppCompatActivity {
         }
         this.typeTextView.setText(transacao.getType().name());
 
-        this.itemsRecyclerView.setHasFixedSize(true);
+        /*this.itemsRecyclerView.setHasFixedSize(true);
         this.itemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.itemsRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        this.itemsrecyclerViewAdapter = new TransacaoItemAdapter(transacao.getItems());
+        this.itemsRecyclerView.setAdapter(this.itemsrecyclerViewAdapter);*/
 
-        this.recyclerViewAdapter = new TransacaoItemAdapter(transacao.getItems());
-
-        this.itemsRecyclerView.setAdapter(this.recyclerViewAdapter);
+        this.pagamentosRecyclerView.setHasFixedSize(true);
+        this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.pagamentosRecyclerView.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.getPayments());
+        this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
     }
 
