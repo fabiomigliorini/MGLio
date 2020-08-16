@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import br.com.mgpapelaria.R;
+import br.com.mgpapelaria.api.ApiService;
+import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
 import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
@@ -32,6 +34,9 @@ import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.payment.PaymentCode;
 import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.order.payment.PaymentListener;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PagamentoActivity extends AppCompatActivity {
     public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
@@ -42,12 +47,15 @@ public class PagamentoActivity extends AppCompatActivity {
     private Long valorPago;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pagamento);
         ButterKnife.bind(this);
+
+        this.apiService = RetrofitUtil.build().create(ApiService.class);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
@@ -170,6 +178,7 @@ public class PagamentoActivity extends AppCompatActivity {
                 order = paidOrder;
                 order.markAsPaid();
                 orderManager.updateOrder(order);
+                sendOrder(order);
 
                 setResult(PAGAMENTO_EFETUADO_RESULT);
                 finish();
@@ -202,6 +211,21 @@ public class PagamentoActivity extends AppCompatActivity {
         finish();
     }
 
+    private void sendOrder(Order order){
+        this.apiService.updateOrder(order).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                //TODO: Salvar no bd como enviado
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //TODO: Salvar no bd como não enviado
+            }
+
+        });
+    }
+
     protected void configSDK() {
         Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
         orderManager = new OrderManager(credentials, this);
@@ -219,7 +243,6 @@ public class PagamentoActivity extends AppCompatActivity {
             @Override
             public void onServiceBound() {
                 orderManagerServiceBinded = true;
-                orderManager.createDraftOrder("REFERENCIA DA ORDEM");
             }
 
             @Override

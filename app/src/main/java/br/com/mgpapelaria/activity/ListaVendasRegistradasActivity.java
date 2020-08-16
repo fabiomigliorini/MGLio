@@ -43,9 +43,8 @@ public class ListaVendasRegistradasActivity extends AppCompatActivity {
     View noResultsView;
     @BindView(R.id.vendas_recylcer_view)
     RecyclerView vendasRecyclerView;
-    //private List<VendaRegistrada> vendas = new ArrayList<>();
     private VendasRegistradasAdapter recyclerViewAdapter;
-    ApiService apiService;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
