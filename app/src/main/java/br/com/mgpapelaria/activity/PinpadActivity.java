@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.maltaisn.calcdialog.CalcDialog;
+import com.maltaisn.calcdialog.CalcNumpadLayout;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -63,6 +64,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
 
         this.calcDialog.getSettings().setNumberFormat(NumberFormat.getCurrencyInstance());
         this.calcDialog.getSettings().setSignBtnShown(false);
+        this.calcDialog.getSettings().setNumpadLayout(CalcNumpadLayout.PHONE);
         //this.calcDialog.getSettings().setMinValue(new BigDecimal(0));
         //this.calcDialog.getSettings().setMinValue(new BigDecimal(999999999));
 
