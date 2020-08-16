@@ -188,7 +188,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         Order order;
         if(vendaRegistrada != null){
             String orderName = vendaRegistrada.getCodNegocio().toString();
-            order = this.orderManager.createDraftOrder(orderName);
+            order = this.orderManager.createDraftOrder("Pedido: #" + orderName);
             order.setNumber(orderName);
         }else{
             order = this.orderManager.createDraftOrder("Valor avulso");
