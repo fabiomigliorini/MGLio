@@ -33,15 +33,5 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </ScrollView>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancelar_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="CANCELAR"
-            android:textSize="18sp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="@android:color/holo_red_light"
-            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

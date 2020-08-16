@@ -94,7 +94,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == TRANSACAO_REQUEST){
-            if (resultCode == TransacaoJsonActivity.CANCELAMENTO_EFETUADO_RESULT) {
+            if (resultCode == TransacaoActivity.CANCELAMENTO_EFETUADO_RESULT) {
                 this.onRefreshButtonClicked();
             }
         }

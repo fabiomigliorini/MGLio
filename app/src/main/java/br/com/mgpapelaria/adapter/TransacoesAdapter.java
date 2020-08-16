@@ -65,7 +65,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Order transacao = this.transacoes.get(position);
         holder.descricaoTextView.setText(transacao.getReference());
-        holder.valorTextView.setText(nf.format(new BigDecimal(transacao.getPaidAmount()).divide(new BigDecimal(100))));
+        holder.valorTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.getCreatedAt()));
     }
 
