@@ -6,7 +6,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -50,6 +53,7 @@ public class TransacaoActivity extends AppCompatActivity {
     @BindView(R.id.payments_recylcer_view)
     RecyclerView pagamentosRecyclerView;
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
+    private Order transacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +66,6 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Order transacao = null;
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if(bundle.containsKey(TRANSACAO)){
@@ -106,10 +109,22 @@ public class TransacaoActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_transacao, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_mostrar_json:
+                Intent intent = new Intent(this, TransacaoJsonActivity.class);
+                intent.putExtra(TransacaoJsonActivity.TRANSACAO, this.transacao);
+                startActivity(intent);
                 return true;
         }
 
