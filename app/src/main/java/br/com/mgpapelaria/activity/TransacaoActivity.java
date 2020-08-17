@@ -155,6 +155,9 @@ public class TransacaoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Order order) {
                 Toast.makeText(getApplicationContext(),"O pagamento foi cancelado.", Toast.LENGTH_LONG).show();
+                order.cancel();
+                orderManager.updateOrder(order);
+                transacao = order;
                 setResult(CANCELAMENTO_EFETUADO_RESULT);
                 finish();
             }
