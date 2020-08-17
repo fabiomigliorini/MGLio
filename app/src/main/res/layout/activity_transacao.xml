@@ -30,123 +30,99 @@
             android:fillViewport="true">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <!--price-->
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp">
 
                     <TextView
+                        android:id="@+id/item_descricao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="price: "
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                        android:text="Produtos de papelaria"
+                        android:textSize="18sp"/>
 
-                <!--paidAmount-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="paidAmount: "
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/paidAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!--pendingAmount-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="pendingAmount: "
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/pendingAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!--status-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="status: "
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!--type-->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="type: "
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!--items-->
-                <!--<LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Items"
-                        android:textStyle="bold" />
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/items_recylcer_view"
+                    <!--price-->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="vertical"
-                        tools:listitem="@layout/transacao_item_list_item"/>
-                </LinearLayout>-->
+                        android:layout_marginStart="16dp"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Valor" />
+                        <TextView
+                            android:id="@+id/price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:text="R$100,00"/>
+                    </LinearLayout>
+
+                    <!--paidAmount-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pago" />
+                        <TextView
+                            android:id="@+id/paidAmount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:text="R$80,00"/>
+                    </LinearLayout>
+
+                    <!--pendingAmount-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pendente" />
+                        <TextView
+                            android:id="@+id/pendingAmount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:text="R$80,00"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pagamentos"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp"/>
+                </LinearLayout>
                 <!--payments-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pagamentos"
-                        android:textStyle="bold" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/payments_recylcer_view"
                         android:layout_width="match_parent"
@@ -155,6 +131,7 @@
                         tools:listitem="@layout/transacao_payment_list_item"/>
                 </LinearLayout>
             </LinearLayout>
+
         </ScrollView>
 
         <com.google.android.material.button.MaterialButton

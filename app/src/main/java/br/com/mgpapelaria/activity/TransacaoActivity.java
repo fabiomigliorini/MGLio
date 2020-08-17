@@ -17,6 +17,10 @@ import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoItemAdapter;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
@@ -36,16 +40,14 @@ public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
     public static final Integer CANCELAMENTO_EFETUADO_RESULT = 1;
 
+    @BindView(R.id.item_descricao)
+    TextView itemDescricaoTextView;
     @BindView(R.id.price)
     TextView priceTextView;
     @BindView(R.id.paidAmount)
     TextView paidAmountTextView;
     @BindView(R.id.pendingAmount)
-    TextView pendingAmountTextView;;
-    @BindView(R.id.status)
-    TextView statusTextView;
-    @BindView(R.id.type)
-    TextView typeTextView;
+    TextView pendingAmountTextView;
     @BindView(R.id.cancelar_button)
     MaterialButton cancelarButton;
     /*@BindView(R.id.items_recylcer_view)
@@ -54,6 +56,7 @@ public class TransacaoActivity extends AppCompatActivity {
     @BindView(R.id.payments_recylcer_view)
     RecyclerView pagamentosRecyclerView;
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
+    private NumberFormat nf = DecimalFormat.getCurrencyInstance();
     private Order transacao;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
@@ -82,11 +85,10 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.priceTextView.setText(String.valueOf(transacao.getPrice()));
-        this.paidAmountTextView.setText(String.valueOf(transacao.getPaidAmount()));
-        this.pendingAmountTextView.setText(String.valueOf(transacao.pendingAmount()));
-        this.statusTextView.setText(transacao.getStatus().name());
-        this.typeTextView.setText(transacao.getType().name());
+        this.itemDescricaoTextView.setText(transacao.getItems().get(0).getName());
+        this.priceTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
+        this.paidAmountTextView.setText(nf.format(new BigDecimal(transacao.getPaidAmount()).divide(new BigDecimal(100))));
+        this.pendingAmountTextView.setText(nf.format(new BigDecimal(transacao.pendingAmount()).divide(new BigDecimal(100))));
 
         boolean pagamentoCancelado = false;
         for(Payment payment : transacao.getPayments()){
