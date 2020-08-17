@@ -24,6 +24,8 @@ import java.text.NumberFormat;
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoItemAdapter;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
+import br.com.mgpapelaria.api.ApiService;
+import br.com.mgpapelaria.api.RetrofitUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,6 +37,9 @@ import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
 import cielo.sdk.order.payment.Payment;
 import cielo.sdk.order.payment.PaymentError;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
@@ -60,6 +65,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private Order transacao;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,7 @@ public class TransacaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transacao);
         ButterKnife.bind(this);
 
+        this.apiService = RetrofitUtil.build().create(ApiService.class);
         this.configSDK();
 
         Bundle bundle = getIntent().getExtras();
@@ -158,6 +165,7 @@ public class TransacaoActivity extends AppCompatActivity {
                 order.cancel();
                 orderManager.updateOrder(order);
                 transacao = order;
+                sendOrder(order);
                 setResult(CANCELAMENTO_EFETUADO_RESULT);
                 finish();
             }
@@ -171,6 +179,21 @@ public class TransacaoActivity extends AppCompatActivity {
             public void onError(PaymentError paymentError) {
                 Toast.makeText(getApplicationContext(),"Houve um erro no cancelamento", Toast.LENGTH_LONG).show();
             }
+        });
+    }
+
+    private void sendOrder(Order order){
+        this.apiService.updateOrder(order).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                //TODO: Salvar no bd como enviado
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //TODO: Salvar no bd como não enviado
+            }
+
         });
     }
 
