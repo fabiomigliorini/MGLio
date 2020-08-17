@@ -100,6 +100,12 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        orderManager.unbind();
+        super.onDestroy();
+    }
+
     @OnClick(R.id.refresh_button)
     void onRefreshButtonClicked(){
         this.swipeRefreshLayout.setRefreshing(true);

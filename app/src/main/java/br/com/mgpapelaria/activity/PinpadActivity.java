@@ -94,6 +94,12 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     }
 
     @Override
+    protected void onDestroy() {
+        orderManager.unbind();
+        super.onDestroy();
+    }
+
+    @Override
     public void onValueEntered(int requestCode, @Nullable BigDecimal value) {
         if(this.isBetween(value, new BigDecimal(0), new BigDecimal(99999999))){
             this.valorLimpo = value.multiply(new BigDecimal(100)).longValue();
