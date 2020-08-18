@@ -3,7 +3,9 @@ package br.com.mgpapelaria.activity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -32,12 +34,21 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.senha_edit_text)
     TextInputEditText senhaEditText;
     private ApiService apiService;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        this.sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
+        String token = this.sharedPref.getString("token", null);
+        if(token != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         this.apiService = RetrofitUtil.build().create(ApiService.class);
     }
@@ -55,10 +66,13 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if(response.code() == 200){
-                        Log.i("LOGIN", response.body().getToken());
-                        /*Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        String token = response.body().getToken();
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("token", token);
+                        editor.apply();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish();*/
+                        finish();
                     }else if(response.code() == 401){
                         showErrorDialog("Usuário e/ou senha inválidos.");
                     }else{

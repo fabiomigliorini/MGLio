@@ -1,7 +1,10 @@
 package br.com.mgpapelaria.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +20,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        //getSupportActionBar().hide();
+        SharedPreferences sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token", null);
+
+        if(token == null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @OnClick(R.id.venda_aberta_button)
