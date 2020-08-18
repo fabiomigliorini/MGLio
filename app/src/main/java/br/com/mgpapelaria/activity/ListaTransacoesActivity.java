@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacoesAdapter;
@@ -27,6 +28,7 @@ import butterknife.OnClick;
 import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
 import cielo.orders.domain.ResultOrders;
+import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.ServiceBindListener;
 
@@ -119,7 +121,12 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         if(resultOrders != null){
             this.transacoesRecyclerView.setVisibility(View.VISIBLE);
             this.noResultsView.setVisibility(View.GONE);
-            final List<Order> orderList = resultOrders.getResults();
+            final List<Order> orderList = new ArrayList<>();
+            for(Order order : resultOrders.getResults()){
+                if(order.getStatus() != Status.CANCELED){
+                    orderList.add(order);
+                }
+            }
             this.recyclerViewAdapter.apagaTransacoes();
             this.recyclerViewAdapter.adicionaTransacoes(orderList);
         }else{

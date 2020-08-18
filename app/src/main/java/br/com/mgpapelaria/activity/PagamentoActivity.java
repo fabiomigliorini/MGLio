@@ -146,7 +146,6 @@ public class PagamentoActivity extends AppCompatActivity {
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
         //OrderManager orderManager = OrderManagerSingleton.getInstance();
 
-
         orderManager.placeOrder(this.order);
         /*String ec = merchantCode.getText().toString();
         String userEmail = email.getText().toString();*/
@@ -175,6 +174,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onPayment(@NonNull Order paidOrder) {
+                Toast.makeText(getApplicationContext(), "onPayment", Toast.LENGTH_SHORT).show();
                 order = paidOrder;
                 order.markAsPaid();
                 orderManager.updateOrder(order);
@@ -186,11 +186,17 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
+                //Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                order.cancel();
+                orderManager.updateOrder(order);
                 finish();
             }
 
             @Override
             public void onError(@NonNull PaymentError paymentError) {
+                //Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
+                order.cancel();
+                orderManager.updateOrder(order);
                 finish();
             }
 
