@@ -187,7 +187,7 @@ public class PagamentoActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 //Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
-                order.cancel();
+                order.markAsRejected();
                 orderManager.updateOrder(order);
                 finish();
             }

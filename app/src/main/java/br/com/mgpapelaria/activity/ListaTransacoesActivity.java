@@ -5,9 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -17,11 +15,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacoesAdapter;
-import br.com.mgpapelaria.util.OrderManagerSingleton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -123,7 +119,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
             this.noResultsView.setVisibility(View.GONE);
             final List<Order> orderList = new ArrayList<>();
             for(Order order : resultOrders.getResults()){
-                if(order.getStatus() != Status.CANCELED){
+                if(order.getPayments().size() > 0){
                     orderList.add(order);
                 }
             }

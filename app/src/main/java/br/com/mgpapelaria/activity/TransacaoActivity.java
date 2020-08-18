@@ -1,11 +1,5 @@
 package br.com.mgpapelaria.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +9,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 
 import java.math.BigDecimal;
@@ -22,7 +22,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import br.com.mgpapelaria.R;
-import br.com.mgpapelaria.adapter.TransacaoItemAdapter;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
@@ -45,19 +44,14 @@ public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
     public static final Integer CANCELAMENTO_EFETUADO_RESULT = 1;
 
+    @BindView(R.id.nome_cliente)
+    TextView nomeClienteTextView;
     @BindView(R.id.item_descricao)
     TextView itemDescricaoTextView;
     @BindView(R.id.price)
     TextView priceTextView;
-    @BindView(R.id.paidAmount)
-    TextView paidAmountTextView;
-    @BindView(R.id.pendingAmount)
-    TextView pendingAmountTextView;
     @BindView(R.id.cancelar_button)
     MaterialButton cancelarButton;
-    /*@BindView(R.id.items_recylcer_view)
-    RecyclerView itemsRecyclerView;
-    private TransacaoItemAdapter itemsrecyclerViewAdapter;*/
     @BindView(R.id.payments_recylcer_view)
     RecyclerView pagamentosRecyclerView;
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
@@ -92,10 +86,13 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        if(transacao.getPayments().size() > 0){
+            this.nomeClienteTextView.setText(transacao.getPayments().get(0).getPaymentFields().get("clientName"));
+        }else{
+            this.nomeClienteTextView.setVisibility(View.GONE);
+        }
         this.itemDescricaoTextView.setText(transacao.getItems().get(0).getName());
         this.priceTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
-        this.paidAmountTextView.setText(nf.format(new BigDecimal(transacao.getPaidAmount()).divide(new BigDecimal(100))));
-        this.pendingAmountTextView.setText(nf.format(new BigDecimal(transacao.pendingAmount()).divide(new BigDecimal(100))));
 
         boolean pagamentoCancelado = false;
         for(Payment payment : transacao.getPayments()){
@@ -104,12 +101,6 @@ public class TransacaoActivity extends AppCompatActivity {
         if(pagamentoCancelado){
             this.cancelarButton.setVisibility(View.GONE);
         }
-        /*this.itemsRecyclerView.setHasFixedSize(true);
-        this.itemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.itemsRecyclerView.addItemDecoration(
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        this.itemsrecyclerViewAdapter = new TransacaoItemAdapter(transacao.getItems());
-        this.itemsRecyclerView.setAdapter(this.itemsrecyclerViewAdapter);*/
 
         this.pagamentosRecyclerView.setHasFixedSize(true);
         this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));

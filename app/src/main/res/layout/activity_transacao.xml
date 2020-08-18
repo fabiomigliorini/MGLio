@@ -41,11 +41,19 @@
                     android:layout_marginEnd="16dp">
 
                     <TextView
+                        android:id="@+id/nome_cliente"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LIMA/DANILO O."
+                        android:layout_marginBottom="8dp"
+                        android:textSize="20sp"/>
+
+                    <TextView
                         android:id="@+id/item_descricao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Produtos de papelaria"
-                        android:textSize="18sp"/>
+                        android:textSize="16sp"/>
 
                     <!--price-->
                     <LinearLayout
@@ -57,6 +65,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="18sp"
                             android:text="Valor" />
                         <TextView
                             android:id="@+id/price"
@@ -66,48 +75,6 @@
                             android:textSize="30sp"
                             android:textStyle="bold"
                             android:text="R$100,00"/>
-                    </LinearLayout>
-
-                    <!--paidAmount-->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pago" />
-                        <TextView
-                            android:id="@+id/paidAmount"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:text="R$80,00"/>
-                    </LinearLayout>
-
-                    <!--pendingAmount-->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pendente" />
-                        <TextView
-                            android:id="@+id/pendingAmount"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:text="R$80,00"/>
                     </LinearLayout>
 
                     <TextView
