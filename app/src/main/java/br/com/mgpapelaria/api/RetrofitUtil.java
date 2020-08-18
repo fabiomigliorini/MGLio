@@ -13,7 +13,7 @@ public class RetrofitUtil {
                 .create();
 
         return new Retrofit.Builder()
-                .baseUrl("http://api.mgspa.mgpapelaria.com.br/api/v1/lio/")
+                .baseUrl("http://api.mgspa.mgpapelaria.com.br/api/v1/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
