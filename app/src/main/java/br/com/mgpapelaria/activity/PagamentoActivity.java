@@ -25,6 +25,7 @@ import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.fragment.pagamento.VoucherFragment;
+import br.com.mgpapelaria.model.OrderRequest;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
 import cielo.orders.domain.Credentials;
@@ -218,15 +219,20 @@ public class PagamentoActivity extends AppCompatActivity {
     }
 
     private void sendOrder(Order order){
-        this.apiService.updateOrder(order).enqueue(new Callback<Void>() {
+        Log.i("ORDER", order.getId());
+        this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 //TODO: Salvar no bd como enviado
+                if(response.code() == 200){
+                    Log.i("PAGAMENTO", response.raw().toString());
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 //TODO: Salvar no bd como não enviado
+                Log.e("PAGAMENTO", t.getMessage());
             }
 
         });

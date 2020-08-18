@@ -2,6 +2,7 @@ package br.com.mgpapelaria.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.model.OrderRequest;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -174,10 +176,12 @@ public class TransacaoActivity extends AppCompatActivity {
     }
 
     private void sendOrder(Order order){
-        this.apiService.updateOrder(order).enqueue(new Callback<Void>() {
+        this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                //TODO: Salvar no bd como enviado
+                if(response.code() == 200){
+                    Log.i("PAGAMENTO", response.raw().toString());
+                }
             }
 
             @Override

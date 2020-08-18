@@ -2,17 +2,22 @@ package br.com.mgpapelaria.api;
 
 import java.util.List;
 
+import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.VendaAberta;
 import cielo.orders.domain.Order;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ApiService {
+    @Headers({"Accept:application/json", "Content-Type:application/json;"})
     @GET("vendas-abertas")
     Call<List<VendaAberta>> getVendasAbertas(@Query("cnpj") String cnpj, @Query("terminal") String terminal);
 
+    @Headers({"Accept:application/json"})
     @POST("order")
-    Call<Void> updateOrder(@Query("order") Order order);
+    Call<Void> updateOrder(@Body OrderRequest order);
 }
