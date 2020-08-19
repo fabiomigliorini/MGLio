@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo_mgpapelaria" />
+        app:srcCompat="@drawable/logo_mgpapelaria"
+        android:contentDescription="logo" />
 
     <androidx.gridlayout.widget.GridLayout
         android:layout_width="0dp"
@@ -166,6 +167,14 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.gridlayout.widget.GridLayout>
+    <Button
+        android:id="@+id/teste_requisicao_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Teste requisição" />
     <!--<Button
         android:id="@+id/teste_cores_button"
         android:layout_width="match_parent"

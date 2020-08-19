@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
-        this.apiService = RetrofitUtil.build().create(ApiService.class);
+        this.apiService = RetrofitUtil.createService(this, ApiService.class);
     }
 
     @OnClick(R.id.entrar_button)

@@ -69,7 +69,7 @@ public class TransacaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transacao);
         ButterKnife.bind(this);
 
-        this.apiService = RetrofitUtil.build().create(ApiService.class);
+        this.apiService = RetrofitUtil.createService(this, ApiService.class);
         this.configSDK();
 
         Bundle bundle = getIntent().getExtras();

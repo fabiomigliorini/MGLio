@@ -56,7 +56,7 @@ public class PagamentoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pagamento);
         ButterKnife.bind(this);
 
-        this.apiService = RetrofitUtil.build().create(ApiService.class);
+        this.apiService = RetrofitUtil.createService(this, ApiService.class);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null || !bundle.containsKey(VALOR_PAGO)){

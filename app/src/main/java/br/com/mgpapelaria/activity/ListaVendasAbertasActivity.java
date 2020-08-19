@@ -53,7 +53,7 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.apiService = RetrofitUtil.build().create(ApiService.class);
+        this.apiService = RetrofitUtil.createService(this, ApiService.class);
 
         this.swipeRefreshLayout.setOnRefreshListener(this::buscaVendasAbertas);
         this.swipeRefreshLayout.setColorSchemeColors(

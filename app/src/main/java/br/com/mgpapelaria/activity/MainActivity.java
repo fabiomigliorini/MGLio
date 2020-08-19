@@ -8,11 +8,20 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 import br.com.mgpapelaria.R;
+import br.com.mgpapelaria.api.ApiService;
+import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.model.Filial;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
     }
 
     @OnClick(R.id.venda_aberta_button)
@@ -48,6 +59,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @OnClick(R.id.teste_requisicao_button)
+    void onTesteRequisicaoButtonClicked(){
+        this.apiService.selectFilial().enqueue(new Callback<List<Filial>>() {
+            @Override
+            public void onResponse(Call<List<Filial>> call, Response<List<Filial>> response) {
+                if(response.code() == 200){
+                    for(Filial filial : response.body()){
+                        Log.i("FILIAL", filial.getLabel());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Filial>> call, Throwable t) {
+
+            }
+        });
+    }
 
     /*@OnClick(R.id.teste_cores_button)
     void onTesteCoresButtonClicked(){
