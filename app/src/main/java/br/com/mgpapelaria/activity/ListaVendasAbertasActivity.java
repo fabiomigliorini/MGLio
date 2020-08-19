@@ -25,6 +25,8 @@ import br.com.mgpapelaria.model.VendaAberta;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cielo.orders.domain.Settings;
+import cielo.sdk.info.InfoManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,7 +100,8 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
     }
 
     private void buscaVendasAbertas(){
-        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
+        String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
+        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", numeroLogico);
         vendas.enqueue(new Callback<List<VendaAberta>>() {
             @Override
             public void onResponse(Call<List<VendaAberta>> call, Response<List<VendaAberta>> response) {
