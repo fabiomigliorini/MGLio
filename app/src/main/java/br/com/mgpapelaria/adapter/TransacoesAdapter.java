@@ -17,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.mgpapelaria.R;
+import br.com.mgpapelaria.model.Pedido;
 import cielo.orders.domain.Order;
 import cielo.orders.domain.Status;
 
 public class TransacoesAdapter extends RecyclerView.Adapter<TransacoesAdapter.ViewHolder> {
-private List<Order> transacoes;
+private List<Pedido> transacoes;
 private static ItemClickListener clickListener;
 private NumberFormat nf = DecimalFormat.getCurrencyInstance();
 
@@ -49,7 +50,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     }
 }
 
-    public TransacoesAdapter(List<Order> transacoes) {
+    public TransacoesAdapter(List<Pedido> transacoes) {
         this.transacoes = transacoes;
     }
 
@@ -66,11 +67,11 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Order transacao = this.transacoes.get(position);
-        holder.descricaoTextView.setText(transacao.getPayments().get(0).getPaymentFields().get("clientName"));
-        holder.dataTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.getCreatedAt()));
-        holder.valorTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
-        if(transacao.getStatus() == Status.CANCELED){
+        Pedido transacao = this.transacoes.get(position);
+        holder.descricaoTextView.setText(transacao.nome);
+        holder.dataTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.data));
+        holder.valorTextView.setText(nf.format(new BigDecimal(transacao.valor).divide(new BigDecimal(100))));
+        if(transacao.status.equals("CANCELED")){
             holder.statusTextView.setText("CANCELADO");
             holder.statusTextView.setTextColor(Color.RED);
         }else{
@@ -89,17 +90,17 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         notifyItemRangeRemoved(0, total);
     }
 
-    public void adicionaTransacao(Order transacao) {
+    public void adicionaTransacao(Pedido transacao) {
         this.transacoes.add(transacao);
         notifyItemInserted(getItemCount());
     }
 
-    public void adicionaTransacoes(List<Order> transacoes) {
+    public void adicionaTransacoes(List<Pedido> transacoes) {
         this.transacoes = transacoes;
         notifyItemRangeInserted(0, getItemCount());
     }
 
-    public List<Order> getTransacoes(){
+    public List<Pedido> getTransacoes(){
         return this.transacoes;
     }
 
