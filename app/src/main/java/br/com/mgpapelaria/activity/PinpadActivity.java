@@ -52,7 +52,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         if (bundle != null) {
             if(bundle.containsKey(ListaVendasAbertasActivity.VENDA_ABERTA)){
                 this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
-                titulo = "Pedido: #" + vendaAberta.getCodNegocio().toString();
+                titulo = "Venda #" + vendaAberta.getCodNegocio().toString();
                 this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
             }
         }

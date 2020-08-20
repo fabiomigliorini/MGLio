@@ -9,7 +9,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:maxHeight="64dp">
+    android:maxHeight="72dp">
 
     <LinearLayout
         android:layout_width="0dp"

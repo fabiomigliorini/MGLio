@@ -62,7 +62,7 @@ public class VendasAbertasAdapter extends RecyclerView.Adapter<VendasAbertasAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         VendaAberta venda = this.vendas.get(position);
-        holder.descricaoTextView.setText(venda.getCodNegocio().toString());
+        holder.descricaoTextView.setText("Venda #" + venda.getCodNegocio().toString());
         holder.valorTextView.setText(nf.format(venda.getValorSaldo()));
         holder.dataCriacaoTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", venda.getLancamento()));
     }

@@ -53,7 +53,7 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Vendas");
+        toolbar.setTitle("Vendas Abertas");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
