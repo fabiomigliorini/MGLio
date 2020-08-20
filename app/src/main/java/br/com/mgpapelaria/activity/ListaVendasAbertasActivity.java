@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -55,7 +57,10 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.apiService = RetrofitUtil.createService(this, ApiService.class);
+        SharedPreferences sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
+        String token = sharedPref.getString("token", null);
+
+        this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
 
         this.swipeRefreshLayout.setOnRefreshListener(this::buscaVendasAbertas);
         this.swipeRefreshLayout.setColorSchemeColors(
@@ -101,15 +106,17 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
 
     private void buscaVendasAbertas(){
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
-        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", numeroLogico);
+        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
         vendas.enqueue(new Callback<List<VendaAberta>>() {
             @Override
             public void onResponse(Call<List<VendaAberta>> call, Response<List<VendaAberta>> response) {
-                recyclerViewAdapter.apagaVendas();
-                recyclerViewAdapter.setVendas(response.body());
-                swipeRefreshLayout.setRefreshing(false);
-                vendasRecyclerView.setVisibility(View.VISIBLE);
-                noResultsView.setVisibility(View.INVISIBLE);
+                if(response.code() == 200){
+                    recyclerViewAdapter.apagaVendas();
+                    recyclerViewAdapter.setVendas(response.body());
+                    swipeRefreshLayout.setRefreshing(false);
+                    vendasRecyclerView.setVisibility(View.VISIBLE);
+                    noResultsView.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override

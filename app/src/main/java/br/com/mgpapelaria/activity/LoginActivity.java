@@ -3,6 +3,7 @@ package br.com.mgpapelaria.activity;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,6 +59,11 @@ public class LoginActivity extends AppCompatActivity {
         if(!this.isFormValid()){
             return;
         }
+
+        ProgressDialog mDialog = new ProgressDialog(LoginActivity.this);
+        mDialog.setMessage("Aguarde...");
+        mDialog.setCancelable(false);
+        mDialog.show();
 
         this.apiService.login(new LoginRequest(
                 this.usuarioEditText.getText().toString(),

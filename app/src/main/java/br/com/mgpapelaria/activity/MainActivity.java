@@ -1,11 +1,13 @@
 package br.com.mgpapelaria.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        SharedPreferences sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
         String token = sharedPref.getString("token", null);
 
         if(token == null){
@@ -59,7 +62,45 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.teste_requisicao_button)
+    @OnClick(R.id.sair_button)
+    void onSairButtonClicked(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Realmente deseja sair?");
+        builder.setPositiveButton("Sim", (dialog, which) -> {
+            dialog.dismiss();
+            logout();
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.create().show();
+    }
+
+    private void logout(){
+        this.apiService.logout().enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                ProgressDialog mDialog = new ProgressDialog(MainActivity.this);
+                mDialog.setMessage("Aguarde...");
+                mDialog.setCancelable(false);
+                mDialog.show();
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("token", null);
+                editor.apply();
+
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
+
+    /*@OnClick(R.id.teste_requisicao_button)
     void onTesteRequisicaoButtonClicked(){
         this.apiService.selectFilial().enqueue(new Callback<List<Filial>>() {
             @Override
@@ -78,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*@OnClick(R.id.teste_cores_button)
+    @OnClick(R.id.teste_cores_button)
     void onTesteCoresButtonClicked(){
         Intent intent = new Intent(this, TesteCoresActivity.class);
         startActivity(intent);

@@ -33,6 +33,10 @@ public interface ApiService {
     Call<LoginResponse> login(@Body LoginRequest login);
 
     @Headers({"Accept:application/json"})
+    @GET("auth/logout")
+    Call<Void> logout();
+
+    @Headers({"Accept:application/json"})
     @GET("auth/refresh")
     Call<String> refreshToken();
 }
