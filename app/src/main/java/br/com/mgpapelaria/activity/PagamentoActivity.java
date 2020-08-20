@@ -3,6 +3,8 @@ package br.com.mgpapelaria.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,10 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.room.Room;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
 import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
@@ -26,6 +30,7 @@ import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.fragment.pagamento.VoucherFragment;
 import br.com.mgpapelaria.model.OrderRequest;
+import br.com.mgpapelaria.model.Pedido;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
 import cielo.orders.domain.Credentials;
@@ -49,6 +54,8 @@ public class PagamentoActivity extends AppCompatActivity {
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
+    private AppDatabase db;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,7 @@ public class PagamentoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
+        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
@@ -67,6 +75,8 @@ public class PagamentoActivity extends AppCompatActivity {
         if(bundle.containsKey(ORDER)){
             this.order = (Order) bundle.getSerializable(ORDER);
         }
+
+        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -179,6 +189,7 @@ public class PagamentoActivity extends AppCompatActivity {
                 order = paidOrder;
                 order.markAsPaid();
                 orderManager.updateOrder(order);
+                persistOrder(order);
                 sendOrder(order);
 
                 setResult(PAGAMENTO_EFETUADO_RESULT);
@@ -218,14 +229,35 @@ public class PagamentoActivity extends AppCompatActivity {
         finish();
     }
 
+    private void persistOrder(Order order){
+        AsyncTask.execute(() -> {
+            Pedido pedido = new Pedido();
+            pedido.userId = sharedPref.getInt("userId", -1);
+            pedido.orderId = order.getId();
+            pedido.nome = order.getPayments().get(0).getPaymentFields().get("clientName");
+            pedido.data = order.getCreatedAt();
+            pedido.valor = order.getPrice();
+            pedido.status = order.getStatus().name();
+            pedido.sincronizado = false;
+            pedido.order = order;
+            this.db.pedidoDAO().insertPedido(pedido);
+        });
+    }
+
+    private void updateSincronizadoStatus(String orderId){
+        AsyncTask.execute(() -> {
+            this.db.pedidoDAO().updatePedidoSincronizado(orderId, true);
+        });
+    }
+
     private void sendOrder(Order order){
-        Log.i("ORDER", order.getId());
         this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 //TODO: Salvar no bd como enviado
                 if(response.code() == 200){
                     Log.i("PAGAMENTO", response.raw().toString());
+                    updateSincronizadoStatus(order.getId());
                 }
             }
 

@@ -99,11 +99,12 @@ public class MainActivity extends AppCompatActivity {
                 mDialog.show();
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("token", null);
-                editor.apply();
+                editor.clear().apply();
 
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+                mDialog.dismiss();
+                finish();
             }
 
             @Override

@@ -1,7 +1,10 @@
 package br.com.mgpapelaria.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
@@ -18,15 +22,11 @@ import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacoesAdapter;
+import br.com.mgpapelaria.model.Pedido;
+import br.com.mgpapelaria.database.AppDatabase;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cielo.orders.domain.Credentials;
-import cielo.orders.domain.Order;
-import cielo.orders.domain.ResultOrders;
-import cielo.orders.domain.Status;
-import cielo.sdk.order.OrderManager;
-import cielo.sdk.order.ServiceBindListener;
 
 public class ListaTransacoesActivity extends AppCompatActivity {
     public static final Integer TRANSACAO_REQUEST = 1;
@@ -37,7 +37,9 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     @BindView(R.id.transacoes_recylcer_view)
     RecyclerView transacoesRecyclerView;
     private TransacoesAdapter recyclerViewAdapter;
-    private OrderManager orderManager;
+    private AppDatabase db;
+    private SharedPreferences sharedPref;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,9 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_transacoes);
 
         ButterKnife.bind(this);
+
+        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
+        this.userId = sharedPref.getInt("userId", -1);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Transações");
@@ -65,8 +70,8 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         this.recyclerViewAdapter = new TransacoesAdapter(new ArrayList<>());
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
             Intent intent = new Intent(this, TransacaoActivity.class);
-            Order transacao = recyclerViewAdapter.getTransacoes().get(position);
-            intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
+            Pedido transacao = recyclerViewAdapter.getTransacoes().get(position);
+            intent.putExtra(TransacaoActivity.TRANSACAO, transacao.order);
 
             startActivityForResult(intent, TRANSACAO_REQUEST);
         });
@@ -74,7 +79,9 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
         this.swipeRefreshLayout.setRefreshing(true);
 
-        this.configSDK();
+        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+
+        this.buscaTransacoes();
     }
 
     @Override
@@ -98,12 +105,6 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        orderManager.unbind();
-        super.onDestroy();
-    }
-
     @OnClick(R.id.refresh_button)
     void onRefreshButtonClicked(){
         this.swipeRefreshLayout.setRefreshing(true);
@@ -111,44 +112,21 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     }
 
     private void buscaTransacoes(){
-        ///TODO Fazer uma paginação aqui pra pegar de 10 em 10
-        ResultOrders resultOrders = this.orderManager.retrieveOrders(200, 0);
-
-        if(resultOrders != null){
-            this.transacoesRecyclerView.setVisibility(View.VISIBLE);
-            this.noResultsView.setVisibility(View.GONE);
-            final List<Order> orderList = new ArrayList<>();
-            for(Order order : resultOrders.getResults()){
-                if(order.getPayments().size() > 0){
-                    orderList.add(order);
+        AsyncTask.execute(() -> {
+            List<Pedido> pedidos = this.db.pedidoDAO().getAllByUserId(userId);
+            runOnUiThread(() -> {
+                if(pedidos.size() > 0){
+                    this.transacoesRecyclerView.setVisibility(View.VISIBLE);
+                    this.noResultsView.setVisibility(View.GONE);
+                    this.recyclerViewAdapter.apagaTransacoes();
+                    this.recyclerViewAdapter.adicionaTransacoes(pedidos);
+                }else{
+                    this.transacoesRecyclerView.setVisibility(View.GONE);
+                    this.noResultsView.setVisibility(View.VISIBLE);
                 }
-            }
-            this.recyclerViewAdapter.apagaTransacoes();
-            this.recyclerViewAdapter.adicionaTransacoes(orderList);
-        }else{
-            this.transacoesRecyclerView.setVisibility(View.GONE);
-            this.noResultsView.setVisibility(View.VISIBLE);
-        }
-        this.swipeRefreshLayout.setRefreshing(false);
-    }
+                this.swipeRefreshLayout.setRefreshing(false);
+            });
 
-    public void configSDK() {
-        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        this.orderManager = new OrderManager(credentials, this);
-        this.orderManager.bind(this, new ServiceBindListener() {
-
-            @Override
-            public void onServiceBoundError(Throwable throwable) {
-            }
-
-            @Override
-            public void onServiceBound() {
-                buscaTransacoes();
-            }
-
-            @Override
-            public void onServiceUnbound() {
-            }
         });
     }
 }

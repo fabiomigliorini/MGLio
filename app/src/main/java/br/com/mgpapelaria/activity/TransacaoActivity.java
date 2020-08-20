@@ -1,6 +1,7 @@
 package br.com.mgpapelaria.activity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -26,6 +28,7 @@ import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.model.OrderRequest;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +36,7 @@ import butterknife.OnClick;
 import cielo.orders.domain.CancellationRequest;
 import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
+import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
@@ -62,6 +66,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +101,7 @@ public class TransacaoActivity extends AppCompatActivity {
         this.itemDescricaoTextView.setText(transacao.getItems().get(0).getName());
         this.priceTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
 
-        boolean pagamentoCancelado = false;
-        for(Payment payment : transacao.getPayments()){
-            pagamentoCancelado = payment.getPaymentFields().get("v40Code").equals("28");
-        }
-        if(pagamentoCancelado){
+        if(transacao.getStatus() == Status.CANCELED){
             this.cancelarButton.setVisibility(View.GONE);
         }
 
@@ -110,6 +111,8 @@ public class TransacaoActivity extends AppCompatActivity {
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.getPayments(), this);
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
+
+        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
     }
 
     @Override
@@ -158,6 +161,7 @@ public class TransacaoActivity extends AppCompatActivity {
                 order.cancel();
                 orderManager.updateOrder(order);
                 transacao = order;
+                alteraStatusOrder(order);
                 sendOrder(order);
                 setResult(CANCELAMENTO_EFETUADO_RESULT);
                 finish();
@@ -172,6 +176,12 @@ public class TransacaoActivity extends AppCompatActivity {
             public void onError(PaymentError paymentError) {
                 Toast.makeText(getApplicationContext(),"Houve um erro no cancelamento", Toast.LENGTH_LONG).show();
             }
+        });
+    }
+
+    private void alteraStatusOrder(Order order){
+        AsyncTask.execute(() -> {
+            db.pedidoDAO().cancelaOrder(order.getId(), order);
         });
     }
 

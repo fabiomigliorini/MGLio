@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onResponse() {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
+                                mDialog.dismiss();
                                 finish();
                             }
 
@@ -120,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.code() == 200){
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("user", response.body().getUser().getUsuario());
+                    editor.putInt("userId", response.body().getUser().getId());
                     editor.apply();
                     callback.onResponse();
                 }else{
