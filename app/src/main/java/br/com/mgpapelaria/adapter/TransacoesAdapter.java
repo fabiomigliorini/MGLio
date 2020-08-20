@@ -5,9 +5,11 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.math.BigDecimal;
@@ -35,12 +37,15 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public TextView dataTextView;
     public TextView valorTextView;
     public TextView statusTextView;
+    public ImageView noSyncImageView;
+
     public ViewHolder(View v) {
         super(v);
         descricaoTextView = v.findViewById(R.id.descricao_text_view);
         dataTextView = v.findViewById(R.id.data_text_view);
         valorTextView = v.findViewById(R.id.valor_text_view);
         statusTextView = v.findViewById(R.id.status_text_view);
+        noSyncImageView = v.findViewById(R.id.no_sync_iamge_view);
 
         v.setOnClickListener(view -> {
             if(clickListener != null){
@@ -76,6 +81,11 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
             holder.statusTextView.setTextColor(Color.RED);
         }else{
             holder.statusTextView.setText("");
+        }
+        if(transacao.sincronizado){
+            holder.noSyncImageView.setVisibility(View.GONE);
+        }else{
+            holder.noSyncImageView.setVisibility(View.VISIBLE);
         }
     }
 
