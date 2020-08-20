@@ -40,6 +40,8 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.no_results_view)
     View noResultsView;
+    @BindView(R.id.connection_error_view)
+    View connectionErrorView;
     @BindView(R.id.vendas_recylcer_view)
     RecyclerView vendasRecyclerView;
     private VendasAbertasAdapter recyclerViewAdapter;
@@ -104,6 +106,11 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
         this.buscaVendasAbertas();
     }
 
+    @OnClick(R.id.retry_button)
+    void onRetryButtonClicked(){
+        this.onRefreshButtonClicked();
+    }
+
     private void buscaVendasAbertas(){
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
         Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
@@ -113,17 +120,19 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
                 if(response.code() == 200){
                     recyclerViewAdapter.apagaVendas();
                     recyclerViewAdapter.setVendas(response.body());
-                    swipeRefreshLayout.setRefreshing(false);
                     vendasRecyclerView.setVisibility(View.VISIBLE);
                     noResultsView.setVisibility(View.INVISIBLE);
+                    connectionErrorView.setVisibility(View.INVISIBLE);
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Call<List<VendaAberta>> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
                 vendasRecyclerView.setVisibility(View.INVISIBLE);
-                noResultsView.setVisibility(View.INVISIBLE);
+                connectionErrorView.setVisibility(View.VISIBLE);
             }
         });
     }
