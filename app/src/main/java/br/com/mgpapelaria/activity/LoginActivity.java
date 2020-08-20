@@ -18,6 +18,7 @@ import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.model.LoginRequest;
 import br.com.mgpapelaria.model.LoginResponse;
+import br.com.mgpapelaria.model.UsuarioResponse;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,9 +77,21 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putString("token", token);
                         editor.apply();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+
+                        getUserInfo(token, new UserInfoCallback() {
+                            @Override
+                            public void onResponse() {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError() {
+                                showErrorDialog("Ocorreu um erro ao processar a requisição.");
+                            }
+                        });
+
                     }else if(response.code() == 401){
                         showErrorDialog("Usuário e/ou senha inválidos.");
                     }else{
@@ -92,6 +105,33 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+    }
+
+    public interface UserInfoCallback{
+        void onResponse();
+        void onError();
+    }
+
+    private void getUserInfo(String token, UserInfoCallback callback){
+        this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
+        this.apiService.getUser().enqueue(new Callback<UsuarioResponse>() {
+            @Override
+            public void onResponse(Call<UsuarioResponse> call, Response<UsuarioResponse> response) {
+                if(response.code() == 200){
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("user", response.body().getUser().getUsuario());
+                    editor.apply();
+                    callback.onResponse();
+                }else{
+                    callback.onError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsuarioResponse> call, Throwable t) {
+                callback.onError();
+            }
+        });
     }
 
     private void showErrorDialog(String message){

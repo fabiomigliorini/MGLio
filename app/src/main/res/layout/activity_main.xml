@@ -196,6 +196,7 @@
                     android:textSize="12sp"
                     android:text="Usuário: " />
                 <TextView
+                    android:id="@+id/usuario_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
@@ -212,6 +213,7 @@
                     android:textSize="12sp"
                     android:text="Número Lógico: " />
                 <TextView
+                    android:id="@+id/numero_logico_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"

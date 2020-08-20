@@ -6,6 +6,7 @@ import br.com.mgpapelaria.model.Filial;
 import br.com.mgpapelaria.model.LoginRequest;
 import br.com.mgpapelaria.model.LoginResponse;
 import br.com.mgpapelaria.model.OrderRequest;
+import br.com.mgpapelaria.model.UsuarioResponse;
 import br.com.mgpapelaria.model.VendaAberta;
 import cielo.orders.domain.Order;
 import retrofit2.Call;
@@ -39,4 +40,8 @@ public interface ApiService {
     @Headers({"Accept:application/json"})
     @GET("auth/refresh")
     Call<String> refreshToken();
+
+    @Headers({"Accept:application/json"})
+    @GET("auth/user")
+    Call<UsuarioResponse> getUser();
 }

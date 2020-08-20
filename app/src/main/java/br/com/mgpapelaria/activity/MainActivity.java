@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,10 @@ import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.model.Filial;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cielo.sdk.info.InfoManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +28,11 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
     private SharedPreferences sharedPref;
+
+    @BindView(R.id.usuario_text_view)
+    TextView usuarioTextView;
+    @BindView(R.id.numero_logico_text_view)
+    TextView numeroLogicoTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
+
+        String usuario = sharedPref.getString("user", null);
+        String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
+        this.usuarioTextView.setText(usuario);
+        this.numeroLogicoTextView.setText(numeroLogico);
     }
 
     @OnClick(R.id.venda_aberta_button)
