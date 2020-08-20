@@ -3,12 +3,13 @@ package br.com.mgpapelaria.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import cielo.orders.domain.Order;
 
 @Entity
-public class Pedido {
+public class Pedido implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
     public int userId;

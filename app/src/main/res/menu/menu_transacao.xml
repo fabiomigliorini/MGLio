@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_enviar_order"
+        android:icon="@drawable/ic_baseline_cloud_upload_24"
+        app:showAsAction="always"
+        android:title="Mostar Json" />
+
+    <item
         android:id="@+id/action_mostrar_json"
         android:icon="@drawable/ic_baseline_code_24"
         app:showAsAction="always"

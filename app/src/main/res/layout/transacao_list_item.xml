@@ -27,7 +27,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
         android:tint="@android:color/holo_red_light"
-        android:src="@drawable/ic_baseline_cloud_off_24"
+        android:src="@drawable/ic_baseline_cloud_off_18"
         app:layout_constraintStart_toEndOf="@id/descricao_text_view"
         app:layout_constraintTop_toTopOf="@+id/descricao_text_view"/>
 

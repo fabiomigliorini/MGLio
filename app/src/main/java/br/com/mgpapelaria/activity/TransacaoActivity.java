@@ -1,5 +1,6 @@
 package br.com.mgpapelaria.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.model.OrderRequest;
+import br.com.mgpapelaria.model.Pedido;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -49,6 +51,7 @@ import retrofit2.Response;
 public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
     public static final Integer CANCELAMENTO_EFETUADO_RESULT = 1;
+    public static final Integer SINCRONIZACAO_EFETUADA_RESULT = 2;
 
     @BindView(R.id.nome_cliente)
     TextView nomeClienteTextView;
@@ -62,11 +65,12 @@ public class TransacaoActivity extends AppCompatActivity {
     RecyclerView pagamentosRecyclerView;
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
     private NumberFormat nf = DecimalFormat.getCurrencyInstance();
-    private Order transacao;
+    private Pedido transacao;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
+    private boolean sincronizadoValorInicial = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +84,7 @@ public class TransacaoActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if(bundle.containsKey(TRANSACAO)){
-                transacao = (Order) bundle.getSerializable(TRANSACAO);
+                transacao = (Pedido) bundle.getSerializable(TRANSACAO);
             }
         }
 
@@ -88,20 +92,22 @@ public class TransacaoActivity extends AppCompatActivity {
             return;
         }
 
+        this.sincronizadoValorInicial = transacao.sincronizado;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(transacao.getReference());
+        toolbar.setTitle(transacao.order.getReference());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(transacao.getPayments().size() > 0){
-            this.nomeClienteTextView.setText(transacao.getPayments().get(0).getPaymentFields().get("clientName"));
+        if(transacao.order.getPayments().size() > 0){
+            this.nomeClienteTextView.setText(transacao.order.getPayments().get(0).getPaymentFields().get("clientName"));
         }else{
             this.nomeClienteTextView.setVisibility(View.GONE);
         }
-        this.itemDescricaoTextView.setText(transacao.getItems().get(0).getName());
-        this.priceTextView.setText(nf.format(new BigDecimal(transacao.getPrice()).divide(new BigDecimal(100))));
+        this.itemDescricaoTextView.setText(transacao.order.getItems().get(0).getName());
+        this.priceTextView.setText(nf.format(new BigDecimal(transacao.order.getPrice()).divide(new BigDecimal(100))));
 
-        if(transacao.getStatus() == Status.CANCELED){
+        if(transacao.order.getStatus() == Status.CANCELED){
             this.cancelarButton.setVisibility(View.GONE);
         }
 
@@ -109,7 +115,7 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.pagamentosRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.getPayments(), this);
+        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), this);
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
         AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
@@ -120,6 +126,11 @@ public class TransacaoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_transacao, menu);
+        if(this.transacao.sincronizado){
+            MenuItem menuItem = menu.findItem(R.id.action_enviar_order);
+            menuItem.setVisible(false);
+        }
+
         return true;
     }
 
@@ -127,12 +138,22 @@ public class TransacaoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                if(this.sincronizadoValorInicial != this.transacao.sincronizado){
+                    setResult(SINCRONIZACAO_EFETUADA_RESULT);
+                }
                 finish();
                 return true;
             case R.id.action_mostrar_json:
                 Intent intent = new Intent(this, TransacaoJsonActivity.class);
                 intent.putExtra(TransacaoJsonActivity.TRANSACAO, this.transacao);
                 startActivity(intent);
+                return true;
+            case R.id.action_enviar_order:
+                ProgressDialog mDialog = new ProgressDialog(TransacaoActivity.this);
+                mDialog.setMessage("Aguarde...");
+                mDialog.setCancelable(false);
+                mDialog.show();
+                this.sendOrder(transacao.order, mDialog);
                 return true;
         }
 
@@ -148,10 +169,10 @@ public class TransacaoActivity extends AppCompatActivity {
     @OnClick(R.id.cancelar_button)
     void cancelarPagamento(){
         CancellationRequest request = new CancellationRequest.Builder()
-                .orderId(this.transacao.getId()) /* Obrigatório */
-                .authCode(this.transacao.getPayments().get(0).getAuthCode()) /* Obrigatório */
-                .cieloCode(this.transacao.getPayments().get(0).getCieloCode()) /* Obrigatório */
-                .value(this.transacao.getPayments().get(0).getAmount()) /* Obrigatório */
+                .orderId(this.transacao.order.getId()) /* Obrigatório */
+                .authCode(this.transacao.order.getPayments().get(0).getAuthCode()) /* Obrigatório */
+                .cieloCode(this.transacao.order.getPayments().get(0).getCieloCode()) /* Obrigatório */
+                .value(this.transacao.order.getPayments().get(0).getAmount()) /* Obrigatório */
                 //.ec("0000000000000003") /* Opcional */
                 .build();
 
@@ -161,7 +182,7 @@ public class TransacaoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"O pagamento foi cancelado.", Toast.LENGTH_LONG).show();
                 order.cancel();
                 orderManager.updateOrder(order);
-                transacao = order;
+                transacao.order = order;
                 alteraStatusOrder(order);
                 sendOrder(order);
                 setResult(CANCELAMENTO_EFETUADO_RESULT);
@@ -187,10 +208,23 @@ public class TransacaoActivity extends AppCompatActivity {
     }
 
     private void sendOrder(Order order){
+        sendOrder(order, null);
+    }
+
+    private void sendOrder(Order order, ProgressDialog dialog){
         this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.code() != 200){
+                if(response.code() == 200){
+                    AsyncTask.execute(() -> {
+                        pedidoDAO.updatePedidoSincronizado(order.getId(), true);
+                        transacao.sincronizado = true;
+                        invalidateOptionsMenu();
+                        if(dialog != null){
+                            dialog.dismiss();
+                        }
+                    });
+                }else{
                     AsyncTask.execute(() -> {
                         pedidoDAO.updatePedidoSincronizado(order.getId(), false);
                     });

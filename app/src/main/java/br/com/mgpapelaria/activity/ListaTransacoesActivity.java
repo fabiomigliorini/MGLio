@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -44,6 +45,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("LISTA", "ON CREATE");
         setContentView(R.layout.activity_lista_transacoes);
 
         ButterKnife.bind(this);
@@ -71,7 +73,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
             Intent intent = new Intent(this, TransacaoActivity.class);
             Pedido transacao = recyclerViewAdapter.getTransacoes().get(position);
-            intent.putExtra(TransacaoActivity.TRANSACAO, transacao.order);
+            intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
 
             startActivityForResult(intent, TRANSACAO_REQUEST);
         });
@@ -99,11 +101,14 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == TRANSACAO_REQUEST){
-            if (resultCode == TransacaoActivity.CANCELAMENTO_EFETUADO_RESULT) {
+            if (resultCode == TransacaoActivity.CANCELAMENTO_EFETUADO_RESULT
+            || resultCode == TransacaoActivity.SINCRONIZACAO_EFETUADA_RESULT) {
                 this.onRefreshButtonClicked();
             }
         }
     }
+
+
 
     @OnClick(R.id.refresh_button)
     void onRefreshButtonClicked(){
