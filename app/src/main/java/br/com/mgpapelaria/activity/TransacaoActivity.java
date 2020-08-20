@@ -28,6 +28,7 @@ import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.model.OrderRequest;
 import butterknife.BindView;
@@ -40,7 +41,6 @@ import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
-import cielo.sdk.order.payment.Payment;
 import cielo.sdk.order.payment.PaymentError;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,7 +66,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
-    private AppDatabase db;
+    private PedidoDAO pedidoDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +112,8 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.getPayments(), this);
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
-        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+        AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+        this.pedidoDAO = database.pedidoDAO();
     }
 
     @Override
@@ -181,7 +182,7 @@ public class TransacaoActivity extends AppCompatActivity {
 
     private void alteraStatusOrder(Order order){
         AsyncTask.execute(() -> {
-            db.pedidoDAO().cancelaOrder(order.getId(), order);
+            pedidoDAO.cancelaOrder(order.getId(), order);
         });
     }
 
@@ -189,14 +190,18 @@ public class TransacaoActivity extends AppCompatActivity {
         this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.code() == 200){
-                    Log.i("PAGAMENTO", response.raw().toString());
+                if(response.code() != 200){
+                    AsyncTask.execute(() -> {
+                        pedidoDAO.updatePedidoSincronizado(order.getId(), false);
+                    });
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                //TODO: Salvar no bd como não enviado
+                AsyncTask.execute(() -> {
+                    pedidoDAO.updatePedidoSincronizado(order.getId(), false);
+                });
             }
 
         });

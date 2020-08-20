@@ -254,17 +254,13 @@ public class PagamentoActivity extends AppCompatActivity {
         this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                //TODO: Salvar no bd como enviado
                 if(response.code() == 200){
-                    Log.i("PAGAMENTO", response.raw().toString());
                     updateSincronizadoStatus(order.getId());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                //TODO: Salvar no bd como não enviado
-                Log.e("PAGAMENTO", t.getMessage());
             }
 
         });
