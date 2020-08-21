@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Realmente deseja sair?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            dialog.dismiss();
             logout();
+            dialog.dismiss();
         });
         builder.setNegativeButton("Cancelar", (dialog, which) -> {
             dialog.dismiss();
@@ -90,14 +90,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout(){
+        ProgressDialog mDialog = new ProgressDialog(MainActivity.this);
+        mDialog.setMessage("Aguarde...");
+        mDialog.setCancelable(false);
+        mDialog.show();
+
         this.apiService.logout().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                ProgressDialog mDialog = new ProgressDialog(MainActivity.this);
-                mDialog.setMessage("Aguarde...");
-                mDialog.setCancelable(false);
-                mDialog.show();
-
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.clear().apply();
 

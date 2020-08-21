@@ -64,7 +64,7 @@ public class PagamentoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
-        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+        this.db = AppDatabase.build(this);
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null || !bundle.containsKey(VALOR_PAGO)){

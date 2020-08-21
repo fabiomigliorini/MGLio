@@ -118,7 +118,7 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), this);
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
-        AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+        AppDatabase database = AppDatabase.build(this);
         this.pedidoDAO = database.pedidoDAO();
     }
 
@@ -145,7 +145,7 @@ public class TransacaoActivity extends AppCompatActivity {
                 return true;
             case R.id.action_mostrar_json:
                 Intent intent = new Intent(this, TransacaoJsonActivity.class);
-                intent.putExtra(TransacaoJsonActivity.TRANSACAO, this.transacao);
+                intent.putExtra(TransacaoJsonActivity.TRANSACAO, this.transacao.order);
                 startActivity(intent);
                 return true;
             case R.id.action_enviar_order:

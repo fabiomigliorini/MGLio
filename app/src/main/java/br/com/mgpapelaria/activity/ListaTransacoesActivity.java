@@ -81,7 +81,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
         this.swipeRefreshLayout.setRefreshing(true);
 
-        this.db = Room.databaseBuilder(this, AppDatabase.class, "mg_cielo_lio_db").build();
+        this.db = AppDatabase.build(this);
 
         this.buscaTransacoes();
     }

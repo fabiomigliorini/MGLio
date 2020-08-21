@@ -8,8 +8,8 @@ android {
         applicationId "br.com.mgpapelaria"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 29
-        versionName "1.0.27.alpha"
+        versionCode 32
+        versionName "1.0.30.alpha"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
