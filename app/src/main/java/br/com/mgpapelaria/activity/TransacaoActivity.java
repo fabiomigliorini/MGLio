@@ -19,11 +19,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
@@ -31,6 +34,7 @@ import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
+import br.com.mgpapelaria.fragment.TransacaoBottomSheetFragment;
 import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pedido;
 import butterknife.BindView;
@@ -39,11 +43,14 @@ import butterknife.OnClick;
 import cielo.orders.domain.CancellationRequest;
 import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
+import cielo.orders.domain.PrinterAttributes;
 import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
+import cielo.sdk.order.PrinterListener;
 import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
 import cielo.sdk.order.payment.PaymentError;
+import cielo.sdk.printer.PrinterManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,6 +78,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
     private boolean sincronizadoValorInicial = false;
+    private TransacaoBottomSheetFragment bottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +107,40 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        this.bottomSheetFragment = new TransacaoBottomSheetFragment();
+        this.bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
+            @Override
+            public void imprimirItemClicked() {
+                PrinterManager printerManager = new PrinterManager(TransacaoActivity.this);
+                String textToPrint = "Texto simples a ser impresso.\n Com múltiplas linhas";
+                HashMap<String, Integer> alignLeft =  new HashMap<>();
+                alignLeft.put(PrinterAttributes.KEY_ALIGN, PrinterAttributes.VAL_ALIGN_LEFT);
+                alignLeft.put(PrinterAttributes.KEY_TYPEFACE, 0);
+                alignLeft.put(PrinterAttributes.KEY_TEXT_SIZE, 20);
+                printerManager.printText(textToPrint, alignLeft, new PrinterListener() {
+                    @Override
+                    public void onPrintSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onWithoutPaper() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void enviarEmailClicked() {
+
+            }
+        });
+
         if(transacao.order.getPayments().size() > 0){
             this.nomeClienteTextView.setText(transacao.order.getPayments().get(0).getPaymentFields().get("clientName"));
         }else{
@@ -116,6 +158,12 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), this);
+        this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr(new TransacaoPagamentosAdapter.ItemClickListener() {
+            @Override
+            public void onClickListener(View view, int position) {
+                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+            }
+        });
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
         AppDatabase database = AppDatabase.build(this);
