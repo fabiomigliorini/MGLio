@@ -39,8 +39,6 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     RecyclerView transacoesRecyclerView;
     private TransacoesAdapter recyclerViewAdapter;
     private AppDatabase db;
-    private SharedPreferences sharedPref;
-    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +47,6 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lista_transacoes);
 
         ButterKnife.bind(this);
-
-        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
-        this.userId = sharedPref.getInt("userId", -1);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Transações");
@@ -118,7 +113,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
     private void buscaTransacoes(){
         AsyncTask.execute(() -> {
-            List<Pedido> pedidos = this.db.pedidoDAO().getAllByUserId(userId);
+            List<Pedido> pedidos = this.db.pedidoDAO().getAll();
             runOnUiThread(() -> {
                 if(pedidos.size() > 0){
                     this.transacoesRecyclerView.setVisibility(View.VISIBLE);

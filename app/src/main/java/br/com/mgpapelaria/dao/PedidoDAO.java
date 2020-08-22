@@ -12,8 +12,8 @@ import cielo.orders.domain.Order;
 
 @Dao
 public interface PedidoDAO {
-    @Query("SELECT * FROM pedido WHERE userId = :userId ORDER BY id DESC")
-    List<Pedido> getAllByUserId(int userId);
+    @Query("SELECT * FROM pedido ORDER BY id DESC")
+    List<Pedido> getAll();
 
     @Insert
     void insertPedido(Pedido pedido);
