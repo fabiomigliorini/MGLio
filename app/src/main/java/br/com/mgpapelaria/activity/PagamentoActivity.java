@@ -17,18 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.room.Room;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.database.AppDatabase;
-import br.com.mgpapelaria.fragment.pagamento.CrediarioFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
-import br.com.mgpapelaria.fragment.pagamento.DebitoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
-import br.com.mgpapelaria.fragment.pagamento.VoucherFragment;
 import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pedido;
 import butterknife.ButterKnife;
@@ -127,31 +123,27 @@ public class PagamentoActivity extends AppCompatActivity {
     }
 
     private void onOptionClicked(String option){
-        /*TypedArray a = getTheme().obtainStyledAttributes(R.style.AppTheme, new int[] {R.attr.homeAsUpIndicator});
-        int attributeResourceId = a.getResourceId(0, 0);
-        Drawable icon = ContextCompat.getDrawable(this, attributeResourceId);
-        a.recycle();
-        getSupportActionBar().setHomeAsUpIndicator(icon);*/
         PagamentoBaseFragment proximoFragment;
         switch (option){
             case FormaPagamentoFragment.CREDITO_OPTION:
                 proximoFragment = new CreditoFragment();
                 break;
             case FormaPagamentoFragment.DEBITO_OPTION:
-                proximoFragment = new DebitoFragment();
+                proximoFragment = null;
+                defineFormaDePagamento(PaymentCode.DEBITO_AVISTA, null);
                 break;
-            case FormaPagamentoFragment.CREDIARIO_OPTION:
-                proximoFragment = new CrediarioFragment();
-                break;
-            case FormaPagamentoFragment.VOUCHER_OPTION:
-                proximoFragment = new VoucherFragment();
+            case FormaPagamentoFragment.VALE_CULTURA_OPTION:
+                proximoFragment = null;
+                defineFormaDePagamento(PaymentCode.VOUCHER_ALIMENTACAO, null);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + option);
         }
 
-        proximoFragment.setFormaPagamentoListener(this::defineFormaDePagamento);
-        this.replaceFragment(proximoFragment);
+        if(proximoFragment != null){
+            proximoFragment.setFormaPagamentoListener(this::defineFormaDePagamento);
+            this.replaceFragment(proximoFragment);
+        }
     }
 
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){

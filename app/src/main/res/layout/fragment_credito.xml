@@ -53,18 +53,6 @@
                 app:iconGravity="end"
                 app:iconPadding="-24dp"
                 android:textSize="18sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/credito_parcelado_banco_button"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginBottom="6dp"
-                android:text="Parcelado banco (emissor)"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                app:icon="@drawable/ic_baseline_chevron_right_24"
-                app:iconGravity="end"
-                app:iconPadding="-24dp"
-                android:textSize="18sp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

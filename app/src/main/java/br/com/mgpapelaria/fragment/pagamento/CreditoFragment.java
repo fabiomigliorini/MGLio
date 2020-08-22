@@ -44,9 +44,4 @@ public class CreditoFragment extends PagamentoBaseFragment {
     void onCreditoParceladoLojaButtonClicked(){
         this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
     }
-
-    @OnClick(R.id.credito_parcelado_banco_button)
-    void onCreditoParceladoBancoButtonClicked(){
-        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_BNCO, null);
-    }
 }
