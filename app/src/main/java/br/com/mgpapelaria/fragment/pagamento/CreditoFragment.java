@@ -12,9 +12,19 @@ import butterknife.OnClick;
 import cielo.sdk.order.payment.PaymentCode;
 
 public class CreditoFragment extends PagamentoBaseFragment {
+    public static final String CREDITO_PARCELADO_OPTION = "credito_parcelado";
+    private OptionListener optionListener;
+
+    public interface OptionListener{
+        void onOptionClickListener(String option);
+    }
 
     public CreditoFragment() {
         // Required empty public constructor
+    }
+
+    public CreditoFragment(OptionListener listener) {
+        this.optionListener = listener;
     }
 
     public static CreditoFragment newInstance(String param1, String param2) {
@@ -35,6 +45,10 @@ public class CreditoFragment extends PagamentoBaseFragment {
         return view;
     }
 
+    public void setOptionListener(OptionListener optionListener){
+        this.optionListener = optionListener;
+    }
+
     @OnClick(R.id.credito_avista_button)
     void onRefeicaoButtonClicked(){
         this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_AVISTA, null);
@@ -42,6 +56,9 @@ public class CreditoFragment extends PagamentoBaseFragment {
 
     @OnClick(R.id.credito_parcelado_loja_button)
     void onCreditoParceladoLojaButtonClicked(){
-        this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
+        //this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
+        if(this.optionListener != null){
+            this.optionListener.onOptionClickListener(CREDITO_PARCELADO_OPTION);
+        }
     }
 }

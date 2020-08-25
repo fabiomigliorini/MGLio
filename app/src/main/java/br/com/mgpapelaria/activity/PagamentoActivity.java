@@ -2,7 +2,6 @@ package br.com.mgpapelaria.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,10 +17,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.HashMap;
+
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.database.AppDatabase;
+import br.com.mgpapelaria.fragment.pagamento.CreditoParceladoFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
@@ -76,18 +78,10 @@ public class PagamentoActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        //toolbar.setNavigationIcon(R.drawable.ic_baseline_close_24);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.configSDK();
-
-        /*this.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                cancelaOperacao();
-            }
-        });*/
 
         this.initFragment();
     }
@@ -96,8 +90,6 @@ public class PagamentoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //cancelaOperacao();
-                //finish();
                 hideKeyboard(this);
                 onBackPressed();
                 return true;
@@ -126,7 +118,10 @@ public class PagamentoActivity extends AppCompatActivity {
         PagamentoBaseFragment proximoFragment;
         switch (option){
             case FormaPagamentoFragment.CREDITO_OPTION:
-                proximoFragment = new CreditoFragment();
+                proximoFragment = new CreditoFragment(this::onOptionClicked);
+                break;
+            case CreditoFragment.CREDITO_PARCELADO_OPTION:
+                proximoFragment = new CreditoParceladoFragment();
                 break;
             case FormaPagamentoFragment.DEBITO_OPTION:
                 proximoFragment = null;
@@ -134,6 +129,8 @@ public class PagamentoActivity extends AppCompatActivity {
                 break;
             case FormaPagamentoFragment.VALE_CULTURA_OPTION:
                 proximoFragment = null;
+
+                //TODO: Ver qual o código correto para VOUCHER CULTURA
                 defineFormaDePagamento(PaymentCode.VOUCHER_ALIMENTACAO, null);
                 break;
             default:
@@ -147,27 +144,22 @@ public class PagamentoActivity extends AppCompatActivity {
     }
 
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
-        //OrderManager orderManager = OrderManagerSingleton.getInstance();
-
         orderManager.placeOrder(this.order);
-        /*String ec = merchantCode.getText().toString();
-        String userEmail = email.getText().toString();*/
-        int parcelas = 0;
 
+        /*HashMap<String, Object> options = new HashMap<>();
+        options.put("teste", "valorTeste");*/
 
-
-        /*if (!ec.equals(""))
-            requestBuilder.ec(ec);
-
-        if (!userEmail.equals(""))
-            requestBuilder.email(userEmail);*/
-
-        CheckoutRequest request = new CheckoutRequest.Builder()
+        CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
                 .orderId(this.order.getId())
                 .amount(this.valorPago)
-                .paymentCode(paymentCode)
-                .installments(parcelas).build();
+                .paymentCode(paymentCode);
+                //.options(options);
 
+        if(paymentCode == PaymentCode.CREDITO_PARCELADO_LOJA){
+            requestBuilder = requestBuilder.installments((int)args);
+        }
+
+        CheckoutRequest request = requestBuilder.build();
         orderManager.checkoutOrder(request, new PaymentListener() {
 
             @Override
@@ -177,7 +169,6 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onPayment(@NonNull Order paidOrder) {
-                Toast.makeText(getApplicationContext(), "onPayment", Toast.LENGTH_SHORT).show();
                 order = paidOrder;
                 order.markAsPaid();
                 orderManager.updateOrder(order);
@@ -190,7 +181,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                //Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
                 order.markAsRejected();
                 orderManager.updateOrder(order);
                 finish();
@@ -198,7 +189,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull PaymentError paymentError) {
-                //Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
                 order.cancel();
                 orderManager.updateOrder(order);
                 finish();
@@ -213,12 +204,6 @@ public class PagamentoActivity extends AppCompatActivity {
         transaction.replace(R.id.fragments_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    private void cancelaOperacao(){
-        Intent intent = new Intent(this, OperacaoCanceladaActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     private void persistOrder(Order order){

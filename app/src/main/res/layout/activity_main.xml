@@ -167,6 +167,17 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.gridlayout.widget.GridLayout>
+
+    <!--<TextView
+        android:id="@+id/payments_types_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="64dp"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        android:text="aaa\naaaaa"/>-->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
