@@ -1,12 +1,5 @@
 package br.com.mgpapelaria.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +7,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,6 @@ import br.com.mgpapelaria.model.VendaAberta;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cielo.orders.domain.Settings;
 import cielo.sdk.info.InfoManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,6 +101,8 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
     @OnClick(R.id.refresh_button)
     void onRefreshButtonClicked(){
         this.swipeRefreshLayout.setRefreshing(true);
+        this.noResultsView.setVisibility(View.INVISIBLE);
+        this.connectionErrorView.setVisibility(View.INVISIBLE);
         this.buscaVendasAbertas();
     }
 

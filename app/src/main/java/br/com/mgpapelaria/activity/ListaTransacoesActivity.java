@@ -1,8 +1,6 @@
 package br.com.mgpapelaria.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
@@ -23,8 +20,10 @@ import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacoesAdapter;
+import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.database.AppDatabase;
+import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,7 +37,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
     @BindView(R.id.transacoes_recylcer_view)
     RecyclerView transacoesRecyclerView;
     private TransacoesAdapter recyclerViewAdapter;
-    private AppDatabase db;
+    private PedidoDAO pedidoDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +67,19 @@ public class ListaTransacoesActivity extends AppCompatActivity {
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
             Intent intent = new Intent(this, TransacaoActivity.class);
             Pedido transacao = recyclerViewAdapter.getTransacoes().get(position);
-            intent.putExtra(TransacaoActivity.TRANSACAO, transacao);
+            AsyncTask.execute(() -> {
+                PedidoWithPagamentos pedidoWithPagamentos = pedidoDAO.getWithPagamentosById(transacao.id);
 
-            startActivityForResult(intent, TRANSACAO_REQUEST);
+                intent.putExtra(TransacaoActivity.TRANSACAO, pedidoWithPagamentos);
+                startActivityForResult(intent, TRANSACAO_REQUEST);
+            });
+
         });
         this.transacoesRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
 
-        this.db = AppDatabase.build(this);
+        this.pedidoDAO = AppDatabase.build(this).pedidoDAO();
 
         this.buscaTransacoes();
     }
@@ -113,7 +116,7 @@ public class ListaTransacoesActivity extends AppCompatActivity {
 
     private void buscaTransacoes(){
         AsyncTask.execute(() -> {
-            List<Pedido> pedidos = this.db.pedidoDAO().getAll();
+            List<Pedido> pedidos = this.pedidoDAO.getAll();
             runOnUiThread(() -> {
                 if(pedidos.size() > 0){
                     this.transacoesRecyclerView.setVisibility(View.VISIBLE);

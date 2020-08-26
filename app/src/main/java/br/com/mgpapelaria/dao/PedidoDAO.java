@@ -8,15 +8,22 @@ import androidx.room.Update;
 import java.util.List;
 
 import br.com.mgpapelaria.model.Pedido;
+import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import cielo.orders.domain.Order;
 
 @Dao
 public interface PedidoDAO {
-    @Query("SELECT * FROM pedido ORDER BY id DESC")
+    @Query("SELECT id, userId, nome, data, valor, status, sincronizado FROM pedido ORDER BY id DESC")
     List<Pedido> getAll();
 
+    @Query("SELECT * FROM Pedido WHERE id = :id")
+    PedidoWithPagamentos getWithPagamentosById(int id);
+
+    @Query("SELECT id FROM Pedido WHERE orderId = :orderId")
+    int getPedidoIdByOrderId(String orderId);
+
     @Insert
-    void insertPedido(Pedido pedido);
+    long insertPedido(Pedido pedido);
 
     @Query("UPDATE Pedido SET sincronizado=:valor WHERE orderId = :orderId")
     void updatePedidoSincronizado(String orderId, boolean valor);

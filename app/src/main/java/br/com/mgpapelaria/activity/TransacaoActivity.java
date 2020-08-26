@@ -1,7 +1,9 @@
 package br.com.mgpapelaria.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,16 +25,20 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.dao.PagamentoDAO;
 import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.fragment.TransacaoBottomSheetFragment;
 import br.com.mgpapelaria.model.OrderRequest;
+import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
+import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -69,12 +75,15 @@ public class TransacaoActivity extends AppCompatActivity {
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
     private NumberFormat nf = DecimalFormat.getCurrencyInstance();
     private Pedido transacao;
+    private List<Pagamento> pagamentos;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
+    private PagamentoDAO pagamentoDAO;
     private boolean sincronizadoValorInicial = false;
     private TransacaoBottomSheetFragment bottomSheetFragment;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +93,16 @@ public class TransacaoActivity extends AppCompatActivity {
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
         this.configSDK();
+        AppDatabase database = AppDatabase.build(this);
+        this.pedidoDAO = database.pedidoDAO();
+        this.pagamentoDAO = database.pagamentoDAO();
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if(bundle.containsKey(TRANSACAO)){
-                transacao = (Pedido) bundle.getSerializable(TRANSACAO);
+                PedidoWithPagamentos pedidoWithPagamentos = (PedidoWithPagamentos)bundle.getSerializable(TRANSACAO);
+                transacao = pedidoWithPagamentos.pedido;
+                pagamentos = pedidoWithPagamentos.pagamentos;
             }
         }
 
@@ -96,6 +110,7 @@ public class TransacaoActivity extends AppCompatActivity {
             return;
         }
 
+        this.sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
         this.sincronizadoValorInicial = transacao.sincronizado;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -161,9 +176,6 @@ public class TransacaoActivity extends AppCompatActivity {
             }
         });
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
-
-        AppDatabase database = AppDatabase.build(this);
-        this.pedidoDAO = database.pedidoDAO();
     }
 
     @Override
@@ -223,14 +235,17 @@ public class TransacaoActivity extends AppCompatActivity {
         orderManager.cancelOrder(request, new CancellationListener() {
             @Override
             public void onSuccess(Order order) {
-                Toast.makeText(getApplicationContext(),"O pagamento foi cancelado.", Toast.LENGTH_LONG).show();
                 order.cancel();
                 orderManager.updateOrder(order);
                 transacao.order = order;
-                alteraStatusOrder(order);
-                sendOrder(order);
-                setResult(CANCELAMENTO_EFETUADO_RESULT);
-                finish();
+                AsyncTask.execute(() -> {
+                    int pedidoId = pedidoDAO.getPedidoIdByOrderId(order.getId());
+                    alteraStatusOrder(order);
+                    persistePagamento(pedidoId, order);
+                    sendOrder(order);
+                    setResult(CANCELAMENTO_EFETUADO_RESULT);
+                    finish();
+                });
             }
 
             @Override
@@ -246,9 +261,17 @@ public class TransacaoActivity extends AppCompatActivity {
     }
 
     private void alteraStatusOrder(Order order){
-        AsyncTask.execute(() -> {
-            pedidoDAO.cancelaOrder(order.getId(), order);
-        });
+        pedidoDAO.cancelaOrder(order.getId(), order);
+    }
+
+    private void persistePagamento(int pedidoId, Order order){
+        Pagamento pagamento = new Pagamento();
+        pagamento.pedidoId = pedidoId;
+        pagamento.paymentId = order.getPayments().get(1).getId();
+        pagamento.userId = this.sharedPref.getInt("userId", -1);
+        pagamento.userName = this.sharedPref.getString("user", null);
+
+        this.pagamentoDAO.insertPagamento(pagamento);
     }
 
     private void sendOrder(Order order){

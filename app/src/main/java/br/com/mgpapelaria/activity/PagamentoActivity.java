@@ -22,12 +22,15 @@ import java.util.HashMap;
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.dao.PagamentoDAO;
+import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.fragment.pagamento.CreditoParceladoFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.model.OrderRequest;
+import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
@@ -52,7 +55,8 @@ public class PagamentoActivity extends AppCompatActivity {
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
-    private AppDatabase db;
+    private PedidoDAO pedidoDAO;
+    private PagamentoDAO pagamentoDAO;
     private SharedPreferences sharedPref;
 
     @Override
@@ -62,7 +66,9 @@ public class PagamentoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
-        this.db = AppDatabase.build(this);
+        AppDatabase db = AppDatabase.build(this);
+        this.pedidoDAO = db.pedidoDAO();
+        this.pagamentoDAO = db.pagamentoDAO();
 
         Bundle bundle = getIntent().getExtras();
         if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
@@ -81,9 +87,9 @@ public class PagamentoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.configSDK();
+        this.configSDK(this::initFragment);
 
-        this.initFragment();
+
     }
 
     @Override
@@ -217,13 +223,21 @@ public class PagamentoActivity extends AppCompatActivity {
             pedido.status = order.getStatus().name();
             pedido.sincronizado = false;
             pedido.order = order;
-            this.db.pedidoDAO().insertPedido(pedido);
+            long pedidoId = this.pedidoDAO.insertPedido(pedido);
+
+            Pagamento pagamento = new Pagamento();
+            pagamento.pedidoId = (int)pedidoId;
+            pagamento.paymentId = order.getPayments().get(0).getId();
+            pagamento.userId = sharedPref.getInt("userId", -1);
+            pagamento.userName = sharedPref.getString("user", null);
+
+            this.pagamentoDAO.insertPagamento(pagamento);
         });
     }
 
     private void updateSincronizadoStatus(String orderId){
         AsyncTask.execute(() -> {
-            this.db.pedidoDAO().updatePedidoSincronizado(orderId, true);
+            this.pedidoDAO.updatePedidoSincronizado(orderId, true);
         });
     }
 
@@ -238,12 +252,17 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("SEND ORDER", t.getMessage());
             }
 
         });
     }
 
-    protected void configSDK() {
+    public interface SdkListener{
+        void onServiceBound();
+    }
+
+    protected void configSDK(SdkListener listener) {
         Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
         orderManager = new OrderManager(credentials, this);
         orderManager.bind(this, new ServiceBindListener() {
@@ -260,6 +279,7 @@ public class PagamentoActivity extends AppCompatActivity {
             @Override
             public void onServiceBound() {
                 orderManagerServiceBinded = true;
+                listener.onServiceBound();
             }
 
             @Override
