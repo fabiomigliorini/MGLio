@@ -82,7 +82,6 @@ public class TransacaoActivity extends AppCompatActivity {
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
     private boolean sincronizadoValorInicial = false;
-    private TransacaoBottomSheetFragment bottomSheetFragment;
     private SharedPreferences sharedPref;
 
     @Override
@@ -118,39 +117,6 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.bottomSheetFragment = new TransacaoBottomSheetFragment();
-        this.bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
-            @Override
-            public void imprimirItemClicked() {
-                PrinterManager printerManager = new PrinterManager(TransacaoActivity.this);
-                String textToPrint = "Texto simples a ser impresso.\n Com múltiplas linhas";
-                HashMap<String, Integer> alignLeft =  new HashMap<>();
-                alignLeft.put(PrinterAttributes.KEY_ALIGN, PrinterAttributes.VAL_ALIGN_LEFT);
-                alignLeft.put(PrinterAttributes.KEY_TYPEFACE, 0);
-                alignLeft.put(PrinterAttributes.KEY_TEXT_SIZE, 20);
-                printerManager.printText(textToPrint, alignLeft, new PrinterListener() {
-                    @Override
-                    public void onPrintSuccess() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onWithoutPaper() {
-
-                    }
-                });
-            }
-
-            @Override
-            public void enviarEmailClicked() {
-
-            }
-        });
 
         if(transacao.order.getPayments().size() > 0){
             this.nomeClienteTextView.setText(transacao.order.getPayments().get(0).getPaymentFields().get("clientName"));
@@ -172,6 +138,22 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr(new TransacaoPagamentosAdapter.ItemClickListener() {
             @Override
             public void onClickListener(View view, int position) {
+                TransacaoBottomSheetFragment bottomSheetFragment = new TransacaoBottomSheetFragment();
+                Bundle bundle1 = new Bundle();
+                bundle1.putSerializable(TransacaoBottomSheetFragment.USUARIO, pagamentos.get(position).userName);
+                bundle1.putSerializable(TransacaoBottomSheetFragment.PAGAMENTO, transacao.order.getPayments().get(position));
+                bottomSheetFragment.setArguments(bundle1);
+                bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
+                    @Override
+                    public void imprimirItemClicked() {
+                        imprimirSegundaVia();
+                    }
+
+                    @Override
+                    public void enviarEmailClicked() {
+
+                    }
+                });
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
             }
         });
@@ -305,6 +287,31 @@ public class TransacaoActivity extends AppCompatActivity {
                 });
             }
 
+        });
+    }
+
+    private void imprimirSegundaVia(){
+        PrinterManager printerManager = new PrinterManager(TransacaoActivity.this);
+        String textToPrint = "Texto simples a ser impresso.\n Com múltiplas linhas";
+        HashMap<String, Integer> alignLeft =  new HashMap<>();
+        alignLeft.put(PrinterAttributes.KEY_ALIGN, PrinterAttributes.VAL_ALIGN_LEFT);
+        alignLeft.put(PrinterAttributes.KEY_TYPEFACE, 0);
+        alignLeft.put(PrinterAttributes.KEY_TEXT_SIZE, 20);
+        printerManager.printText(textToPrint, alignLeft, new PrinterListener() {
+            @Override
+            public void onPrintSuccess() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onWithoutPaper() {
+
+            }
         });
     }
 
