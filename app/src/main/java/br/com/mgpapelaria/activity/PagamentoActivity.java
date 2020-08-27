@@ -32,6 +32,7 @@ import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
+import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
 import cielo.orders.domain.Credentials;
@@ -178,11 +179,14 @@ public class PagamentoActivity extends AppCompatActivity {
                 order = paidOrder;
                 order.markAsPaid();
                 orderManager.updateOrder(order);
-                persistOrder(order);
-                sendOrder(order);
+                AsyncTask.execute(() -> {
+                    PedidoWithPagamentos pedidoWithPagamentos = persistOrder(order);
+                    sendOrder(pedidoWithPagamentos);
 
-                setResult(PAGAMENTO_EFETUADO_RESULT);
-                finish();
+                    setResult(PAGAMENTO_EFETUADO_RESULT);
+                    finish();
+                });
+
             }
 
             @Override
@@ -212,27 +216,27 @@ public class PagamentoActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void persistOrder(Order order){
-        AsyncTask.execute(() -> {
-            Pedido pedido = new Pedido();
-            pedido.userId = sharedPref.getInt("userId", -1);
-            pedido.orderId = order.getId();
-            pedido.nome = order.getPayments().get(0).getPaymentFields().get("clientName");
-            pedido.data = order.getCreatedAt();
-            pedido.valor = order.getPrice();
-            pedido.status = order.getStatus().name();
-            pedido.sincronizado = false;
-            pedido.order = order;
-            long pedidoId = this.pedidoDAO.insertPedido(pedido);
+    private PedidoWithPagamentos persistOrder(Order order){
+        Pedido pedido = new Pedido();
+        pedido.userId = sharedPref.getInt("userId", -1);
+        pedido.orderId = order.getId();
+        pedido.nome = order.getPayments().get(0).getPaymentFields().get("clientName");
+        pedido.data = order.getCreatedAt();
+        pedido.valor = order.getPrice();
+        pedido.status = order.getStatus().name();
+        pedido.sincronizado = false;
+        pedido.order = order;
+        long pedidoId = this.pedidoDAO.insertPedido(pedido);
 
-            Pagamento pagamento = new Pagamento();
-            pagamento.pedidoId = (int)pedidoId;
-            pagamento.paymentId = order.getPayments().get(0).getId();
-            pagamento.userId = sharedPref.getInt("userId", -1);
-            pagamento.userName = sharedPref.getString("user", null);
+        Pagamento pagamento = new Pagamento();
+        pagamento.pedidoId = (int)pedidoId;
+        pagamento.paymentId = order.getPayments().get(0).getId();
+        pagamento.userId = sharedPref.getInt("userId", -1);
+        pagamento.userName = sharedPref.getString("user", null);
 
-            this.pagamentoDAO.insertPagamento(pagamento);
-        });
+        this.pagamentoDAO.insertPagamento(pagamento);
+
+        return this.pedidoDAO.getWithPagamentosById((int) pedidoId);
     }
 
     private void updateSincronizadoStatus(String orderId){
@@ -241,12 +245,12 @@ public class PagamentoActivity extends AppCompatActivity {
         });
     }
 
-    private void sendOrder(Order order){
-        this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
+    private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos){
+        this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200){
-                    updateSincronizadoStatus(order.getId());
+                    updateSincronizadoStatus(pedidoWithPagamentos.pedido.order.getId());
                 }
             }
 

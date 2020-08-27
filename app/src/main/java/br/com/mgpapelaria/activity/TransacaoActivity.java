@@ -191,7 +191,12 @@ public class TransacaoActivity extends AppCompatActivity {
                 mDialog.setMessage("Aguarde...");
                 mDialog.setCancelable(false);
                 mDialog.show();
-                this.sendOrder(transacao.order, mDialog);
+
+                AsyncTask.execute(() -> {
+                    int pedidoId = pedidoDAO.getPedidoIdByOrderId(transacao.order.getId());
+                    PedidoWithPagamentos pedidoWithPagamentos = pedidoDAO.getWithPagamentosById(pedidoId);
+                    this.sendOrder(pedidoWithPagamentos, mDialog);
+                });
                 return true;
         }
 
@@ -224,7 +229,8 @@ public class TransacaoActivity extends AppCompatActivity {
                     int pedidoId = pedidoDAO.getPedidoIdByOrderId(order.getId());
                     alteraStatusOrder(order);
                     persistePagamento(pedidoId, order);
-                    sendOrder(order);
+                    PedidoWithPagamentos pedidoWithPagamentos = pedidoDAO.getWithPagamentosById(pedidoId);
+                    sendOrder(pedidoWithPagamentos);
                     setResult(CANCELAMENTO_EFETUADO_RESULT);
                     finish();
                 });
@@ -256,35 +262,42 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentoDAO.insertPagamento(pagamento);
     }
 
-    private void sendOrder(Order order){
-        sendOrder(order, null);
+    private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos){
+        sendOrder(pedidoWithPagamentos, null);
     }
 
-    private void sendOrder(Order order, ProgressDialog dialog){
-        this.apiService.updateOrder(new OrderRequest(order)).enqueue(new Callback<Void>() {
+    private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos, ProgressDialog dialog){
+        this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200){
                     AsyncTask.execute(() -> {
-                        pedidoDAO.updatePedidoSincronizado(order.getId(), true);
-                        transacao.sincronizado = true;
-                        invalidateOptionsMenu();
-                        if(dialog != null){
-                            dialog.dismiss();
-                        }
+                        pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), true);
                     });
+                    transacao.sincronizado = true;
+                    invalidateOptionsMenu();
+                    if(dialog != null){
+                        dialog.dismiss();
+                    }
                 }else{
+                    //TODO: Colocar algum erro aqui
                     AsyncTask.execute(() -> {
-                        pedidoDAO.updatePedidoSincronizado(order.getId(), false);
+                        pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), false);
                     });
+                    if(dialog != null){
+                        dialog.dismiss();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 AsyncTask.execute(() -> {
-                    pedidoDAO.updatePedidoSincronizado(order.getId(), false);
+                    pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), false);
                 });
+                if(dialog != null){
+                    dialog.dismiss();
+                }
             }
 
         });

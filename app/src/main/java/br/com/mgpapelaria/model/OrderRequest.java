@@ -8,12 +8,18 @@ import cielo.orders.domain.Order;
 
 public class OrderRequest implements Serializable {
     private String order;
+    private String pagamentos;
 
-    public OrderRequest(Order order) {
-        this.order = new Gson().toJson(order);
+    public OrderRequest(PedidoWithPagamentos pedido) {
+        this.order = new Gson().toJson(pedido.pedido.order);
+        this.pagamentos = new Gson().toJson(pedido.pagamentos);
     }
 
     public String getOrder() {
         return order;
+    }
+
+    public String getPagamentos() {
+        return pagamentos;
     }
 }
