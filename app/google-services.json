@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "791750448543",
+    "firebase_url": "https://mg-cielo-lio.firebaseio.com",
+    "project_id": "mg-cielo-lio",
+    "storage_bucket": "mg-cielo-lio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791750448543:android:8c055c9c9aafae3aff59aa",
+        "android_client_info": {
+          "package_name": "br.com.mgpapelaria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791750448543-35kttnl9maqm63rb5upb0pgqt8659rs8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf1xfqSb_xdti4EYX9o3kU3Cb1lvMNA7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791750448543-35kttnl9maqm63rb5upb0pgqt8659rs8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
