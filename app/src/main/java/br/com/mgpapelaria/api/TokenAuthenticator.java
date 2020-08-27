@@ -13,6 +13,7 @@ import br.com.mgpapelaria.activity.LoginActivity;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
@@ -32,9 +33,9 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, @NonNull Response response) throws IOException {
         ApiService apiService = RetrofitUtil.createService(this.context, ApiService.class, this.token);
-        retrofit2.Response<String> refreshResponse = apiService.refreshToken().execute();
+        retrofit2.Response<ResponseBody> refreshResponse = apiService.refreshToken().execute();
         if(refreshResponse.code() == 200){
-            String newToken = refreshResponse.body();
+            String newToken = refreshResponse.body().string();
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("token", newToken);
             editor.apply();

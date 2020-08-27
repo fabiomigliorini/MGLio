@@ -8,7 +8,7 @@ import br.com.mgpapelaria.model.LoginResponse;
 import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.UsuarioResponse;
 import br.com.mgpapelaria.model.VendaAberta;
-import cielo.orders.domain.Order;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -37,9 +37,8 @@ public interface ApiService {
     @GET("auth/logout")
     Call<Void> logout();
 
-    @Headers({"Accept:application/json"})
     @GET("auth/refresh")
-    Call<String> refreshToken();
+    Call<ResponseBody> refreshToken();
 
     @Headers({"Accept:application/json"})
     @GET("auth/user")
