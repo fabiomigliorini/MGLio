@@ -373,13 +373,32 @@ public class TransacaoActivity extends AppCompatActivity {
         printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
         printerManager.printText(" ", getLeftStyle(), printerListener);
 
+        boolean cancelamento = false;
+        if(payment.getPaymentFields().get("v40Code").equals("28")){
+            cancelamento = true;
+        }
+
         String[] text2 = new String[] {
-                "VALOR:",
+                cancelamento ? "VALOR CANCELAMENTO:" : "VALOR:",
                 "",
                 formatValor(payment.getAmount())
         };
 
         printerManager.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+
+        if(cancelamento){
+            printerManager.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
+            String[] text3 = new String[] {
+                    "DOC="+payment.getPaymentFields().get("originalTransactionalId"),
+                    payment.getPaymentFields().get("originalTransactionalDate"),
+                    ""
+            };
+            printerManager.printMultipleColumnText(text3, getColumnStyle(), printerListener);
+            String textoCancelamento = "SOLICITACAO DE CANCELAMENTO REGISTRADA APOS A APROVACAOO " +
+                    "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR";
+            printerManager.printText(textoCancelamento, getCenterStyle(), printerListener);
+        }
+
         printerManager.printText("\n\n\n\n", getLeftStyle(), new PrinterListener() {
             @Override
             public void onPrintSuccess() {
