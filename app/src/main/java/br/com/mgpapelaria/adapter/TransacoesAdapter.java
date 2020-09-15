@@ -73,7 +73,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Pedido transacao = this.transacoes.get(position);
-        holder.descricaoTextView.setText(transacao.nome);
+        holder.descricaoTextView.setText(transacao.nome.trim());
         holder.dataTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.data));
         holder.valorTextView.setText(nf.format(new BigDecimal(transacao.valor).divide(new BigDecimal(100))));
         if(transacao.status.equals("CANCELED")){
