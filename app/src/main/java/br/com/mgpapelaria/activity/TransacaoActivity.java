@@ -365,6 +365,10 @@ public class TransacaoActivity extends AppCompatActivity {
 
         printerManager.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
         printerManager.printText(payment.getPaymentFields().get("typeName"), getLeftStyle(), printerListener);
+        int parcelas = Integer.parseInt(payment.getPaymentFields().get("numberOfQuotas"));
+        if(parcelas > 0){
+            printerManager.printText("PARCELADO LOJA EM " + String.format("%02d", parcelas) + " PARCELAS", getLeftStyle(), printerListener);
+        }
         printerManager.printText(" ", getLeftStyle(), printerListener);
         printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
         printerManager.printText(" ", getLeftStyle(), printerListener);
