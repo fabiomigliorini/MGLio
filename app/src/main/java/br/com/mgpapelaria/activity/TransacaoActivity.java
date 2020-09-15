@@ -4,8 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,13 +22,18 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
@@ -51,11 +59,20 @@ import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.PrinterListener;
 import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
+import cielo.sdk.order.payment.Payment;
 import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.printer.PrinterManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static br.com.mgpapelaria.util.PrintHelper.formatCNPJ;
+import static br.com.mgpapelaria.util.PrintHelper.formatDate;
+import static br.com.mgpapelaria.util.PrintHelper.formatValor;
+import static br.com.mgpapelaria.util.PrintHelper.getCenterStyle;
+import static br.com.mgpapelaria.util.PrintHelper.getColumnStyle;
+import static br.com.mgpapelaria.util.PrintHelper.getLeftStyle;
+import static br.com.mgpapelaria.util.PrintHelper.getRightStyle;
 
 public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
@@ -83,6 +100,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private PagamentoDAO pagamentoDAO;
     private boolean sincronizadoValorInicial = false;
     private SharedPreferences sharedPref;
+    private PrinterListener printerListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +164,7 @@ public class TransacaoActivity extends AppCompatActivity {
                 bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
                     @Override
                     public void imprimirItemClicked() {
-                        imprimirSegundaVia();
+                        imprimirSegundaVia(transacao.order.getPayments().get(position), bottomSheetFragment);
                     }
 
                     @Override
@@ -158,6 +176,23 @@ public class TransacaoActivity extends AppCompatActivity {
             }
         });
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
+
+        this.printerListener = new PrinterListener() {
+            @Override
+            public void onPrintSuccess() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onWithoutPaper() {
+
+            }
+        };
     }
 
     @Override
@@ -303,29 +338,63 @@ public class TransacaoActivity extends AppCompatActivity {
         });
     }
 
-    private void imprimirSegundaVia(){
+
+
+    private void imprimirSegundaVia(Payment payment, BottomSheetDialogFragment bottomSheetDialogFragment){
+        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo_cielo);
+
         PrinterManager printerManager = new PrinterManager(TransacaoActivity.this);
-        String textToPrint = "Texto simples a ser impresso.\n Com múltiplas linhas";
-        HashMap<String, Integer> alignLeft =  new HashMap<>();
-        alignLeft.put(PrinterAttributes.KEY_ALIGN, PrinterAttributes.VAL_ALIGN_LEFT);
-        alignLeft.put(PrinterAttributes.KEY_TYPEFACE, 0);
-        alignLeft.put(PrinterAttributes.KEY_TEXT_SIZE, 20);
-        printerManager.printText(textToPrint, alignLeft, new PrinterListener() {
+
+        printerManager.printImage(logo, getCenterStyle(), printerListener);
+        printerManager.printText(payment.getBrand(), getCenterStyle(), printerListener);
+        printerManager.printText(payment.getPaymentFields().get("productName"), getCenterStyle(), printerListener);
+        printerManager.printText(" ", getLeftStyle(), printerListener);
+        printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
+        printerManager.printText(" ", getLeftStyle(), printerListener);
+        printerManager.printText(payment.getMask(), getCenterStyle(), printerListener);
+        printerManager.printText("VIA  CLIENTE / POS=" + payment.getTerminal(), getCenterStyle(), printerListener);
+        printerManager.printText("CNPJ " + formatCNPJ(payment.getPaymentFields().get("document")), getLeftStyle(), printerListener);
+        printerManager.printText(payment.getPaymentFields().get("merchantName"), getLeftStyle(true), printerListener);
+        printerManager.printText(payment.getPaymentFields().get("cityState"), getLeftStyle(), printerListener);
+
+        String[] text1 = new String[] {
+                "DOC="+payment.getCieloCode(),
+                formatDate(payment.getRequestDate()),
+                "ONL-C" //TODO C para credito e D para debito?
+        };
+
+        printerManager.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
+        printerManager.printText(payment.getPaymentFields().get("typeName"), getLeftStyle(), printerListener);
+        printerManager.printText(" ", getLeftStyle(), printerListener);
+        printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
+        printerManager.printText(" ", getLeftStyle(), printerListener);
+
+        String[] text2 = new String[] {
+                "VALOR:",
+                "",
+                formatValor(payment.getAmount())
+        };
+
+        printerManager.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+        printerManager.printText("\n\n\n\n", getLeftStyle(), new PrinterListener() {
             @Override
             public void onPrintSuccess() {
-
+                Log.i("PRINT", "onPrintSuccess");
+                bottomSheetDialogFragment.dismiss();
             }
 
             @Override
             public void onError(Throwable throwable) {
-
+                Log.i("PRINT", "onError");
             }
 
             @Override
             public void onWithoutPaper() {
-
+                Log.i("PRINT", "onWithoutPaper");
             }
         });
+
+
     }
 
     protected void configSDK() {
