@@ -102,6 +102,8 @@ public class TransacaoPagamentosAdapter  extends RecyclerView.Adapter<TransacaoP
                 return this.context.getDrawable(R.drawable.ic_mastercard_40);
             case "VISA":
                 return this.context.getDrawable(R.drawable.ic_visa_40);
+            case "ELO":
+                return this.context.getDrawable(R.drawable.ic_elo_40);
             default:
                 return null;
         }
