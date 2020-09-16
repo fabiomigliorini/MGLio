@@ -48,7 +48,7 @@
         android:background="@android:color/white"
         android:elevation="20dp">
         <LinearLayout
-            android:id="@+id/imprimir_2_via_button"
+            android:id="@+id/imprimir_2_via__estabelecimento_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:orientation="horizontal"
@@ -66,12 +66,38 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Imprimir 2ª via"
+                android:text="Imprimir 2ª via (Estabelecimento)"
                 android:textSize="16sp"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/imprimir_2_via_cliente_button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:src="@drawable/ic_baseline_receipt_24"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Imprimir 2ª via (Cliente)"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+
+
+        <!--<LinearLayout
             android:id="@+id/enviar_email_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -95,7 +121,7 @@
                 android:text="Enviar por email"
                 android:textSize="16sp"/>
 
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
 
 

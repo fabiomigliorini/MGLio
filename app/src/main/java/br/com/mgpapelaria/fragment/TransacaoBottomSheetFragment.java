@@ -31,8 +31,8 @@ public class TransacaoBottomSheetFragment extends BottomSheetDialogFragment {
     TextView usuarioTextView;
 
     public interface ItemClickListener{
-        void imprimirItemClicked();
-        void enviarEmailClicked();
+        void imprimirItemClicked(boolean viaCliente);
+        //void enviarEmailClicked();
     }
 
     @Override
@@ -62,19 +62,26 @@ public class TransacaoBottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
-    @OnClick(R.id.imprimir_2_via_button)
-    void onImprimirItemClicked(){
+    @OnClick(R.id.imprimir_2_via__estabelecimento_button)
+    void onImprimir2ViaEstabelecimentoItemClicked(){
         if(this.itemClickListener != null){
-            this.itemClickListener.imprimirItemClicked();
+            this.itemClickListener.imprimirItemClicked(false);
         }
     }
 
-    @OnClick(R.id.enviar_email_button)
+    @OnClick(R.id.imprimir_2_via__estabelecimento_button)
+    void onImprimir2ViaClienteItemClicked(){
+        if(this.itemClickListener != null){
+            this.itemClickListener.imprimirItemClicked(true);
+        }
+    }
+
+    /*@OnClick(R.id.enviar_email_button)
     void onEnviarEmailItemClicked(){
         if(this.itemClickListener != null){
             this.itemClickListener.enviarEmailClicked();
         }
-    }
+    }*/
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;

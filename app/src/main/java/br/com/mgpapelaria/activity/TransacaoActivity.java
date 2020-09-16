@@ -28,12 +28,7 @@ import com.google.android.material.button.MaterialButton;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
@@ -53,7 +48,6 @@ import butterknife.OnClick;
 import cielo.orders.domain.CancellationRequest;
 import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
-import cielo.orders.domain.PrinterAttributes;
 import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.PrinterListener;
@@ -68,6 +62,8 @@ import retrofit2.Response;
 
 import static br.com.mgpapelaria.util.PrintHelper.formatCNPJ;
 import static br.com.mgpapelaria.util.PrintHelper.formatDate;
+import static br.com.mgpapelaria.util.PrintHelper.formatDateTime;
+import static br.com.mgpapelaria.util.PrintHelper.formatTime;
 import static br.com.mgpapelaria.util.PrintHelper.formatValor;
 import static br.com.mgpapelaria.util.PrintHelper.getCenterStyle;
 import static br.com.mgpapelaria.util.PrintHelper.getColumnStyle;
@@ -163,14 +159,14 @@ public class TransacaoActivity extends AppCompatActivity {
                 bottomSheetFragment.setArguments(bundle1);
                 bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
                     @Override
-                    public void imprimirItemClicked() {
-                        imprimirSegundaVia(transacao.order.getPayments().get(position), bottomSheetFragment);
+                    public void imprimirItemClicked(boolean viaCliente) {
+                        imprimirSegundaViaCliente(viaCliente, transacao.order.getPayments().get(position), bottomSheetFragment);
                     }
 
-                    @Override
+                    /*@Override
                     public void enviarEmailClicked() {
 
-                    }
+                    }*/
                 });
                 bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
             }
@@ -338,68 +334,110 @@ public class TransacaoActivity extends AppCompatActivity {
         });
     }
 
+    private void imprimirSegundaViaCliente(boolean viaCliente, Payment payment, BottomSheetDialogFragment bottomSheetDialogFragment){
+        PrinterManager pm = new PrinterManager(TransacaoActivity.this);
 
-
-    private void imprimirSegundaVia(Payment payment, BottomSheetDialogFragment bottomSheetDialogFragment){
         Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo_cielo);
 
-        PrinterManager printerManager = new PrinterManager(TransacaoActivity.this);
+        pm.printImage(logo, getCenterStyle(), printerListener);
+        pm.printText(payment.getBrand(), getCenterStyle(), printerListener);
+        pm.printText(payment.getPaymentFields().get("productName"), getCenterStyle(), printerListener);
+        pm.printText(" ", getLeftStyle(), printerListener);
+        pm.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
+        pm.printText(" ", getLeftStyle(), printerListener);
+        pm.printText(payment.getMask(), getCenterStyle(), printerListener);
 
-        printerManager.printImage(logo, getCenterStyle(), printerListener);
-        printerManager.printText(payment.getBrand(), getCenterStyle(), printerListener);
-        printerManager.printText(payment.getPaymentFields().get("productName"), getCenterStyle(), printerListener);
-        printerManager.printText(" ", getLeftStyle(), printerListener);
-        printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
-        printerManager.printText(" ", getLeftStyle(), printerListener);
-        printerManager.printText(payment.getMask(), getCenterStyle(), printerListener);
-        printerManager.printText("VIA  CLIENTE / POS=" + payment.getTerminal(), getCenterStyle(), printerListener);
-        printerManager.printText("CNPJ " + formatCNPJ(payment.getPaymentFields().get("document")), getLeftStyle(), printerListener);
-        printerManager.printText(payment.getPaymentFields().get("merchantName"), getLeftStyle(true), printerListener);
-        printerManager.printText(payment.getPaymentFields().get("cityState"), getLeftStyle(), printerListener);
-
-        String[] text1 = new String[] {
-                "DOC="+payment.getCieloCode(),
-                formatDate(payment.getRequestDate()),
-                "ONL-C" //TODO C para credito e D para debito?
-        };
-
-        printerManager.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
-        printerManager.printText(payment.getPaymentFields().get("typeName"), getLeftStyle(), printerListener);
-        int parcelas = Integer.parseInt(payment.getPaymentFields().get("numberOfQuotas"));
-        if(parcelas > 0){
-            printerManager.printText("PARCELADO LOJA EM " + String.format("%02d", parcelas) + " PARCELAS", getLeftStyle(), printerListener);
+        if(viaCliente){
+            pm.printText("VIA  CLIENTE / POS=" + payment.getTerminal(), getCenterStyle(), printerListener);
+        }else{
+            pm.printText("VIA  ESTABELECIMENTO / POS=" + payment.getTerminal(), getCenterStyle(), printerListener);
         }
-        printerManager.printText(" ", getLeftStyle(), printerListener);
-        printerManager.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
-        printerManager.printText(" ", getLeftStyle(), printerListener);
+
+        pm.printText("CNPJ " + formatCNPJ(payment.getPaymentFields().get("document")), getLeftStyle(), printerListener);
+        pm.printText(payment.getPaymentFields().get("merchantName"), getLeftStyle(true), printerListener);
+        pm.printText(payment.getPaymentFields().get("cityState"), getLeftStyle(), printerListener);
 
         boolean cancelamento = false;
         if(payment.getPaymentFields().get("v40Code").equals("28")){
             cancelamento = true;
         }
 
-        String[] text2 = new String[] {
+        if(viaCliente){
+            String[] text1 = new String[] {
+                    "DOC="+payment.getCieloCode(),
+                    formatDateTime(payment.getRequestDate()),
+                    "ONL-C"
+            };
+
+            pm.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
+        }else {
+            String[] text1 = new String[] {
+                    payment.getMerchantCode(),
+                    "DOC="+payment.getCieloCode(),
+                    "AUT=" + payment.getAuthCode()
+            };
+
+            pm.printMultipleColumnText(text1, getColumnStyle(), printerListener);
+
+            if(cancelamento){
+                String[] text2 = new String[]{
+                        formatDate(payment.getRequestDate()),
+                        formatTime(payment.getRequestDate()),
+                        "ONL-C"
+                };
+                pm.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+            }else {
+                String[] text2 = new String[]{
+                        formatDateTime(payment.getRequestDate()),
+                        "OPER=SUPERVISOR",
+                        "ONL-C"
+                };
+                pm.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+            }
+        }
+
+        pm.printText(payment.getPaymentFields().get("typeName"), getLeftStyle(), printerListener);
+        int parcelas = Integer.parseInt(payment.getPaymentFields().get("numberOfQuotas"));
+        if(parcelas > 0){
+            pm.printText("PARCELADO LOJA EM " + String.format("%02d", parcelas) + " PARCELAS", getLeftStyle(), printerListener);
+        }
+        pm.printText(" ", getLeftStyle(), printerListener);
+        pm.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
+        pm.printText(" ", getLeftStyle(), printerListener);
+
+        String[] linhaValor = new String[] {
                 cancelamento ? "VALOR CANCELAMENTO:" : "VALOR:",
                 "",
                 formatValor(payment.getAmount())
         };
 
-        printerManager.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+        pm.printMultipleColumnText(linhaValor, getColumnStyle(true), printerListener);
 
         if(cancelamento){
-            printerManager.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
+            pm.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
             String[] text3 = new String[] {
                     "DOC="+payment.getPaymentFields().get("originalTransactionalId"),
                     payment.getPaymentFields().get("originalTransactionalDate"),
                     ""
             };
-            printerManager.printMultipleColumnText(text3, getColumnStyle(), printerListener);
-            String textoCancelamento = "SOLICITACAO DE CANCELAMENTO REGISTRADA APOS A APROVACAOO " +
-                    "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR";
-            printerManager.printText(textoCancelamento, getCenterStyle(), printerListener);
+            pm.printMultipleColumnText(text3, getColumnStyle(), printerListener);
+            String textoCancelamento = "SOLICITACAO DE CANCELAMENTO REGISTRADA. APOS A APROVACAOO, " +
+                    "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR.";
+            pm.printText(textoCancelamento, getCenterStyle(), printerListener);
+        }else{
+            if(Boolean.getBoolean(payment.getPaymentFields().get("hasPassword"))){
+                String text1 = "TRANSACAO AUTORIZADA COM SENHA";
+                pm.printText(text1, getCenterStyle(), printerListener);
+                String text2 = payment.getPaymentFields().get("clientName");
+                pm.printText(text2, getCenterStyle(), printerListener);
+            }
+            String text = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
+            pm.printText(text, getCenterStyle(), printerListener);
+            String text2 = payment.getPaymentFields().get("cardLabelApplication");
+            pm.printText(text2, getCenterStyle(), printerListener);
         }
 
-        printerManager.printText("\n\n\n\n", getLeftStyle(), new PrinterListener() {
+        pm.printText("\n\n\n\n", getLeftStyle(), new PrinterListener() {
             @Override
             public void onPrintSuccess() {
                 Log.i("PRINT", "onPrintSuccess");

@@ -77,9 +77,21 @@ public class PrintHelper {
         return cnpj.replaceAll("([0-9]{2})([0-9]{3})([0-9]{3})([0-9]{4})([0-9]{2})","$1\\.$2\\.$3/$4-$5");
     }
 
-    public static String formatDate(String date){
+    public static String formatDateTime(String date){
         SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getInstance();
         sdf.applyPattern("dd/MM/yy  HH:mm");
+        return sdf.format(Long.valueOf(date));
+    }
+
+    public static String formatDate(String date){
+        SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getInstance();
+        sdf.applyPattern("dd/MM/yy");
+        return sdf.format(Long.valueOf(date));
+    }
+
+    public static String formatTime(String date){
+        SimpleDateFormat sdf = (SimpleDateFormat) SimpleDateFormat.getInstance();
+        sdf.applyPattern("HH:mm");
         return sdf.format(Long.valueOf(date));
     }
 
