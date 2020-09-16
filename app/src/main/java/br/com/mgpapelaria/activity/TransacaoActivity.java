@@ -339,7 +339,23 @@ public class TransacaoActivity extends AppCompatActivity {
 
         Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo_cielo);
 
-        pm.printImage(logo, getCenterStyle(), printerListener);
+        pm.printImage(logo, getCenterStyle(), new PrinterListener() {
+            @Override
+            public void onPrintSuccess() {
+                Log.i("PRINT", "onPrintSuccess");
+                bottomSheetDialogFragment.dismiss();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.i("PRINT", "onError");
+            }
+
+            @Override
+            public void onWithoutPaper() {
+                Log.i("PRINT", "onWithoutPaper");
+            }
+        });
         pm.printText(payment.getBrand(), getCenterStyle(), printerListener);
         pm.printText(payment.getPaymentFields().get("productName"), getCenterStyle(), printerListener);
         pm.printText(" ", getLeftStyle(), printerListener);
@@ -437,23 +453,7 @@ public class TransacaoActivity extends AppCompatActivity {
             pm.printText(text2, getCenterStyle(), printerListener);
         }
 
-        pm.printText("\n\n\n\n", getLeftStyle(), new PrinterListener() {
-            @Override
-            public void onPrintSuccess() {
-                Log.i("PRINT", "onPrintSuccess");
-                bottomSheetDialogFragment.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                Log.i("PRINT", "onError");
-            }
-
-            @Override
-            public void onWithoutPaper() {
-                Log.i("PRINT", "onWithoutPaper");
-            }
-        });
+        pm.printText("\n\n\n\n", getLeftStyle(), printerListener);
 
 
     }
