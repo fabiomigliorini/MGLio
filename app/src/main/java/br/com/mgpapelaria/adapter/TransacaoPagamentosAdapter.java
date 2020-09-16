@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -105,6 +107,7 @@ public class TransacaoPagamentosAdapter  extends RecyclerView.Adapter<TransacaoP
             case "ELO":
                 return this.context.getDrawable(R.drawable.ic_elo_40);
             default:
+                FirebaseCrashlytics.getInstance().log("Bandeira não definida: " + brand);
                 return this.context.getDrawable(R.drawable.ic_credit_card_40);
         }
     }
