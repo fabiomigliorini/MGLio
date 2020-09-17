@@ -220,7 +220,13 @@ public class PagamentoActivity extends AppCompatActivity {
         Pedido pedido = new Pedido();
         pedido.userId = sharedPref.getInt("userId", -1);
         pedido.orderId = order.getId();
-        pedido.nome = order.getPayments().get(0).getPaymentFields().get("clientName");
+
+        String nome = order.getPayments().get(0).getPaymentFields().get("clientName");
+        if(nome == null || nome.equals("")){
+            nome = order.getReference();
+        }
+
+        pedido.nome = nome;
         pedido.data = order.getCreatedAt();
         pedido.valor = order.getPrice();
         pedido.status = order.getStatus().name();
