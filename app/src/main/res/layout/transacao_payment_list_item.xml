@@ -11,23 +11,17 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:maxHeight="72dp">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/brand_imageView"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <TextView
-        android:id="@+id/descricao_text_view"
+        android:id="@+id/status_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/brand_imageView"
-        app:layout_constraintEnd_toStartOf="@id/valor_text_view"
-        android:textSize="16sp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/label_text_view"
+        android:textSize="16sp"
+        android:textColor="#D32F2F"/>
 
     <TextView
         android:id="@+id/data_text_view"
@@ -35,28 +29,31 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/descricao_text_view"
-        app:layout_constraintStart_toEndOf="@id/brand_imageView"
-        app:layout_constraintEnd_toStartOf="@id/valor_text_view"
+        app:layout_constraintTop_toBottomOf="@id/status_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/usuario_text_view"
         android:textSize="12sp"/>
 
     <TextView
-        android:id="@+id/valor_text_view"
+        android:id="@+id/label_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minWidth="50dp"
         android:gravity="end"
+        android:text="Emitido por"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/status_text_view"
+        android:id="@+id/usuario_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minWidth="50dp"
         android:gravity="end"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/valor_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/label_text_view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

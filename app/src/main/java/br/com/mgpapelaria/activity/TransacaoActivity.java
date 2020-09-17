@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -79,8 +82,12 @@ public class TransacaoActivity extends AppCompatActivity {
     TextView nomeClienteTextView;
     @BindView(R.id.item_descricao)
     TextView itemDescricaoTextView;
+    @BindView(R.id.product_name)
+    TextView productNameTextView;
     @BindView(R.id.price)
     TextView priceTextView;
+    @BindView(R.id.brand_imageView)
+    AppCompatImageView brandImageView;
     @BindView(R.id.cancelar_button)
     MaterialButton cancelarButton;
     @BindView(R.id.payments_recylcer_view)
@@ -131,12 +138,10 @@ public class TransacaoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        if(transacao.order.getPayments().size() > 0){
-            this.nomeClienteTextView.setText(transacao.order.getPayments().get(0).getPaymentFields().get("clientName"));
-        }else{
-            this.nomeClienteTextView.setVisibility(View.GONE);
-        }
+        Payment primeiroPagamento = transacao.order.getPayments().get(0);
+        this.nomeClienteTextView.setText(primeiroPagamento.getPaymentFields().get("clientName"));
+        this.productNameTextView.setText(primeiroPagamento.getPaymentFields().get("productName"));
+        this.brandImageView.setImageDrawable(getBrandImage(primeiroPagamento.getBrand()));
         this.itemDescricaoTextView.setText(transacao.order.getItems().get(0).getName());
         this.priceTextView.setText(nf.format(new BigDecimal(transacao.order.getPrice()).divide(new BigDecimal(100))));
 
@@ -148,28 +153,13 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.pagamentosRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), this);
-        this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr(new TransacaoPagamentosAdapter.ItemClickListener() {
-            @Override
-            public void onClickListener(View view, int position) {
-                TransacaoBottomSheetFragment bottomSheetFragment = new TransacaoBottomSheetFragment();
-                Bundle bundle1 = new Bundle();
-                bundle1.putSerializable(TransacaoBottomSheetFragment.USUARIO, pagamentos.get(position).userName);
-                bundle1.putSerializable(TransacaoBottomSheetFragment.PAGAMENTO, transacao.order.getPayments().get(position));
-                bottomSheetFragment.setArguments(bundle1);
-                bottomSheetFragment.setItemClickListener(new TransacaoBottomSheetFragment.ItemClickListener() {
-                    @Override
-                    public void imprimirItemClicked(boolean viaCliente) {
-                        imprimirSegundaViaCliente(viaCliente, transacao.order.getPayments().get(position), bottomSheetFragment);
-                    }
-
-                    /*@Override
-                    public void enviarEmailClicked() {
-
-                    }*/
-                });
-                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-            }
+        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), pagamentos);
+        this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
+            TransacaoBottomSheetFragment bottomSheetFragment = new TransacaoBottomSheetFragment();
+            bottomSheetFragment.setItemClickListener(viaCliente ->
+                    imprimirSegundaViaCliente(viaCliente, transacao.order.getPayments().get(position), bottomSheetFragment)
+            );
+            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
         });
         this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
 
@@ -277,6 +267,20 @@ public class TransacaoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Houve um erro no cancelamento", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private Drawable getBrandImage(String brand){
+        switch (brand.toUpperCase()){
+            case "MASTERCARD":
+                return getDrawable(R.drawable.ic_mastercard_2_40);
+            case "VISA":
+                return getDrawable(R.drawable.ic_visa_2_40);
+            case "ELO":
+                return getDrawable(R.drawable.ic_elo_2_40);
+            default:
+                FirebaseCrashlytics.getInstance().log("Bandeira não definida: " + brand);
+                return null;
+        }
     }
 
     private void alteraStatusOrder(Order order){
@@ -423,11 +427,10 @@ public class TransacaoActivity extends AppCompatActivity {
 
         String[] linhaValor = new String[] {
                 cancelamento ? "VALOR CANCELAMENTO:" : "VALOR:",
-                "",
                 formatValor(payment.getAmount())
         };
 
-        pm.printMultipleColumnText(linhaValor, getColumnStyle(true), printerListener);
+        pm.printMultipleColumnText(linhaValor, getColumnStyle(true, true, false, true), printerListener);
 
         if(cancelamento){
             pm.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
@@ -441,16 +444,18 @@ public class TransacaoActivity extends AppCompatActivity {
                     "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR.";
             pm.printText(textoCancelamento, getCenterStyle(), printerListener);
         }else{
-            if(Boolean.getBoolean(payment.getPaymentFields().get("hasPassword"))){
-                String text1 = "TRANSACAO AUTORIZADA COM SENHA";
-                pm.printText(text1, getCenterStyle(), printerListener);
-                String text2 = payment.getPaymentFields().get("clientName");
+            if(!viaCliente){
+                if(Boolean.getBoolean(payment.getPaymentFields().get("hasPassword"))){
+                    String text1 = "TRANSACAO AUTORIZADA COM SENHA";
+                    pm.printText(text1, getCenterStyle(), printerListener);
+                    String text2 = payment.getPaymentFields().get("clientName");
+                    pm.printText(text2, getCenterStyle(), printerListener);
+                }
+                String text = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
+                pm.printText(text, getCenterStyle(), printerListener);
+                String text2 = payment.getPaymentFields().get("cardLabelApplication");
                 pm.printText(text2, getCenterStyle(), printerListener);
             }
-            String text = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
-            pm.printText(text, getCenterStyle(), printerListener);
-            String text2 = payment.getPaymentFields().get("cardLabelApplication");
-            pm.printText(text2, getCenterStyle(), printerListener);
         }
 
         pm.printText("\n\n\n\n", getLeftStyle(), printerListener);

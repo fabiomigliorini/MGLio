@@ -38,15 +38,29 @@ public class PrintHelper {
         return getStyle(PrinterAttributes.VAL_ALIGN_RIGHT, bold);
     }
 
-    public static List<Map<String, Integer>> getColumnStyle(){
-        return getColumnStyle(false);
+    public static List<Map<String, Integer>> getColumnStyle(boolean bold){
+        return getColumnStyle(bold, true, true, true);
     }
 
-    public static List<Map<String, Integer>> getColumnStyle(boolean bold){
+    public static List<Map<String, Integer>> getColumnStyle(){
+        return getColumnStyle(false, true, true, true);
+    }
+
+    public static List<Map<String, Integer>> getColumnStyle(boolean left, boolean center, boolean right){
+        return getColumnStyle(false, true, true, true);
+    }
+
+    public static List<Map<String, Integer>> getColumnStyle(boolean bold, boolean left, boolean center, boolean right){
         List<Map<String, Integer>> style =  new ArrayList<>();
-        style.add(getLeftStyle(bold));
-        style.add(getCenterStyle(bold));
-        style.add(getRightStyle(bold));
+        if(left){
+            style.add(getLeftStyle(bold));
+        }
+        if(center){
+            style.add(getCenterStyle(bold));
+        }
+        if(right){
+            style.add(getRightStyle(bold));
+        }
 
         return style;
     }
