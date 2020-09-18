@@ -9,6 +9,13 @@
     app:behavior_peekHeight="90dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Imprimir 2ª via"
+        android:textStyle="bold"
+        android:layout_margin="8dp"/>
+
     <LinearLayout
         android:id="@+id/imprimir_2_via_estabelecimento_button"
         android:layout_width="match_parent"
@@ -28,7 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Imprimir 2ª via (Estabelecimento)"
+            android:text="Via Estabelecimento"
             android:textSize="16sp"/>
 
     </LinearLayout>
@@ -52,7 +59,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Imprimir 2ª via (Cliente)"
+            android:text="Via Cliente"
             android:textSize="16sp"/>
 
     </LinearLayout>

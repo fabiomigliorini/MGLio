@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
@@ -155,17 +156,17 @@ public class TransacaoActivity extends AppCompatActivity {
         this.printerListener = new PrinterListener() {
             @Override
             public void onPrintSuccess() {
-
+                FirebaseCrashlytics.getInstance().recordException(new Exception("PrinterListener.onPrintSuccess"));
             }
 
             @Override
             public void onError(Throwable throwable) {
-
+                FirebaseCrashlytics.getInstance().recordException(new Exception("PrinterListener.onError"));
             }
 
             @Override
             public void onWithoutPaper() {
-
+                FirebaseCrashlytics.getInstance().recordException(new Exception("PrinterListener.onWithoutPaper"));
             }
         };
     }
@@ -323,7 +324,6 @@ public class TransacaoActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }else{
-                    //TODO: Colocar algum erro aqui
                     AsyncTask.execute(() -> {
                         pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), false);
                     });
@@ -347,26 +347,10 @@ public class TransacaoActivity extends AppCompatActivity {
     }
 
     private void imprimirSegundaViaCliente(boolean viaCliente, Payment payment, BottomSheetDialogFragment bottomSheetDialogFragment){
-        PrinterManager pm = new PrinterManager(TransacaoActivity.this);
-
+        PrinterManager pm = new PrinterManager(this);
         Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo_cielo);
 
-        pm.printImage(logo, getCenterStyle(), new PrinterListener() {
-            @Override
-            public void onPrintSuccess() {
-                runOnUiThread(bottomSheetDialogFragment::dismiss);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                FirebaseCrashlytics.getInstance().recordException(throwable);
-            }
-
-            @Override
-            public void onWithoutPaper() {
-                Log.i("PRINT", "onWithoutPaper");
-            }
-        });
+        pm.printImage(logo, getCenterStyle(), printerListener);
         pm.printText(payment.getBrand(), getCenterStyle(), printerListener);
         pm.printText(payment.getPaymentFields().get("productName"), getCenterStyle(), printerListener);
         pm.printText(" ", getLeftStyle(), printerListener);
@@ -466,7 +450,7 @@ public class TransacaoActivity extends AppCompatActivity {
         }
 
         pm.printText("\n\n\n\n", getLeftStyle(), printerListener);
-
+        bottomSheetDialogFragment.dismiss();
 
     }
 
