@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
+
 import br.com.mgpapelaria.R;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -13,6 +15,7 @@ import cielo.sdk.order.payment.PaymentCode;
 public class CreditoFragment extends PagamentoBaseFragment {
     public static final String CREDITO_PARCELADO_OPTION = "credito_parcelado";
     private OptionListener optionListener;
+    private Long valor;
 
     public interface OptionListener{
         void onOptionClickListener(String option);
@@ -22,7 +25,8 @@ public class CreditoFragment extends PagamentoBaseFragment {
         // Required empty public constructor
     }
 
-    public CreditoFragment(OptionListener listener) {
+    public CreditoFragment(Long valor, OptionListener listener) {
+        this.valor = valor;
         this.optionListener = listener;
     }
 
@@ -55,6 +59,16 @@ public class CreditoFragment extends PagamentoBaseFragment {
 
     @OnClick(R.id.credito_parcelado_loja_button)
     void onCreditoParceladoLojaButtonClicked(){
+        if(this.valor < 1000){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Para parcelar, o valor não pode ser menor que R$10,00")
+                    .setTitle("Ops!");
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            builder.create().show();
+            return;
+        }
         //this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
         if(this.optionListener != null){
             this.optionListener.onOptionClickListener(CREDITO_PARCELADO_OPTION);

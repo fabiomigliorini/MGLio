@@ -123,7 +123,7 @@ public class PagamentoActivity extends AppCompatActivity {
         PagamentoBaseFragment proximoFragment;
         switch (option){
             case FormaPagamentoFragment.CREDITO_OPTION:
-                proximoFragment = new CreditoFragment(this::onOptionClicked);
+                proximoFragment = new CreditoFragment(this.valorPago, this::onOptionClicked);
                 break;
             case CreditoFragment.CREDITO_PARCELADO_OPTION:
                 proximoFragment = new CreditoParceladoFragment();
@@ -169,7 +169,6 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onStart() {
-                Log.d(TAG, "ON START");
             }
 
             @Override
