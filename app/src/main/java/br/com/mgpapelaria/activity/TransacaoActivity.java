@@ -357,8 +357,7 @@ public class TransacaoActivity extends AppCompatActivity {
         pm.printImage(logo, getCenterStyle(), new PrinterListener() {
             @Override
             public void onPrintSuccess() {
-                Log.i("PRINT", "onPrintSuccess");
-                bottomSheetDialogFragment.dismiss();
+                runOnUiThread(bottomSheetDialogFragment::dismiss);
             }
 
             @Override
@@ -402,28 +401,28 @@ public class TransacaoActivity extends AppCompatActivity {
 
             pm.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
         }else {
-            String[] text1 = new String[] {
+            String[] text2 = new String[] {
                     payment.getMerchantCode(),
                     "DOC="+payment.getCieloCode(),
                     "AUT=" + payment.getAuthCode()
             };
 
-            pm.printMultipleColumnText(text1, getColumnStyle(), printerListener);
+            pm.printMultipleColumnText(text2, getColumnStyle(), printerListener);
 
-            if(cancelamento){
-                String[] text2 = new String[]{
+            if(!cancelamento){
+                String[] text3 = new String[]{
                         formatDate(payment.getRequestDate()),
                         formatTime(payment.getRequestDate()),
                         "ONL-C"
                 };
-                pm.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+                pm.printMultipleColumnText(text3, getColumnStyle(true), printerListener);
             }else {
-                String[] text2 = new String[]{
+                String[] text4 = new String[]{
                         formatDateTime(payment.getRequestDate()),
                         "OPER=SUPERVISOR",
                         "ONL-C"
                 };
-                pm.printMultipleColumnText(text2, getColumnStyle(true), printerListener);
+                pm.printMultipleColumnText(text4, getColumnStyle(true), printerListener);
             }
         }
 
@@ -445,27 +444,27 @@ public class TransacaoActivity extends AppCompatActivity {
 
         if(cancelamento){
             pm.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
-            String[] text3 = new String[] {
+            String[] text5 = new String[] {
                     "DOC="+payment.getPaymentFields().get("originalTransactionalId"),
                     payment.getPaymentFields().get("originalTransactionalDate"),
                     ""
             };
-            pm.printMultipleColumnText(text3, getColumnStyle(), printerListener);
+            pm.printMultipleColumnText(text5, getColumnStyle(), printerListener);
             String textoCancelamento = "SOLICITACAO DE CANCELAMENTO REGISTRADA. APOS A APROVACAOO, " +
                     "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR.";
             pm.printText(textoCancelamento, getCenterStyle(), printerListener);
         }else{
             if(!viaCliente){
                 if(Boolean.getBoolean(payment.getPaymentFields().get("hasPassword"))){
-                    String text1 = "TRANSACAO AUTORIZADA COM SENHA";
-                    pm.printText(text1, getCenterStyle(), printerListener);
-                    String text2 = payment.getPaymentFields().get("clientName");
-                    pm.printText(text2, getCenterStyle(), printerListener);
+                    String text6 = "TRANSACAO AUTORIZADA COM SENHA";
+                    pm.printText(text6, getCenterStyle(), printerListener);
+                    String text7 = payment.getPaymentFields().get("clientName");
+                    pm.printText(text7, getCenterStyle(), printerListener);
                 }
-                String text = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
-                pm.printText(text, getCenterStyle(), printerListener);
-                String text2 = payment.getPaymentFields().get("cardLabelApplication");
-                pm.printText(text2, getCenterStyle(), printerListener);
+                String text8 = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
+                pm.printText(text8, getCenterStyle(), printerListener);
+                String text9 = payment.getPaymentFields().get("cardLabelApplication");
+                pm.printText(text9, getCenterStyle(), printerListener);
             }
         }
 
