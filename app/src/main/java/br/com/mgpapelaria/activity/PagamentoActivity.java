@@ -154,18 +154,7 @@ public class PagamentoActivity extends AppCompatActivity {
         /*HashMap<String, Object> options = new HashMap<>();
         options.put("teste", "valorTeste");*/
 
-        CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
-                .orderId(this.order.getId())
-                .amount(this.valorPago)
-                .paymentCode(paymentCode);
-                //.options(options);
-
-        if(paymentCode == PaymentCode.CREDITO_PARCELADO_LOJA){
-            requestBuilder = requestBuilder.installments((int)args);
-        }
-
-        CheckoutRequest request = requestBuilder.build();
-        orderManager.checkoutOrder(request, new PaymentListener() {
+        PaymentListener paymentListener = new PaymentListener() {
 
             @Override
             public void onStart() {
@@ -203,7 +192,24 @@ public class PagamentoActivity extends AppCompatActivity {
                 finish();
             }
 
-        });
+        };
+
+        if(paymentCode != PaymentCode.VOUCHER_ALIMENTACAO){
+            CheckoutRequest.Builder requestBuilder = new CheckoutRequest.Builder()
+                    .orderId(this.order.getId())
+                    .amount(this.valorPago)
+                    .paymentCode(paymentCode);
+            //.options(options);
+
+            if(paymentCode == PaymentCode.CREDITO_PARCELADO_LOJA){
+                requestBuilder = requestBuilder.installments((int)args);
+            }
+
+            CheckoutRequest request = requestBuilder.build();
+            orderManager.checkoutOrder(request, paymentListener);
+        }else{
+            orderManager.checkoutOrder(order.getId(), this.valorPago, "3000", "4", paymentListener);
+        }
     }
 
     private void replaceFragment(PagamentoBaseFragment fragment){
