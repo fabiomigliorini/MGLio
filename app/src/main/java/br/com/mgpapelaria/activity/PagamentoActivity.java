@@ -263,7 +263,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("SEND ORDER", t.getMessage());
+                FirebaseCrashlytics.getInstance().recordException(t);
             }
 
         });

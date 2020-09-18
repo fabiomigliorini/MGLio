@@ -363,7 +363,7 @@ public class TransacaoActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                Log.i("PRINT", "onError");
+                FirebaseCrashlytics.getInstance().recordException(throwable);
             }
 
             @Override
