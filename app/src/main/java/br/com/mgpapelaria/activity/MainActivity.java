@@ -5,30 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import java.util.List;
-
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
-import br.com.mgpapelaria.model.Filial;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cielo.orders.domain.Credentials;
-import cielo.orders.domain.product.PrimaryProduct;
-import cielo.orders.domain.product.SecondaryProduct;
 import cielo.sdk.info.InfoManager;
 import cielo.sdk.order.OrderManager;
-import cielo.sdk.order.ServiceBindListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,43 +61,7 @@ public class MainActivity extends AppCompatActivity {
         this.numeroLogicoTextView.setText(numeroLogico);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        //this.configSDK();
     }
-
-    /*protected void configSDK() {
-        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        this.orderManager = new OrderManager(credentials, this);
-        this.orderManager.bind(this, new ServiceBindListener() {
-
-            @Override
-            public void onServiceBoundError(Throwable throwable) {
-                orderManagerServiceBinded = false;
-
-                Toast.makeText(getApplicationContext(),
-                        String.format("Erro fazendo bind do serviço de ordem -> %s",
-                                throwable.getMessage()), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onServiceBound() {
-                orderManagerServiceBinded = true;
-
-                StringBuilder sb = new StringBuilder();
-                for(PrimaryProduct pp : orderManager.retrievePaymentType(getApplicationContext())){
-                    sb.append(pp.getId()).append(": ").append(pp.getName()).append(" (").append(pp.getCode()).append(")\n");
-                    for(SecondaryProduct sp : pp.getSecondaryProducts()){
-                        sb.append("- ").append(sp.getId()).append(": ").append(sp.getName()).append(" (").append(sp.getCode()).append(")\n");
-                    }
-                }
-                paymetsTypesTextView.setText(sb.toString());
-            }
-
-            @Override
-            public void onServiceUnbound() {
-                orderManagerServiceBinded = false;
-            }
-        });
-    }*/
 
     @OnClick(R.id.venda_aberta_button)
     void onVendaAvulsaClicked(){

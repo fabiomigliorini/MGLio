@@ -25,10 +25,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
-import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
 import cielo.sdk.order.OrderManager;
-import cielo.sdk.order.ServiceBindListener;
 
 import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 

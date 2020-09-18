@@ -51,12 +51,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cielo.orders.domain.CancellationRequest;
-import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
 import cielo.orders.domain.Status;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.PrinterListener;
-import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.cancellation.CancellationListener;
 import cielo.sdk.order.payment.Payment;
 import cielo.sdk.order.payment.PaymentError;
@@ -74,7 +72,6 @@ import static br.com.mgpapelaria.util.PrintHelper.formatValor;
 import static br.com.mgpapelaria.util.PrintHelper.getCenterStyle;
 import static br.com.mgpapelaria.util.PrintHelper.getColumnStyle;
 import static br.com.mgpapelaria.util.PrintHelper.getLeftStyle;
-import static br.com.mgpapelaria.util.PrintHelper.getRightStyle;
 
 public class TransacaoActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";

@@ -12,7 +12,9 @@ import com.google.gson.GsonBuilder;
 import br.com.mgpapelaria.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cielo.orders.domain.Order;;
+import cielo.orders.domain.Order;
+
+;
 
 public class TransacaoJsonActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";

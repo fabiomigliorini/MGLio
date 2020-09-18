@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.math.BigDecimal;
@@ -20,8 +19,6 @@ import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.model.Pedido;
-import cielo.orders.domain.Order;
-import cielo.orders.domain.Status;
 
 public class TransacoesAdapter extends RecyclerView.Adapter<TransacoesAdapter.ViewHolder> {
 private List<Pedido> transacoes;
@@ -73,7 +70,11 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Pedido transacao = this.transacoes.get(position);
-        holder.descricaoTextView.setText(transacao.nome.trim());
+        String nome = transacao.nome;
+        if(nome == null){
+            nome = "";
+        }
+        holder.descricaoTextView.setText(nome.trim());
         holder.dataTextView.setText(DateFormat.format("dd/MM/yyyy HH:mm", transacao.data));
         holder.valorTextView.setText(nf.format(new BigDecimal(transacao.valor).divide(new BigDecimal(100))));
         if(transacao.status.equals("CANCELED")){
@@ -98,11 +99,6 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         int total = this.transacoes.size();
         this.transacoes = new ArrayList<>();
         notifyItemRangeRemoved(0, total);
-    }
-
-    public void adicionaTransacao(Pedido transacao) {
-        this.transacoes.add(transacao);
-        notifyItemInserted(getItemCount());
     }
 
     public void adicionaTransacoes(List<Pedido> transacoes) {

@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 import java.io.Serializable;
 
-import cielo.orders.domain.Order;
-
 public class OrderRequest implements Serializable {
     private String order;
     private String pagamentos;

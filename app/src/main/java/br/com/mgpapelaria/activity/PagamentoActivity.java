@@ -19,16 +19,14 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
-import java.util.HashMap;
-
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.dao.PagamentoDAO;
 import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
-import br.com.mgpapelaria.fragment.pagamento.CreditoParceladoFragment;
 import br.com.mgpapelaria.fragment.pagamento.CreditoFragment;
+import br.com.mgpapelaria.fragment.pagamento.CreditoParceladoFragment;
 import br.com.mgpapelaria.fragment.pagamento.FormaPagamentoFragment;
 import br.com.mgpapelaria.fragment.pagamento.PagamentoBaseFragment;
 import br.com.mgpapelaria.model.OrderRequest;

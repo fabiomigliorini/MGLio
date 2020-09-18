@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.util.InputFilterMinMax;
 import butterknife.BindView;
