@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -259,11 +260,12 @@ public class TransacaoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(),"A operação foi cancelada.", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"A operação foi cancelada.", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(PaymentError paymentError) {
+                FirebaseCrashlytics.getInstance().recordException(new Exception(new Gson().toJson(paymentError)));
                 Toast.makeText(getApplicationContext(),"Houve um erro no cancelamento", Toast.LENGTH_LONG).show();
             }
         });
@@ -278,7 +280,9 @@ public class TransacaoActivity extends AppCompatActivity {
             case "ELO":
                 return getDrawable(R.drawable.ic_elo_2_40);
             default:
-                FirebaseCrashlytics.getInstance().log("Bandeira não definida: " + brand);
+                String message = "Bandeira não definida: " + brand;
+                FirebaseCrashlytics.getInstance().log(message);
+                FirebaseCrashlytics.getInstance().recordException(new Exception(message));
                 return null;
         }
     }

@@ -17,6 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
+
 import java.util.HashMap;
 
 import br.com.mgpapelaria.R;
@@ -191,7 +194,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
                 order.markAsRejected();
                 orderManager.updateOrder(order);
                 finish();
@@ -199,7 +202,8 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull PaymentError paymentError) {
-                Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
+                FirebaseCrashlytics.getInstance().recordException(new Exception(new Gson().toJson(paymentError)));
                 order.cancel();
                 orderManager.updateOrder(order);
                 finish();
