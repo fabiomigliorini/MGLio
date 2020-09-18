@@ -203,7 +203,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         }else{
             order = this.orderManager.createDraftOrder("Valor avulso");
         }
-        order.addItem("fake-sku", "Produtos de papelaria", this.valorLimpo, 1, "QTD");
+        order.addItem("000", "Produtos de papelaria", this.valorLimpo, 1, "QTD");
 
         this.orderManager.updateOrder(order);
 
