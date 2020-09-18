@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.List;
 
 import br.com.mgpapelaria.R;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     TextView usuarioTextView;
     @BindView(R.id.numero_logico_text_view)
     TextView numeroLogicoTextView;
+    private FirebaseAnalytics mFirebaseAnalytics;
     private OrderManager orderManager = null;
     private static boolean orderManagerServiceBinded = false;
     /*@BindView(R.id.payments_types_text_view)
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         this.usuarioTextView.setText(usuario);
         this.numeroLogicoTextView.setText(numeroLogico);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         //this.configSDK();
     }
 
