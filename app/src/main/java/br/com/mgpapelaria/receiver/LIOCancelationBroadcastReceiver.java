@@ -8,11 +8,10 @@ import android.util.Log;
 import cielo.orders.aidl.ParcelableOrder;
 import cielo.orders.aidl.ParcelableTransaction;
 
+import static br.com.mgpapelaria.util.CieloSdkUtil.ACCESS_KEY;
+import static br.com.mgpapelaria.util.CieloSdkUtil.SECRET_KEY;
+
 public class LIOCancelationBroadcastReceiver extends BroadcastReceiver {
-
-    String ACCESS_KEY = "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm";
-    String SECRET_KEY = "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0";
-
     String INTENT_ORDER_KEY = "ORDER";
     String INTENT_TRANSACTION_KEY = "TRANSACTION";
 

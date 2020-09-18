@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,18 +35,19 @@ import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
+import br.com.mgpapelaria.util.CieloSdkUtil;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
-import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
 import cielo.sdk.order.OrderManager;
-import cielo.sdk.order.ServiceBindListener;
 import cielo.sdk.order.payment.PaymentCode;
 import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.order.payment.PaymentListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 
 public class PagamentoActivity extends AppCompatActivity {
     public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
@@ -57,7 +57,6 @@ public class PagamentoActivity extends AppCompatActivity {
     private Order order = null;
     private Long valorPago;
     private OrderManager orderManager = null;
-    private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
@@ -92,8 +91,6 @@ public class PagamentoActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.configSDK(this::initFragment);
-
-
     }
 
     @Override
@@ -272,35 +269,9 @@ public class PagamentoActivity extends AppCompatActivity {
         });
     }
 
-    public interface SdkListener{
-        void onServiceBound();
-    }
-
-    protected void configSDK(SdkListener listener) {
-        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        orderManager = new OrderManager(credentials, this);
-        orderManager.bind(this, new ServiceBindListener() {
-
-            @Override
-            public void onServiceBoundError(Throwable throwable) {
-                orderManagerServiceBinded = false;
-
-                Toast.makeText(getApplicationContext(),
-                        String.format("Erro fazendo bind do serviço de ordem -> %s",
-                                throwable.getMessage()), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onServiceBound() {
-                orderManagerServiceBinded = true;
-                listener.onServiceBound();
-            }
-
-            @Override
-            public void onServiceUnbound() {
-                orderManagerServiceBinded = false;
-            }
-        });
+    protected void configSDK(CieloSdkUtil.SdkListener listener) {
+        orderManager = new OrderManager(getCredentials(), this);
+        orderManager.bind(this, new CieloSdkUtil.BindListener(listener));
     }
 
     public static void hideKeyboard(Context context) {

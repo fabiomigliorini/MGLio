@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.model.VendaAberta;
+import br.com.mgpapelaria.util.CieloSdkUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,6 +29,8 @@ import cielo.orders.domain.Credentials;
 import cielo.orders.domain.Order;
 import cielo.sdk.order.OrderManager;
 import cielo.sdk.order.ServiceBindListener;
+
+import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 
 public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
@@ -39,13 +42,14 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     private VendaAberta vendaAberta;
     private final CalcDialog calcDialog = new CalcDialog();
     private OrderManager orderManager = null;
-    private static boolean orderManagerServiceBinded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pinpad);
         ButterKnife.bind(this);
+
+        this.pagarButton.setEnabled(false);
 
         String titulo = "";
         Bundle bundle = getIntent().getExtras();
@@ -69,7 +73,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         //this.calcDialog.getSettings().setMinValue(new BigDecimal(999999999));
 
         this.setValor(this.valorLimpo);
-        this.configSDK();
+        this.configSDK(() -> pagarButton.setEnabled(true));
     }
 
     @Override
@@ -208,30 +212,9 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         return order;
     }
 
-    protected void configSDK() {
-        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        this.orderManager = new OrderManager(credentials, this);
-        this.orderManager.bind(this, new ServiceBindListener() {
-
-            @Override
-            public void onServiceBoundError(Throwable throwable) {
-                orderManagerServiceBinded = false;
-
-                Toast.makeText(getApplicationContext(),
-                        String.format("Erro fazendo bind do serviço de ordem -> %s",
-                                throwable.getMessage()), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onServiceBound() {
-                orderManagerServiceBinded = true;
-            }
-
-            @Override
-            public void onServiceUnbound() {
-                orderManagerServiceBinded = false;
-            }
-        });
+    protected void configSDK(CieloSdkUtil.SdkListener listener) {
+        this.orderManager = new OrderManager(getCredentials(), this);
+        this.orderManager.bind(this, new CieloSdkUtil.BindListener(listener));
     }
 
     private long concatDigito(Integer digito){

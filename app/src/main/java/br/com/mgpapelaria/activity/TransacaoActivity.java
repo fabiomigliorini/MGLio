@@ -46,6 +46,7 @@ import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
+import br.com.mgpapelaria.util.CieloSdkUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,6 +65,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 import static br.com.mgpapelaria.util.PrintHelper.formatCNPJ;
 import static br.com.mgpapelaria.util.PrintHelper.formatDate;
 import static br.com.mgpapelaria.util.PrintHelper.formatDateTime;
@@ -98,7 +100,6 @@ public class TransacaoActivity extends AppCompatActivity {
     private Pedido transacao;
     private List<Pagamento> pagamentos;
     private OrderManager orderManager = null;
-    private static boolean orderManagerServiceBinded = false;
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
@@ -113,7 +114,7 @@ public class TransacaoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
-        this.configSDK();
+
         AppDatabase database = AppDatabase.build(this);
         this.pedidoDAO = database.pedidoDAO();
         this.pagamentoDAO = database.pagamentoDAO();
@@ -131,6 +132,12 @@ public class TransacaoActivity extends AppCompatActivity {
             return;
         }
 
+        if(transacao.order.getStatus() == Status.CANCELED){
+            this.cancelarButton.setVisibility(View.GONE);
+        }
+        this.cancelarButton.setEnabled(false);
+        this.configSDK(() -> this.cancelarButton.setEnabled(true));
+
         this.sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
         this.sincronizadoValorInicial = transacao.sincronizado;
 
@@ -146,23 +153,7 @@ public class TransacaoActivity extends AppCompatActivity {
         this.itemDescricaoTextView.setText(transacao.order.getItems().get(0).getName());
         this.priceTextView.setText(nf.format(new BigDecimal(transacao.order.getPrice()).divide(new BigDecimal(100))));
 
-        if(transacao.order.getStatus() == Status.CANCELED){
-            this.cancelarButton.setVisibility(View.GONE);
-        }
-
-        this.pagamentosRecyclerView.setHasFixedSize(true);
-        this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.pagamentosRecyclerView.addItemDecoration(
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), pagamentos);
-        this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            TransacaoBottomSheetFragment bottomSheetFragment = new TransacaoBottomSheetFragment();
-            bottomSheetFragment.setItemClickListener(viaCliente ->
-                    imprimirSegundaViaCliente(viaCliente, transacao.order.getPayments().get(position), bottomSheetFragment)
-            );
-            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-        });
-        this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
+        this.initRecyclerView();
 
         this.printerListener = new PrinterListener() {
             @Override
@@ -180,6 +171,22 @@ public class TransacaoActivity extends AppCompatActivity {
 
             }
         };
+    }
+
+    private void initRecyclerView(){
+        this.pagamentosRecyclerView.setHasFixedSize(true);
+        this.pagamentosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.pagamentosRecyclerView.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        this.pagamentosRecyclerViewAdapter = new TransacaoPagamentosAdapter(transacao.order.getPayments(), pagamentos);
+        this.pagamentosRecyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
+            TransacaoBottomSheetFragment bottomSheetFragment = new TransacaoBottomSheetFragment();
+            bottomSheetFragment.setItemClickListener(viaCliente ->
+                    imprimirSegundaViaCliente(viaCliente, transacao.order.getPayments().get(position), bottomSheetFragment)
+            );
+            bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+        });
+        this.pagamentosRecyclerView.setAdapter(this.pagamentosRecyclerViewAdapter);
     }
 
     @Override
@@ -467,29 +474,8 @@ public class TransacaoActivity extends AppCompatActivity {
 
     }
 
-    protected void configSDK() {
-        Credentials credentials = new Credentials( "3bBCIdoFCNMUCJHFPZIQtuVAFQzb16O11O3twEnzz9MT5Huhng/ rRKDEcIfdA7AMcGSzStRAyHSCx44yEHsRVmLTeYMQfBEFFpcgm", "iIm9ujCG8IkvWOaTSFT3diNSEhNkjr0ttRf7hDnwEDMoO3u3S0");
-        orderManager = new OrderManager(credentials, this);
-        orderManager.bind(this, new ServiceBindListener() {
-
-            @Override
-            public void onServiceBoundError(Throwable throwable) {
-                orderManagerServiceBinded = false;
-
-                Toast.makeText(getApplicationContext(),
-                        String.format("Erro fazendo bind do serviço de ordem -> %s",
-                                throwable.getMessage()), Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onServiceBound() {
-                orderManagerServiceBinded = true;
-            }
-
-            @Override
-            public void onServiceUnbound() {
-                orderManagerServiceBinded = false;
-            }
-        });
+    protected void configSDK(CieloSdkUtil.SdkListener listener) {
+        this.orderManager = new OrderManager(getCredentials(), this);
+        this.orderManager.bind(this, new CieloSdkUtil.BindListener(listener));
     }
 }
