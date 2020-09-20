@@ -10,9 +10,6 @@ public class PedidoWithPagamentos implements Serializable {
     @Embedded
     public Pedido pedido;
 
-    @Relation(
-            parentColumn = "id",
-            entityColumn = "pedidoId"
-    )
+    @Relation(parentColumn = "id", entityColumn = "pedidoId")
     public List<Pagamento> pagamentos;
 }

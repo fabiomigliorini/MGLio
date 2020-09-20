@@ -3,8 +3,6 @@ package br.com.mgpapelaria.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import br.com.mgpapelaria.activity.MainActivity;
-
 public class SharedPreferencesHelper {
     public static final String NAME = "MG_Pref";
     public static final String TOKEN = "token";

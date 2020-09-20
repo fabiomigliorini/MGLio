@@ -1,15 +1,12 @@
 package br.com.mgpapelaria.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
@@ -105,7 +101,6 @@ public class TransacaoActivity extends AppCompatActivity {
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
     private boolean sincronizadoValorInicial = false;
-    private SharedPreferences sharedPref;
     private PrinterListener printerListener;
 
     @Override
@@ -166,7 +161,6 @@ public class TransacaoActivity extends AppCompatActivity {
         this.printerListener = new PrinterListener() {
             @Override
             public void onPrintSuccess() {
-                FirebaseCrashlytics.getInstance().recordException(new Exception("PrinterListener.onPrintSuccess"));
             }
 
             @Override
@@ -176,6 +170,7 @@ public class TransacaoActivity extends AppCompatActivity {
 
             @Override
             public void onWithoutPaper() {
+                runOnUiThread(() -> mostrarMensagemSemPapel());
                 FirebaseCrashlytics.getInstance().recordException(new Exception("PrinterListener.onWithoutPaper"));
             }
         };
@@ -462,6 +457,10 @@ public class TransacaoActivity extends AppCompatActivity {
         pm.printText("\n\n\n\n", getLeftStyle(), printerListener);
         bottomSheetDialogFragment.dismiss();
 
+    }
+
+    private void mostrarMensagemSemPapel(){
+        Toast.makeText(TransacaoActivity.this, "Sem papel", Toast.LENGTH_SHORT).show();
     }
 
     protected void configSDK(CieloSdkUtil.SdkListener listener) {
