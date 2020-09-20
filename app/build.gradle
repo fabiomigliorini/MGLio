@@ -10,8 +10,8 @@ android {
         applicationId "br.com.mgpapelaria"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 64
-        versionName "1.0.63.alpha"
+        versionCode 69
+        versionName "1.0.68.alpha"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,4 +53,6 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:2.2.5"
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+    implementation('com.journeyapps:zxing-android-embedded:4.1.0') { transitive = false }
+    implementation 'com.google.zxing:core:3.3.0'
 }
