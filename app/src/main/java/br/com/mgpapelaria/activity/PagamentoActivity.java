@@ -2,6 +2,7 @@ package br.com.mgpapelaria.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -63,6 +64,10 @@ public class PagamentoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pagamento);
         ButterKnife.bind(this);
+
+       /* getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);*/
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
         AppDatabase db = AppDatabase.build(this);
