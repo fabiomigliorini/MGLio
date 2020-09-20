@@ -33,16 +33,14 @@ import java.util.List;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.adapter.TransacaoPagamentosAdapter;
-import br.com.mgpapelaria.api.ApiService;
-import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.dao.PagamentoDAO;
 import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.fragment.TransacaoBottomSheetFragment;
-import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
+import br.com.mgpapelaria.service.SendOrderServie;
 import br.com.mgpapelaria.util.CieloSdkUtil;
 import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
@@ -57,9 +55,6 @@ import cielo.sdk.order.cancellation.CancellationListener;
 import cielo.sdk.order.payment.Payment;
 import cielo.sdk.order.payment.PaymentError;
 import cielo.sdk.printer.PrinterManager;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 import static br.com.mgpapelaria.util.PrintHelper.formatCNPJ;
@@ -97,7 +92,7 @@ public class TransacaoActivity extends AppCompatActivity {
     private Pedido transacao;
     private List<Pagamento> pagamentos;
     private OrderManager orderManager = null;
-    private ApiService apiService;
+    private SendOrderServie sendOrderServie;
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
     private boolean sincronizadoValorInicial = false;
@@ -109,7 +104,7 @@ public class TransacaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transacao);
         ButterKnife.bind(this);
 
-        this.apiService = RetrofitUtil.createService(this, ApiService.class);
+        this.sendOrderServie = new SendOrderServie(this);
 
         AppDatabase database = AppDatabase.build(this);
         this.pedidoDAO = database.pedidoDAO();
@@ -227,7 +222,13 @@ public class TransacaoActivity extends AppCompatActivity {
                 AsyncTask.execute(() -> {
                     int pedidoId = pedidoDAO.getPedidoIdByOrderId(transacao.order.getId());
                     PedidoWithPagamentos pedidoWithPagamentos = pedidoDAO.getWithPagamentosById(pedidoId);
-                    this.sendOrder(pedidoWithPagamentos, mDialog);
+                    this.sendOrderServie.sendAsync(pedidoWithPagamentos, result -> {
+                        if(result){
+                            transacao.sincronizado = true;
+                            invalidateOptionsMenu();
+                        }
+                        mDialog.dismiss();
+                    });
                 });
                 return true;
         }
@@ -262,7 +263,7 @@ public class TransacaoActivity extends AppCompatActivity {
                     alteraStatusOrder(order);
                     persistePagamento(pedidoId, order);
                     PedidoWithPagamentos pedidoWithPagamentos = pedidoDAO.getWithPagamentosById(pedidoId);
-                    sendOrder(pedidoWithPagamentos);
+                    sendOrderServie.sendAsync(pedidoWithPagamentos);
                     setResult(CANCELAMENTO_EFETUADO_RESULT);
                     finish();
                 });
@@ -311,45 +312,7 @@ public class TransacaoActivity extends AppCompatActivity {
         this.pagamentoDAO.insertPagamento(pagamento);
     }
 
-    private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos){
-        sendOrder(pedidoWithPagamentos, null);
-    }
 
-    private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos, ProgressDialog dialog){
-        this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.code() == 200){
-                    AsyncTask.execute(() -> {
-                        pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), true);
-                    });
-                    transacao.sincronizado = true;
-                    invalidateOptionsMenu();
-                    if(dialog != null){
-                        dialog.dismiss();
-                    }
-                }else{
-                    AsyncTask.execute(() -> {
-                        pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), false);
-                    });
-                    if(dialog != null){
-                        dialog.dismiss();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                AsyncTask.execute(() -> {
-                    pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), false);
-                });
-                if(dialog != null){
-                    dialog.dismiss();
-                }
-            }
-
-        });
-    }
 
     private void imprimirSegundaViaCliente(boolean viaCliente, Payment payment, BottomSheetDialogFragment bottomSheetDialogFragment){
         PrinterManager pm = new PrinterManager(this);

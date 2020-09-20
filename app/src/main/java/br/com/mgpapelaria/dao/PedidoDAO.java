@@ -18,6 +18,9 @@ public interface PedidoDAO {
     @Query("SELECT * FROM Pedido WHERE id = :id")
     PedidoWithPagamentos getWithPagamentosById(int id);
 
+    @Query("SELECT * FROM Pedido WHERE sincronizado=0 ORDER BY id ASC")
+    List<PedidoWithPagamentos> getAllNaoSincronizadosWithPagamentos();
+
     @Query("SELECT id FROM Pedido WHERE orderId = :orderId")
     int getPedidoIdByOrderId(String orderId);
 
