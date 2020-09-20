@@ -48,6 +48,7 @@ import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import br.com.mgpapelaria.util.CieloSdkUtil;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -138,7 +139,6 @@ public class TransacaoActivity extends AppCompatActivity {
         this.cancelarButton.setEnabled(false);
         this.configSDK(() -> this.cancelarButton.setEnabled(true));
 
-        this.sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
         this.sincronizadoValorInicial = transacao.sincronizado;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -310,8 +310,8 @@ public class TransacaoActivity extends AppCompatActivity {
         Pagamento pagamento = new Pagamento();
         pagamento.pedidoId = pedidoId;
         pagamento.paymentId = order.getPayments().get(1).getId();
-        pagamento.userId = this.sharedPref.getInt("userId", -1);
-        pagamento.userName = this.sharedPref.getString("user", null);
+        pagamento.userId = SharedPreferencesHelper.getUserId(this);
+        pagamento.userName = SharedPreferencesHelper.getUser(this);
 
         this.pagamentoDAO.insertPagamento(pagamento);
     }

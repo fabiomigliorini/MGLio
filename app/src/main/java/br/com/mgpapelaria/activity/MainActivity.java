@@ -15,6 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,7 +27,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
-    private SharedPreferences sharedPref;
 
     @BindView(R.id.usuario_text_view)
     TextView usuarioTextView;
@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
-        String token = sharedPref.getString("token", null);
+        String token = SharedPreferencesHelper.getToken(this);
 
         if(token == null){
             Intent intent = new Intent(this, LoginActivity.class);
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
 
-        String usuario = sharedPref.getString("user", null);
+        String usuario = SharedPreferencesHelper.getUser(this);
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
         this.usuarioTextView.setText(usuario);
         this.numeroLogicoTextView.setText(numeroLogico);
@@ -104,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
         this.apiService.logout().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.clear().apply();
+                SharedPreferencesHelper.clear(MainActivity.this);
 
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
@@ -119,30 +117,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    /*@OnClick(R.id.teste_requisicao_button)
-    void onTesteRequisicaoButtonClicked(){
-        this.apiService.selectFilial().enqueue(new Callback<List<Filial>>() {
-            @Override
-            public void onResponse(Call<List<Filial>> call, Response<List<Filial>> response) {
-                if(response.code() == 200){
-                    for(Filial filial : response.body()){
-                        Log.i("FILIAL", filial.getLabel());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Filial>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    @OnClick(R.id.teste_cores_button)
-    void onTesteCoresButtonClicked(){
-        Intent intent = new Intent(this, TesteCoresActivity.class);
-        startActivity(intent);
-    }*/
 
 }

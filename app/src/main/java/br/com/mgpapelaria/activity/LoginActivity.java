@@ -18,6 +18,7 @@ import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.model.LoginRequest;
 import br.com.mgpapelaria.model.LoginResponse;
 import br.com.mgpapelaria.model.UsuarioResponse;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.senha_edit_text)
     TextInputEditText senhaEditText;
     private ApiService apiService;
-    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        this.sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
-        String token = this.sharedPref.getString("token", null);
+        String token = SharedPreferencesHelper.getToken(this);
         if(token != null){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -73,9 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if(response.code() == 200){
                         String token = response.body().getToken();
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("token", token);
-                        editor.apply();
+                        SharedPreferencesHelper.setToken(LoginActivity.this, token);
 
                         getUserInfo(token, new UserInfoCallback() {
                             @Override
@@ -118,10 +115,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<UsuarioResponse> call, Response<UsuarioResponse> response) {
                 if(response.code() == 200){
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("user", response.body().getUser().getUsuario());
-                    editor.putInt("userId", response.body().getUser().getId());
-                    editor.apply();
+                    SharedPreferencesHelper.setUser(
+                            LoginActivity.this,
+                            response.body().getUser().getUsuario(),
+                            response.body().getUser().getId()
+                    );
+
                     callback.onResponse();
                 }else{
                     callback.onError();

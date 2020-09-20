@@ -34,6 +34,7 @@ import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import br.com.mgpapelaria.util.CieloSdkUtil;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.ButterKnife;
 import cielo.orders.domain.CheckoutRequest;
 import cielo.orders.domain.Order;
@@ -58,7 +59,6 @@ public class PagamentoActivity extends AppCompatActivity {
     private ApiService apiService;
     private PedidoDAO pedidoDAO;
     private PagamentoDAO pagamentoDAO;
-    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +80,6 @@ public class PagamentoActivity extends AppCompatActivity {
         if(bundle.containsKey(ORDER)){
             this.order = (Order) bundle.getSerializable(ORDER);
         }
-
-        sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -222,7 +220,7 @@ public class PagamentoActivity extends AppCompatActivity {
 
     private PedidoWithPagamentos persistOrder(Order order){
         Pedido pedido = new Pedido();
-        pedido.userId = sharedPref.getInt("userId", -1);
+        pedido.userId = SharedPreferencesHelper.getUserId(this);
         pedido.orderId = order.getId();
 
         String nome = order.getPayments().get(0).getPaymentFields().get("clientName");
@@ -241,8 +239,8 @@ public class PagamentoActivity extends AppCompatActivity {
         Pagamento pagamento = new Pagamento();
         pagamento.pedidoId = (int)pedidoId;
         pagamento.paymentId = order.getPayments().get(0).getId();
-        pagamento.userId = sharedPref.getInt("userId", -1);
-        pagamento.userName = sharedPref.getString("user", null);
+        pagamento.userId = SharedPreferencesHelper.getUserId(this);
+        pagamento.userName = SharedPreferencesHelper.getUser(this);
 
         this.pagamentoDAO.insertPagamento(pagamento);
 

@@ -23,6 +23,7 @@ import br.com.mgpapelaria.adapter.VendasAbertasAdapter;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
 import br.com.mgpapelaria.model.VendaAberta;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,8 +58,7 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SharedPreferences sharedPref = getSharedPreferences("MG_Pref", Context.MODE_PRIVATE);
-        String token = sharedPref.getString("token", null);
+        String token = SharedPreferencesHelper.getToken(this);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
 
