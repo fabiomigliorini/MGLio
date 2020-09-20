@@ -89,6 +89,8 @@ public class TransacaoActivity extends AppCompatActivity {
     TextView priceTextView;
     @BindView(R.id.brand_imageView)
     AppCompatImageView brandImageView;
+    @BindView(R.id.mask_text_view)
+    TextView maskTextView;
     @BindView(R.id.cancelar_button)
     MaterialButton cancelarButton;
     @BindView(R.id.payments_recylcer_view)
@@ -150,6 +152,14 @@ public class TransacaoActivity extends AppCompatActivity {
         this.brandImageView.setImageDrawable(getBrandImage(primeiroPagamento.getBrand()));
         this.itemDescricaoTextView.setText(transacao.order.getItems().get(0).getName());
         this.priceTextView.setText(nf.format(new BigDecimal(transacao.order.getPrice()).divide(new BigDecimal(100))));
+
+        String mask = primeiroPagamento.getMask();
+        if(mask.equals("mock_mask")){
+            mask = "000000-0000";
+        }
+        String maskFormatted = mask.substring(0, 4) + " " + mask.substring(4,6) + "** **** " + mask.substring(7, 11);
+
+        this.maskTextView.setText(maskFormatted);
 
         this.initRecyclerView();
 
