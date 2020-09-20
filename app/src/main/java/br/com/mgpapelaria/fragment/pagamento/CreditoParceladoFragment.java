@@ -71,7 +71,7 @@ public class CreditoParceladoFragment extends PagamentoBaseFragment {
         String valor = this.quantidadeEditText.getText().toString();
         if(!valor.equals("")){
             int valorAtual = Integer.parseInt(valor);
-            if (valorAtual < 99) {
+            if (valorAtual < 6) {
                 valorAtual++;
                 this.quantidadeEditText.setText(String.valueOf(valorAtual));
                 this.quantidadeEditText.setSelection(valorAtual > 9 ? 2 :1);
