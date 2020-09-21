@@ -334,6 +334,9 @@ public class TransacaoActivity extends AppCompatActivity {
 
         pm.printText("CNPJ " + formatCNPJ(payment.getPaymentFields().get("document")), getLeftStyle(), printerListener);
         pm.printText(payment.getPaymentFields().get("merchantName"), getLeftStyle(true), printerListener);
+        if(!viaCliente){
+            pm.printText(payment.getPaymentFields().get("merchantAddress"), getLeftStyle(), printerListener);
+        }
         pm.printText(payment.getPaymentFields().get("cityState"), getLeftStyle(), printerListener);
 
         boolean cancelamento = false;
@@ -350,13 +353,15 @@ public class TransacaoActivity extends AppCompatActivity {
 
             pm.printMultipleColumnText(text1, getColumnStyle(true), printerListener);
         }else {
-            String[] text2 = new String[] {
+            /*String[] text2 = new String[] {
                     payment.getMerchantCode(),
                     "DOC="+payment.getCieloCode(),
                     "AUT=" + payment.getAuthCode()
-            };
+            };*/
+            String fullText = payment.getMerchantCode() + "  " + "DOC="+payment.getCieloCode() + "  " + "AUT=" + payment.getAuthCode();
 
-            pm.printMultipleColumnText(text2, getColumnStyle(), printerListener);
+            //pm.printMultipleColumnText(text2, getColumnStyle(), printerListener);
+            pm.printText(fullText, getCenterStyle(), printerListener);
 
             if(!cancelamento){
                 String[] text3 = new String[]{
@@ -366,12 +371,14 @@ public class TransacaoActivity extends AppCompatActivity {
                 };
                 pm.printMultipleColumnText(text3, getColumnStyle(true), printerListener);
             }else {
-                String[] text4 = new String[]{
+                /*String[] text4 = new String[]{
                         formatDateTime(payment.getRequestDate()),
                         "OPER=SUPERVISOR",
                         "ONL-C"
                 };
-                pm.printMultipleColumnText(text4, getColumnStyle(true), printerListener);
+                pm.printMultipleColumnText(text4, getColumnStyle(true), printerListener);*/
+                String text4 = formatDateTime(payment.getRequestDate()) + "   OPER=SUPERVISOR        ONL-C";
+                pm.printText(text4, getLeftStyle(true), printerListener);
             }
         }
 
@@ -384,36 +391,78 @@ public class TransacaoActivity extends AppCompatActivity {
         pm.printText("*REIMPRESSÃO*", getCenterStyle(), printerListener);
         pm.printText(" ", getLeftStyle(), printerListener);
 
-        String[] linhaValor = new String[] {
-                cancelamento ? "VALOR CANCELAMENTO:" : "VALOR:",
-                formatValor(payment.getAmount())
-        };
-
-        pm.printMultipleColumnText(linhaValor, getColumnStyle(true, true, false, true), printerListener);
-
         if(cancelamento){
+            String linhaValor = "VALOR CANCELAMENTO:                                     " + formatValor(payment.getAmount());
+            pm.printText(linhaValor, getLeftStyle(true), printerListener);
+
+            if(viaCliente && payment.getBrand().equals("TICKET CULTURA")){
+                String[] linhaSaldo = new String[] {
+                        "SALDO DISP.",
+                        formatValor(Long.valueOf(payment.getPaymentFields().get("avaiableBalance")))
+                };
+
+                pm.printMultipleColumnText(linhaSaldo, getColumnStyle(false, true, false, true), printerListener);
+                pm.printText("SALDO SUJEITO A ALTERACAO ATE", getLeftStyle(), printerListener);
+                pm.printText("O FINAL DO DIA", getLeftStyle(), printerListener);
+            }
+
             pm.printText("DADOS DA VENDA ORIGINAL", getLeftStyle(), printerListener);
+
             String[] text5 = new String[] {
-                    "DOC="+payment.getPaymentFields().get("originalTransactionalId"),
-                    payment.getPaymentFields().get("originalTransactionalDate"),
-                    ""
+                    "DOC="+payment.getPaymentFields().get("originalTransactionId"),
+                    payment.getPaymentFields().get("originalTransactionDate"),
+                    "."
             };
             pm.printMultipleColumnText(text5, getColumnStyle(), printerListener);
-            String textoCancelamento = "SOLICITACAO DE CANCELAMENTO REGISTRADA. APOS A APROVACAOO, " +
-                    "O CREDITO AO PORTADOR DO CARTAO SERA FEITO PELO BANCO EMISSOR.";
-            pm.printText(textoCancelamento, getCenterStyle(), printerListener);
+            /*String text5 = "DOC="+payment.getPaymentFields().get("originalTransactionId") + " " +
+                    payment.getPaymentFields().get("originalTransactionDate");
+            pm.printText(text5, getLeftStyle(), printerListener);*/
+
+            pm.printText("SOLICITACAO DE CANCELAMENTO REGISTRA", getCenterStyle(), printerListener);
+            pm.printText("DA. APOS A APROVACAO O CREDITO AO,", getCenterStyle(), printerListener);
+            pm.printText("PORTADOR DO CARTAO SERA FEITO PELO", getCenterStyle(), printerListener);
+            pm.printText("BANCO EMISSOR.", getCenterStyle(), printerListener);
+            String text7 = payment.getPaymentFields().get("clientName");
+            if(text7 != null){
+                text7 = text7.trim();
+                pm.printText(text7, getCenterStyle(), printerListener);
+            }
         }else{
+            String[] linhaValor = new String[] {
+                    "VALOR:",
+                    formatValor(payment.getAmount())
+            };
+
+            pm.printMultipleColumnText(linhaValor, getColumnStyle(true, true, false, true), printerListener);
+
             if(!viaCliente){
-                if(Boolean.getBoolean(payment.getPaymentFields().get("hasPassword"))){
+                if(payment.getPaymentFields().get("hasPassword").equals("true")){
+                    pm.printText(" ", getLeftStyle(), printerListener);
                     String text6 = "TRANSACAO AUTORIZADA COM SENHA";
                     pm.printText(text6, getCenterStyle(), printerListener);
                     String text7 = payment.getPaymentFields().get("clientName");
-                    pm.printText(text7, getCenterStyle(), printerListener);
+                    if(text7 != null){
+                        text7 = text7.trim();
+                        pm.printText(text7, getCenterStyle(), printerListener);
+                    }
                 }
-                String text8 = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
-                pm.printText(text8, getCenterStyle(), printerListener);
+                /*String text8 = "A0000000000000" + "-" + payment.getPaymentFields().get("finalCryptogram");
+                pm.printText(text8, getCenterStyle(), printerListener);*/
                 String text9 = payment.getPaymentFields().get("cardLabelApplication");
-                pm.printText(text9, getCenterStyle(), printerListener);
+                if(text9 != null){
+                    pm.printText(text9, getCenterStyle(), printerListener);
+                }
+            }else{
+                if(payment.getBrand().equals("TICKET CULTURA")){
+                    pm.printText("SALDO SUJEITO A ALTERACAO ATE", getLeftStyle(), printerListener);
+                    pm.printText("O FINAL DO DIA", getLeftStyle(), printerListener);
+                    String[] linhaSaldo = new String[] {
+                            "SALDO DISP.",
+                            formatValor(Long.valueOf(payment.getPaymentFields().get("avaiableBalance")))
+                    };
+
+                    pm.printMultipleColumnText(linhaSaldo, getColumnStyle(false, true, false, true), printerListener);
+                }
             }
         }
 
