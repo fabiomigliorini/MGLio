@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 mDialog.dismiss();
-                                finish();
+                                LoginActivity.this.finish();
                             }
 
                             @Override
