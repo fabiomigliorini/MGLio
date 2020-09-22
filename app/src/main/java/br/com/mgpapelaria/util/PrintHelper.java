@@ -47,7 +47,7 @@ public class PrintHelper {
     }
 
     public static List<Map<String, Integer>> getColumnStyle(boolean left, boolean center, boolean right){
-        return getColumnStyle(false, true, true, true);
+        return getColumnStyle(false, left, center, right);
     }
 
     public static List<Map<String, Integer>> getColumnStyle(boolean bold, boolean left, boolean center, boolean right){
