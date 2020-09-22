@@ -65,8 +65,6 @@ public class PagamentoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pagamento);
         ButterKnife.bind(this);
 
-       /* getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);*/
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
@@ -135,8 +133,6 @@ public class PagamentoActivity extends AppCompatActivity {
                 break;
             case FormaPagamentoFragment.VALE_CULTURA_OPTION:
                 proximoFragment = null;
-
-                //TODO: Ver qual o código correto para VOUCHER CULTURA
                 defineFormaDePagamento(PaymentCode.VOUCHER_ALIMENTACAO, null);
                 break;
             default:
@@ -151,9 +147,6 @@ public class PagamentoActivity extends AppCompatActivity {
 
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
         orderManager.placeOrder(this.order);
-
-        /*HashMap<String, Object> options = new HashMap<>();
-        options.put("teste", "valorTeste");*/
 
         PaymentListener paymentListener = new PaymentListener() {
 
@@ -178,7 +171,6 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                //Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
                 order.markAsRejected();
                 orderManager.updateOrder(order);
                 finish();
@@ -186,7 +178,6 @@ public class PagamentoActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull PaymentError paymentError) {
-                //Toast.makeText(getApplicationContext(), "Erro", Toast.LENGTH_SHORT).show();
                 FirebaseCrashlytics.getInstance().recordException(new Exception(new Gson().toJson(paymentError)));
                 order.cancel();
                 orderManager.updateOrder(order);
@@ -200,7 +191,6 @@ public class PagamentoActivity extends AppCompatActivity {
                     .orderId(this.order.getId())
                     .amount(this.valorPago)
                     .paymentCode(paymentCode);
-            //.options(options);
 
             if(paymentCode == PaymentCode.CREDITO_PARCELADO_LOJA){
                 requestBuilder = requestBuilder.installments((int)args);

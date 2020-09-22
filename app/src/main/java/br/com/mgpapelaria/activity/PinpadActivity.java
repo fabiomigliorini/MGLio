@@ -67,8 +67,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         this.calcDialog.getSettings().setNumberFormat(NumberFormat.getCurrencyInstance());
         this.calcDialog.getSettings().setSignBtnShown(false);
         this.calcDialog.getSettings().setNumpadLayout(CalcNumpadLayout.PHONE);
-        //this.calcDialog.getSettings().setMinValue(new BigDecimal(0));
-        //this.calcDialog.getSettings().setMinValue(new BigDecimal(999999999));
 
         this.setValor(this.valorLimpo);
         this.configSDK(() -> pagarButton.setEnabled(true));
@@ -181,7 +179,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
 
     @OnClick(R.id.calculator_button)
     void onCalculatorButtonClicked(){
-        //calcDialog.getSettings().
         calcDialog.getSettings().setInitialValue(new BigDecimal(this.valorLimpo).divide(new BigDecimal(100)));
         calcDialog.show(getSupportFragmentManager(), "calc_dialog");
     }

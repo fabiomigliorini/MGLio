@@ -18,7 +18,7 @@ public class CieloSdkUtil {
     }
 
     public static class BindListener implements ServiceBindListener{
-        private SdkListener listener;
+        private final SdkListener listener;
 
         public BindListener(SdkListener listener) {
             this.listener = listener;

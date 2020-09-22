@@ -1,8 +1,8 @@
 package br.com.mgpapelaria.model;
 
 public class LoginRequest {
-    private String usuario;
-    private String senha;
+    private final String usuario;
+    private final String senha;
 
     public LoginRequest(String usuario, String senha) {
         this.usuario = usuario;

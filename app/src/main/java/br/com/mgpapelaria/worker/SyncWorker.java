@@ -16,8 +16,8 @@ import br.com.mgpapelaria.service.SendOrderServie;
 
 public class SyncWorker extends Worker {
     public static String TAG = "SyncWorker";
-    private PedidoDAO pedidoDAO;
-    private SendOrderServie sendOrderServie;
+    private final PedidoDAO pedidoDAO;
+    private final SendOrderServie sendOrderServie;
 
     public SyncWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);

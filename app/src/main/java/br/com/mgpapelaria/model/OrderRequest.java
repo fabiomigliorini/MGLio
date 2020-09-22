@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 
 public class OrderRequest implements Serializable {
-    private String order;
-    private String pagamentos;
+    private final String order;
+    private final String pagamentos;
 
     public OrderRequest(PedidoWithPagamentos pedido) {
         this.order = new Gson().toJson(pedido.pedido.order);

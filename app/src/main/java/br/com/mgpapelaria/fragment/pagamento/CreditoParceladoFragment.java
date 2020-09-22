@@ -25,7 +25,7 @@ public class CreditoParceladoFragment extends PagamentoBaseFragment {
     TextInputEditText quantidadeEditText;
 
     public CreditoParceladoFragment() {
-        // Required empty public constructor
+
     }
 
     public static CreditoParceladoFragment newInstance(String param1, String param2) {

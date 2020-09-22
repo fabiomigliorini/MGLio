@@ -88,7 +88,7 @@ public class TransacaoActivity extends AppCompatActivity {
     @BindView(R.id.payments_recylcer_view)
     RecyclerView pagamentosRecyclerView;
     private TransacaoPagamentosAdapter pagamentosRecyclerViewAdapter;
-    private NumberFormat nf = DecimalFormat.getCurrencyInstance();
+    private final NumberFormat nf = DecimalFormat.getCurrencyInstance();
     private Pedido transacao;
     private List<Pagamento> pagamentos;
     private OrderManager orderManager = null;
@@ -270,7 +270,7 @@ public class TransacaoActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                //Toast.makeText(getApplicationContext(),"A operação foi cancelada.", Toast.LENGTH_LONG).show();
+
             }
 
             @Override

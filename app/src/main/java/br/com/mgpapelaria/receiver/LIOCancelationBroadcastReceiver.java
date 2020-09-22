@@ -24,6 +24,7 @@ public class LIOCancelationBroadcastReceiver extends BroadcastReceiver {
                 && SECRET_KEY.equalsIgnoreCase(order.getSecretAccessKey())) {
             //ParcelableTransaction transaction = intent.getExtras().getParcelable(INTENT_TRANSACTION_KEY);
             Log.d("CANCELAMENTO", "A ordem pertence ao meu aplicativo");
+            //TODO: Aqui deve ser chamado quando o pedido é cancelado de fora desse app. Qual o comportamento nesse caso.
         }else {
             Log.d("CANCELAMENTO", "A ordem não pertence ao meu aplicativo. Ignorar");
         }

@@ -12,12 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitUtil {
     public static final String API_BASE_URL = "http://api.mgspa.mgpapelaria.com.br/api/v1/";
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    private static Gson gson = new GsonBuilder()
+    private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static final Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .create();
 
-    private static Retrofit.Builder builder =
+    private static final Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson));

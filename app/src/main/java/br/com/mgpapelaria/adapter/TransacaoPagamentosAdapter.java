@@ -17,8 +17,8 @@ import br.com.mgpapelaria.model.Pagamento;
 import cielo.sdk.order.payment.Payment;
 
 public class TransacaoPagamentosAdapter  extends RecyclerView.Adapter<TransacaoPagamentosAdapter.ViewHolder> {
-    private List<Payment> payments;
-    private List<Pagamento> pagamentos;
+    private final List<Payment> payments;
+    private final List<Pagamento> pagamentos;
     private static ItemClickListener clickListener;
 
     public interface ItemClickListener {

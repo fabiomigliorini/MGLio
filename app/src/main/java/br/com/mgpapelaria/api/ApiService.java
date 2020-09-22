@@ -2,7 +2,6 @@ package br.com.mgpapelaria.api;
 
 import java.util.List;
 
-import br.com.mgpapelaria.model.Filial;
 import br.com.mgpapelaria.model.LoginRequest;
 import br.com.mgpapelaria.model.LoginResponse;
 import br.com.mgpapelaria.model.OrderRequest;
@@ -24,10 +23,6 @@ public interface ApiService {
     @Headers({"Accept:application/json"})
     @POST("lio/order")
     Call<Void> updateOrder(@Body OrderRequest order);
-
-    @Headers({"Accept:application/json"})
-    @GET("select/filial")
-    Call<List<Filial>> selectFilial();
 
     @Headers({"Accept:application/json"})
     @POST("auth/login")

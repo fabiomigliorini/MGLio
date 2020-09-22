@@ -20,7 +20,7 @@ import br.com.mgpapelaria.model.VendaAberta;
 public class VendasAbertasAdapter extends RecyclerView.Adapter<VendasAbertasAdapter.ViewHolder> {
     private List<VendaAberta> vendas;
     private static ItemClickListener clickListener;
-    private NumberFormat nf = DecimalFormat.getCurrencyInstance();
+    private final NumberFormat nf = DecimalFormat.getCurrencyInstance();
 
     public interface ItemClickListener {
         void onClickListener(View view, int position);

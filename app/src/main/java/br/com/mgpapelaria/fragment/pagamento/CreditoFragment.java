@@ -22,7 +22,7 @@ public class CreditoFragment extends PagamentoBaseFragment {
     }
 
     public CreditoFragment() {
-        // Required empty public constructor
+
     }
 
     public CreditoFragment(Long valor, OptionListener listener) {
@@ -69,7 +69,7 @@ public class CreditoFragment extends PagamentoBaseFragment {
             builder.create().show();
             return;
         }
-        //this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_PARCELADO_LOJA, null);
+
         if(this.optionListener != null){
             this.optionListener.onOptionClickListener(CREDITO_PARCELADO_OPTION);
         }

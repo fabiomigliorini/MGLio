@@ -16,8 +16,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SendOrderServie {
-    private ApiService apiService;
-    private PedidoDAO pedidoDAO;
+    private final ApiService apiService;
+    private final PedidoDAO pedidoDAO;
 
     public SendOrderServie(Context context) {
         this.pedidoDAO = AppDatabase.build(context).pedidoDAO();
@@ -37,9 +37,6 @@ public class SendOrderServie {
             Response<Void> response = this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).execute();
             if(response.code() == 200){
                 pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), true);
-                /*AsyncTask.execute(() -> {
-                    pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), true);
-                });*/
                 return true;
             }
             return false;

@@ -127,7 +127,6 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<VendaAberta>> call, Throwable t) {
-                //Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                 swipeRefreshLayout.setRefreshing(false);
                 vendasRecyclerView.setVisibility(View.INVISIBLE);
                 connectionErrorView.setVisibility(View.VISIBLE);

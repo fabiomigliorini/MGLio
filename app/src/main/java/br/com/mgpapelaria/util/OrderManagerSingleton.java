@@ -33,7 +33,6 @@ public class OrderManagerSingleton {
                 @Override
                 public void onServiceBound() {
                     orderManagerServiceBinded = true;
-                    //orderManager.createDraftOrder("REFERENCIA DA ORDEM");
                 }
 
                 @Override

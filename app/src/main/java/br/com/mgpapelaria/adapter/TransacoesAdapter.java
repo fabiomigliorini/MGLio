@@ -23,7 +23,7 @@ import br.com.mgpapelaria.model.Pedido;
 public class TransacoesAdapter extends RecyclerView.Adapter<TransacoesAdapter.ViewHolder> {
 private List<Pedido> transacoes;
 private static ItemClickListener clickListener;
-private NumberFormat nf = DecimalFormat.getCurrencyInstance();
+private final NumberFormat nf = DecimalFormat.getCurrencyInstance();
 
 public interface ItemClickListener {
     void onClickListener(View view, int position);

@@ -23,7 +23,7 @@ public class FormaPagamentoFragment extends Fragment {
     }
 
     public FormaPagamentoFragment() {
-        // Required empty public constructor
+
     }
 
     public static FormaPagamentoFragment newInstance(String param1, String param2) {

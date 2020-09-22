@@ -17,15 +17,12 @@ import okhttp3.ResponseBody;
 import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
-    //private ApiService apiService;
-    private Context context;
+    private final Context context;
     private String token;
 
     public TokenAuthenticator(Context context, String token) {
         this.context = context;
         this.token = token;
-        //String token = this.sharedPref.getString("token", null);
-        //this.apiService = RetrofitUtil.createService(context, ApiService.class, token);
     }
 
     @Override

@@ -14,8 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cielo.orders.domain.Order;
 
-;
-
 public class TransacaoJsonActivity extends AppCompatActivity {
     public static final String TRANSACAO = "transacao";
     @BindView(R.id.transacao_json_text_view)
