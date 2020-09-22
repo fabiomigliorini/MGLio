@@ -34,6 +34,18 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.senha_edit_text)
     TextInputEditText senhaEditText;
     private ApiService apiService;
+    private Integer valor;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String token = SharedPreferencesHelper.getToken(this);
+        if(token != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +53,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        String token = SharedPreferencesHelper.getToken(this);
-        if(token != null){
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+        if(getIntent() != null){
+            Bundle bundle = getIntent().getExtras();
+            if(bundle != null){
+                if(bundle.getInt(PinpadActivity.VALOR, -1) != -1){
+                    this.valor = bundle.getInt(PinpadActivity.VALOR);
+                }
+            }
         }
 
         this.apiService = RetrofitUtil.createService(this, ApiService.class);
@@ -75,10 +89,19 @@ public class LoginActivity extends AppCompatActivity {
                         getUserInfo(token, new UserInfoCallback() {
                             @Override
                             public void onResponse() {
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent;
+
+                                if(valor != null){
+                                    intent = new Intent(LoginActivity.this, PinpadActivity.class);
+                                    intent.putExtra(PinpadActivity.VALOR, valor);
+                                    intent.setAction("br.com.mgpapelaria.PINPAD");
+                                }else{
+                                    intent = new Intent(LoginActivity.this, MainActivity.class);
+                                }
                                 startActivity(intent);
                                 mDialog.dismiss();
                                 LoginActivity.this.finish();
+                                valor = null;
                             }
 
                             @Override

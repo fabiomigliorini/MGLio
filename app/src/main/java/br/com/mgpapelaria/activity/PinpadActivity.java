@@ -17,10 +17,12 @@ import com.maltaisn.calcdialog.CalcNumpadLayout;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Objects;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.model.VendaAberta;
 import br.com.mgpapelaria.util.CieloSdkUtil;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,6 +34,7 @@ import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 
 public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
+    public static final String VALOR = "valor";
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
@@ -50,12 +53,28 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         this.pagarButton.setEnabled(false);
 
         String titulo = "";
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            if(bundle.containsKey(ListaVendasAbertasActivity.VENDA_ABERTA)){
-                this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
-                titulo = "Venda #" + vendaAberta.getCodNegocio().toString();
-                this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
+
+        if(getIntent() != null){
+            Bundle bundle = getIntent().getExtras();
+            if(bundle != null){
+                if(getIntent().getAction() != null){
+                    if(getIntent().getAction().equals("br.com.mgpapelaria.PINPAD")){
+                        int valor = bundle.getInt(VALOR);
+                        if(SharedPreferencesHelper.getUser(this) == null){
+                            Intent loginIntent = new Intent(this, LoginActivity.class);
+                            loginIntent.putExtra(VALOR, valor);
+                            startActivity(loginIntent);
+                            finish();
+                        }
+                        this.valorLimpo = new BigDecimal(valor).multiply(new BigDecimal(100)).longValue();
+                    }
+                }else{
+                    if(bundle.containsKey(ListaVendasAbertasActivity.VENDA_ABERTA)){
+                        this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
+                        titulo = "Venda #" + vendaAberta.getCodNegocio().toString();
+                        this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
+                    }
+                }
             }
         }
 

@@ -27,7 +27,12 @@
         <activity android:name=".activity.TesteCoresActivity" android:screenOrientation="portrait" />
         <activity android:name=".activity.PagamentoActivity" android:screenOrientation="portrait" />
         <activity android:name=".activity.ListaVendasAbertasActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.PinpadActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activity.PinpadActivity" android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="br.com.mgpapelaria.PINPAD" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
