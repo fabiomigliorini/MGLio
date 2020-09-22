@@ -41,7 +41,7 @@
 
         <receiver android:name=".receiver.LIOCancelationBroadcastReceiver">
             <intent-filter>
-                <action android:name="cielo.action.NOTIFY_TRANSACTION_CANCEL"></action>
+                <action android:name="cielo.action.NOTIFY_TRANSACTION_CANCEL" />
             </intent-filter>
         </receiver>
     </application>

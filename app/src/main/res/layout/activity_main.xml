@@ -65,7 +65,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     app:srcCompat="@drawable/ic_cash_register_48" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     app:srcCompat="@drawable/ic_baseline_attach_money_48" />
 
                 <TextView
@@ -147,7 +147,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     app:srcCompat="@drawable/ic_outline_list_alt_48" />
 
                 <TextView
