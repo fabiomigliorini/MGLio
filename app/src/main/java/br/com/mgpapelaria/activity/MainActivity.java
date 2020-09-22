@@ -2,7 +2,6 @@ package br.com.mgpapelaria.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,13 +20,11 @@ import com.google.zxing.integration.android.IntentResult;
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
 import br.com.mgpapelaria.api.RetrofitUtil;
-import br.com.mgpapelaria.model.PedidoWithPagamentos;
 import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cielo.sdk.info.InfoManager;
-import cielo.sdk.order.OrderManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,10 +37,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.numero_logico_text_view)
     TextView numeroLogicoTextView;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private OrderManager orderManager = null;
-    private static boolean orderManagerServiceBinded = false;
-    /*@BindView(R.id.payments_types_text_view)
-    TextView paymetsTypesTextView;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String token = SharedPreferencesHelper.getToken(this);
 
@@ -74,13 +66,13 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
