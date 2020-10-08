@@ -14,15 +14,16 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiService {
     @Headers({"Accept:application/json", "Content-Type:application/json;"})
-    @GET("lio/vendas-abertas")
-    Call<List<VendaAberta>> getVendasAbertas(@Query("cnpj") String cnpj, @Query("terminal") String terminal);
+    @GET()
+    Call<List<VendaAberta>> getVendasAbertas(@Url String url, @Query("cnpj") String cnpj, @Query("terminal") String terminal);
 
     @Headers({"Accept:application/json"})
-    @POST("lio/order")
-    Call<Void> updateOrder(@Body OrderRequest order);
+    @POST()
+    Call<Void> updateOrder(@Url String url, @Body OrderRequest order);
 
     @Headers({"Accept:application/json"})
     @POST("auth/login")

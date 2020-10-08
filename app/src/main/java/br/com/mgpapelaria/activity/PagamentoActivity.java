@@ -247,7 +247,8 @@ public class PagamentoActivity extends AppCompatActivity {
     }
 
     private void sendOrder(PedidoWithPagamentos pedidoWithPagamentos){
-        this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
+        String url = SharedPreferencesHelper.getBaseUrlUpdateOrder(this);
+        this.apiService.updateOrder(url, new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200){

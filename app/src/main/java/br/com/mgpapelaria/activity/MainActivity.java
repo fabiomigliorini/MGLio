@@ -66,22 +66,27 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
         return true;
-    }*/
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_barcode) {
+        /*if (item.getItemId() == R.id.action_barcode) {
             IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.setOrientationLocked(true);
             integrator.setPrompt("");
             integrator.initiateScan();
             return true;
+        }*/
+
+        if (item.getItemId() == R.id.action_options) {
+            Intent intent = new Intent(this, OptionsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

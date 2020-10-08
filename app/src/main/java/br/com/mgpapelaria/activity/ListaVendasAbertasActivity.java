@@ -106,12 +106,13 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
 
     @OnClick(R.id.retry_button)
     void onRetryButtonClicked(){
-        this.onRefreshButtonClicked();
+        this    .onRefreshButtonClicked();
     }
 
     private void buscaVendasAbertas(){
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
-        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas("04576775000241", "686052");
+        String url = SharedPreferencesHelper.getBaseUrlListVendasAbertas(this);
+        Call<List<VendaAberta>> vendas = this.apiService.getVendasAbertas(url, "04576775000241", "686052");
         vendas.enqueue(new Callback<List<VendaAberta>>() {
             @Override
             public void onResponse(Call<List<VendaAberta>> call, Response<List<VendaAberta>> response) {

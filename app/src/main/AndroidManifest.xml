@@ -3,32 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="br.com.mgpapelaria">
 
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
-
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activity.LoginActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.TransacaoJsonActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.TransacaoActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.ListaTransacoesActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.TesteCoresActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.PagamentoActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.ListaVendasAbertasActivity" android:screenOrientation="portrait" />
-        <activity android:name=".activity.PinpadActivity" android:exported="true" android:screenOrientation="portrait" />
-        <activity android:name=".activity.MainActivity" android:exported="true" android:screenOrientation="portrait">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activity.OptionsActivity"></activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TransacaoJsonActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TransacaoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ListaTransacoesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TesteCoresActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PagamentoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ListaVendasAbertasActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PinpadActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,14 +66,12 @@
                 <action android:name="cielo.action.NOTIFY_TRANSACTION_CANCEL" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receiver.StartAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

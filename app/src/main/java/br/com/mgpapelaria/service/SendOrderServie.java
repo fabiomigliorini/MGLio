@@ -11,6 +11,7 @@ import br.com.mgpapelaria.dao.PedidoDAO;
 import br.com.mgpapelaria.database.AppDatabase;
 import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
+import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,8 +19,10 @@ import retrofit2.Response;
 public class SendOrderServie {
     private final ApiService apiService;
     private final PedidoDAO pedidoDAO;
+    private final Context context;
 
     public SendOrderServie(Context context) {
+        this.context = context;
         this.pedidoDAO = AppDatabase.build(context).pedidoDAO();
         this.apiService = RetrofitUtil.createService(context, ApiService.class);
     }
@@ -34,7 +37,8 @@ public class SendOrderServie {
 
     public boolean sendSync(PedidoWithPagamentos pedidoWithPagamentos) {
         try {
-            Response<Void> response = this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).execute();
+            String url = SharedPreferencesHelper.getBaseUrlUpdateOrder(context);
+            Response<Void> response = this.apiService.updateOrder(url, new OrderRequest(pedidoWithPagamentos)).execute();
             if(response.code() == 200){
                 pedidoDAO.updatePedidoSincronizado(pedidoWithPagamentos.pedido.order.getId(), true);
                 return true;
@@ -46,7 +50,8 @@ public class SendOrderServie {
     }
 
     public void sendAsync(PedidoWithPagamentos pedidoWithPagamentos, SendOrderListner listner){
-        this.apiService.updateOrder(new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
+        String url = SharedPreferencesHelper.getBaseUrlUpdateOrder(context);
+        this.apiService.updateOrder(url, new OrderRequest(pedidoWithPagamentos)).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 boolean result = false;
