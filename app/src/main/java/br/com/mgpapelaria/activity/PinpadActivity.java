@@ -46,7 +46,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toast.makeText(this, "PinpadActivity", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pinpad);
         ButterKnife.bind(this);
@@ -85,7 +84,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         this.calcDialog.getSettings().setNumpadLayout(CalcNumpadLayout.PHONE);
 
         this.setValor(this.valorLimpo);
-        this.configSDK(() -> pagarButton.setEnabled(true));
+        this.initConfigSDK();
     }
 
     @Override
@@ -205,6 +204,15 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
         intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
         startActivityForResult(intent, PAGAMENTO_REQUEST);
+    }
+
+    private void initConfigSDK(){
+        this.configSDK(() -> {
+            if(this.orderManager == null){
+                this.initConfigSDK();
+            }
+            pagarButton.setEnabled(true);
+        });
     }
 
     private Order criarPedido(VendaAberta vendaAberta){
