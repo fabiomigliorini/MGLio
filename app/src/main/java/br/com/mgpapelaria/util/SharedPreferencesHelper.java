@@ -65,7 +65,7 @@ public class SharedPreferencesHelper {
         if(producao){
             return getSharedPreferences(context).getString(BASE_URL_PRODUCAO, "http://api.mgspa.mgpapelaria.com.br/api/v1/");
         }else{
-            return getSharedPreferences(context).getString(BASE_URL_DESENVOLVIMENTO, "http://localhost/");
+            return getSharedPreferences(context).getString(BASE_URL_DESENVOLVIMENTO, "http://192.168.1.198:91/api/v1/");
         }
     }
 

@@ -167,7 +167,7 @@ public class OptionsActivity extends AppCompatActivity {
     @OnClick(R.id.restaurar_button)
     void restaurar(){
         this.baseUrlProducaoEditText.setText("http://api.mgspa.mgpapelaria.com.br/api/v1/");
-        this.baseUrlDesenvolvimentoEditText.setText("http://localhost/");
+        this.baseUrlDesenvolvimentoEditText.setText("http://192.168.1.198:91/api/v1/");
         this.listaVendasAbertasEditText.setText("http://api.mgspa.mgpapelaria.com.br/api/v1/lio/vendas-abertas");
         this.atualizaPedidoEditText.setText("http://api.mgspa.mgpapelaria.com.br/api/v1/lio/order");
         this.baseUrlAuthProducao = true;
