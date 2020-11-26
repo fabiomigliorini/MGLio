@@ -106,13 +106,16 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError() {
+                                mDialog.dismiss();
                                 showErrorDialog("Ocorreu um erro ao processar a requisição.");
                             }
                         });
 
                     }else if(response.code() == 401){
+                        mDialog.dismiss();
                         showErrorDialog("Usuário e/ou senha inválidos.");
                     }else{
+                        mDialog.dismiss();
                         showErrorDialog("Ocorreu um erro ao processar a requisição.");
                     }
                 }
