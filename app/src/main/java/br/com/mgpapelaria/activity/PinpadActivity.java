@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -200,6 +201,20 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
 
     @OnClick(R.id.pagar_button)
     void onPagarButtonClicked(){
+        if(vendaAberta != null){
+            long valorDaVendaAberta =this.vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
+            if(this.valorLimpo > valorDaVendaAberta){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("O valor a ser pago não pode ser maior que o valor da venda.")
+                        .setTitle("Ops!");
+                builder.setPositiveButton("Ok", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                builder.create().show();
+                return;
+            }
+        }
+
         Intent intent = new Intent(this, PagamentoActivity.class);
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
         intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
