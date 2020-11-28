@@ -24,7 +24,15 @@ public class SharedPreferencesHelper {
     }
 
     public static void clear(Context context){
-        getSharedPreferences(context).edit().clear().apply();
+        //getSharedPreferences(context).edit().clear().apply();
+        getSharedPreferences(context).edit()
+                .remove(NAME)
+                .remove(TOKEN)
+                .remove(USER)
+                .remove(USER_ID).commit();
+        /*getSharedPreferences(context).edit().remove(TOKEN).commit();
+        getSharedPreferences(context).edit().remove(USER).commit();
+        getSharedPreferences(context).edit().remove(USER_ID).commit();*/
     }
 
     public static String getToken(Context context){
