@@ -67,7 +67,8 @@ public class PagamentoActivity extends AppCompatActivity {
 
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
-        this.apiService = RetrofitUtil.createService(this, ApiService.class);
+        String token = SharedPreferencesHelper.getToken(this);
+        this.apiService = RetrofitUtil.createService(this, ApiService.class, token);
         AppDatabase db = AppDatabase.build(this);
         this.pedidoDAO = db.pedidoDAO();
         this.pagamentoDAO = db.pagamentoDAO();
