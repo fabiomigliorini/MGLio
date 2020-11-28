@@ -22,9 +22,10 @@ public class SendOrderServie {
     private final Context context;
 
     public SendOrderServie(Context context) {
+        String token = SharedPreferencesHelper.getToken(context);
         this.context = context;
         this.pedidoDAO = AppDatabase.build(context).pedidoDAO();
-        this.apiService = RetrofitUtil.createService(context, ApiService.class);
+        this.apiService = RetrofitUtil.createService(context, ApiService.class, token);
     }
 
     public interface SendOrderListner{

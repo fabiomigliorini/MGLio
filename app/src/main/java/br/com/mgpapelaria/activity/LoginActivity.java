@@ -3,6 +3,7 @@ package br.com.mgpapelaria.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if(response.code() == 200){
                         String token = response.body().getToken();
+                        Log.i("TOKEN", token);
                         SharedPreferencesHelper.setToken(LoginActivity.this, token);
 
                         getUserInfo(token, new UserInfoCallback() {
