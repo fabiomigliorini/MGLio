@@ -104,6 +104,7 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PAGAMENTO_REQUEST){
             if (resultCode == PagamentoActivity.PAGAMENTO_EFETUADO_RESULT) {
+                setResult(PagamentoActivity.PAGAMENTO_EFETUADO_RESULT);
                 finish();
             }
         }

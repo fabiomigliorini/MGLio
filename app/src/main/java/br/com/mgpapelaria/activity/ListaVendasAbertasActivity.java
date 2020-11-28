@@ -77,12 +77,22 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
             VendaAberta venda = recyclerViewAdapter.getVendas().get(position);
             intent.putExtra(VENDA_ABERTA, venda);
 
-            startActivity(intent);
+            startActivityForResult(intent, PinpadActivity.PAGAMENTO_REQUEST);
         });
         this.vendasRecyclerView.setAdapter(this.recyclerViewAdapter);
 
         this.swipeRefreshLayout.setRefreshing(true);
         this.buscaVendasAbertas();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PinpadActivity.PAGAMENTO_REQUEST){
+            if (resultCode == PagamentoActivity.PAGAMENTO_EFETUADO_RESULT) {
+                finish();
+            }
+        }
     }
 
     @Override

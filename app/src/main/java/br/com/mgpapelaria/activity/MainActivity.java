@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.venda_aberta_button)
-    void onVendaAvulsaClicked(){
+    void onVendaAbertaClicked(){
         Intent intent = new Intent(this, ListaVendasAbertasActivity.class);
         startActivity(intent);
     }
