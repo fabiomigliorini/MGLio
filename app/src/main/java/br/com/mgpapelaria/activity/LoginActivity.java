@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    mDialog.dismiss();
                     showErrorDialog("Ocorreu um erro ao processar a requisição.");
                 }
             });
