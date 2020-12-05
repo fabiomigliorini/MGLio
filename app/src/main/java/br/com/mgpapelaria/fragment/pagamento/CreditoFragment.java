@@ -53,7 +53,7 @@ public class CreditoFragment extends PagamentoBaseFragment {
     }
 
     @OnClick(R.id.credito_avista_button)
-    void onRefeicaoButtonClicked(){
+    void onCreditoAVistaButtonClicked(){
         this.formaPagamentoListener.onFormaSelecionadaListener(PaymentCode.CREDITO_AVISTA, null);
     }
 
