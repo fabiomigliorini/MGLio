@@ -78,11 +78,6 @@ public class VendasAbertasAdapter extends RecyclerView.Adapter<VendasAbertasAdap
         notifyItemRangeRemoved(0, total);
     }
 
-    public void adicionaVenda(VendaAberta venda) {
-        this.vendas.add(venda);
-        notifyItemInserted(getItemCount());
-    }
-
     public void setVendas(List<VendaAberta> vendas){
         this.vendas = vendas;
         notifyItemRangeInserted(0, this.getItemCount());
