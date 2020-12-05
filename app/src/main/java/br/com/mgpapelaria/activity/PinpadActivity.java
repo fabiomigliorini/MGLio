@@ -226,8 +226,9 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         this.configSDK(() -> {
             if(this.orderManager == null){
                 this.initConfigSDK();
+            }else{
+                pagarButton.setEnabled(true);
             }
-            pagarButton.setEnabled(true);
         });
     }
 
