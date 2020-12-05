@@ -2,6 +2,8 @@ package br.com.mgpapelaria.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +34,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
 
+    @BindView(R.id.version_textView)
+    TextView versionTextView;
     @BindView(R.id.usuario_text_view)
     TextView usuarioTextView;
     @BindView(R.id.numero_logico_text_view)
@@ -62,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
         this.usuarioTextView.setText(usuario);
         this.numeroLogicoTextView.setText(numeroLogico);
+        
+
+        this.versionTextView.setText("v.: " + this.getAppVersion());
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
@@ -134,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
             dialog.dismiss();
         });
         builder.create().show();
+    }
+
+    private String getAppVersion(){
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            return "";
+        }
     }
 
     private void logout(){
