@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -66,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
         String numeroLogico = new InfoManager().getSettings(this).getLogicNumber();
         this.usuarioTextView.setText(usuario);
         this.numeroLogicoTextView.setText(numeroLogico);
-        
+
+        FirebaseCrashlytics.getInstance().setCustomKey("numero_logico", numeroLogico);
+        FirebaseCrashlytics.getInstance().setCustomKey("usuario", usuario);
 
         this.versionTextView.setText("v.: " + this.getAppVersion());
 
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 SharedPreferencesHelper.clear(MainActivity.this);
+                FirebaseCrashlytics.getInstance().setCustomKey("usuario", "nulo");
 
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);

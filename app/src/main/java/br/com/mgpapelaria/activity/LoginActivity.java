@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.api.ApiService;
@@ -142,12 +143,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<UsuarioResponse> call, Response<UsuarioResponse> response) {
                 if(response.code() == 200){
+                    String usuario = response.body().getUser().getUsuario();
                     SharedPreferencesHelper.setUser(
                             LoginActivity.this,
-                            response.body().getUser().getUsuario(),
+                            usuario,
                             response.body().getUser().getId()
                     );
 
+                    FirebaseCrashlytics.getInstance().setCustomKey("usuario", usuario);
                     callback.onResponse();
                 }else{
                     callback.onError();
