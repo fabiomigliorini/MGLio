@@ -36,6 +36,7 @@ import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
     public static final String VALOR = "valor";
+    public static final String VALOR_ALTERADO = "valor_alterado";
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
@@ -62,9 +63,14 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
                     this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
                     titulo = "Venda #" + vendaAberta.getCodNegocio().toString();
                     this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
+
+                    if(bundle.containsKey(VALOR_ALTERADO)){
+                        this.valorLimpo = bundle.getLong(VALOR_ALTERADO);
+                    }
                 }else if(bundle.containsKey(VALOR)){
                     int valor = bundle.getInt(VALOR);
                     if(SharedPreferencesHelper.getUser(this) == null){
+                        //TODO: Tem que se certificar que o mesmo usuário vai logar em seguida, senão o valor vai pra outro usuário
                         Intent loginIntent = new Intent(this, LoginActivity.class);
                         loginIntent.putExtra(VALOR, valor);
                         startActivity(loginIntent);
@@ -216,10 +222,19 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
             }
         }
 
-        Intent intent = new Intent(this, PagamentoActivity.class);
-        intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
-        intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
-        startActivityForResult(intent, PAGAMENTO_REQUEST);
+        try{
+            Intent intent = new Intent(this, PagamentoActivity.class);
+            intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
+            intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
+            startActivityForResult(intent, PAGAMENTO_REQUEST);
+        }catch (Exception e){;
+            finish();
+            overridePendingTransition(0, 0);
+            Intent intent = getIntent();
+            intent.putExtra(VALOR_ALTERADO, this.valorLimpo);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        }
     }
 
     private void initConfigSDK(){
