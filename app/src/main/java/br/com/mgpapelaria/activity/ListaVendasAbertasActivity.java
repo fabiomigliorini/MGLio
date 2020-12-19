@@ -73,7 +73,7 @@ public class ListaVendasAbertasActivity extends AppCompatActivity {
 
         this.recyclerViewAdapter = new VendasAbertasAdapter(new ArrayList<>());
         this.recyclerViewAdapter.setOnItemClickedListenr((view, position) -> {
-            if(position > recyclerViewAdapter.getVendas().size()){
+            if(position == -1){
                 return;
             }
             Intent intent = new Intent(this, PinpadActivity.class);
