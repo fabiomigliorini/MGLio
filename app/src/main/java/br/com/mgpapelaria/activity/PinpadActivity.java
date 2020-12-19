@@ -19,25 +19,18 @@ import com.maltaisn.calcdialog.CalcNumpadLayout;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Objects;
 
 import br.com.mgpapelaria.R;
 import br.com.mgpapelaria.model.VendaAberta;
-import br.com.mgpapelaria.util.CieloSdkUtil;
 import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
-import cielo.orders.domain.Order;
-import cielo.sdk.order.OrderManager;
-
-import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 
 public class PinpadActivity extends AppCompatActivity implements CalcDialog.CalcDialogCallback {
     public static final Integer PAGAMENTO_REQUEST = 1;
     public static final String VALOR = "valor";
-    public static final String VALOR_ALTERADO = "valor_alterado";
     @BindView(R.id.valor_textView)
     TextView valorTextView;
     @BindView(R.id.pagar_button)
@@ -45,7 +38,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
     private long valorLimpo = 0;
     private VendaAberta vendaAberta;
     private final CalcDialog calcDialog = new CalcDialog();
-    private OrderManager orderManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +56,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
                     this.vendaAberta = (VendaAberta) bundle.getSerializable(ListaVendasAbertasActivity.VENDA_ABERTA);
                     titulo = "Venda #" + vendaAberta.getCodNegocio().toString();
                     this.valorLimpo = vendaAberta.getValorSaldo().multiply(new BigDecimal(100)).longValue();
-
-                    if(bundle.containsKey(VALOR_ALTERADO)){
-                        this.valorLimpo = bundle.getLong(VALOR_ALTERADO);
-                    }
                 }else if(bundle.containsKey(VALOR)){
                     int valor = bundle.getInt(VALOR);
                     if(SharedPreferencesHelper.getUser(this) == null){
@@ -92,7 +80,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
         this.calcDialog.getSettings().setNumpadLayout(CalcNumpadLayout.PHONE);
 
         this.setValor(this.valorLimpo);
-        this.initConfigSDK();
     }
 
     @Override
@@ -115,12 +102,6 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
                 finish();
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        orderManager.unbind();
-        super.onDestroy();
     }
 
     @Override
@@ -223,52 +204,10 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
             }
         }
 
-        try{
-            Intent intent = new Intent(this, PagamentoActivity.class);
-            intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
-            intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
-            startActivityForResult(intent, PAGAMENTO_REQUEST);
-        }catch (Exception e){;
-            FirebaseCrashlytics.getInstance().log("Erro no try catch do pinpad");
-            FirebaseCrashlytics.getInstance().recordException(e);
-            finish();
-            overridePendingTransition(0, 0);
-            Intent intent = getIntent();
-            intent.putExtra(VALOR_ALTERADO, this.valorLimpo);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-        }
-    }
-
-    private void initConfigSDK(){
-        this.configSDK(() -> {
-            if(this.orderManager == null){
-                this.initConfigSDK();
-            }else{
-                pagarButton.setEnabled(true);
-            }
-        });
-    }
-
-    private Order criarPedido(VendaAberta vendaAberta){
-        Order order;
-        if(vendaAberta != null){
-            String orderName = vendaAberta.getCodNegocio().toString();
-            order = this.orderManager.createDraftOrder("Pedido: #" + orderName);
-            order.setNumber(orderName);
-        }else{
-            order = this.orderManager.createDraftOrder("Valor avulso");
-        }
-        order.addItem("000", "Produtos de papelaria", this.valorLimpo, 1, "QTD");
-
-        this.orderManager.updateOrder(order);
-
-        return order;
-    }
-
-    protected void configSDK(CieloSdkUtil.SdkListener listener) {
-        this.orderManager = new OrderManager(getCredentials(), this);
-        this.orderManager.bind(this, new CieloSdkUtil.BindListener(listener));
+        Intent intent = new Intent(this, PagamentoActivity.class);
+        intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
+        intent.putExtra(PagamentoActivity.VENDA_ABERTA, this.vendaAberta);
+        startActivityForResult(intent, PAGAMENTO_REQUEST);
     }
 
     private long concatDigito(Integer digito){

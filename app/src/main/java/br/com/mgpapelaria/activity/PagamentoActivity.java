@@ -2,6 +2,7 @@ package br.com.mgpapelaria.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import br.com.mgpapelaria.model.OrderRequest;
 import br.com.mgpapelaria.model.Pagamento;
 import br.com.mgpapelaria.model.Pedido;
 import br.com.mgpapelaria.model.PedidoWithPagamentos;
+import br.com.mgpapelaria.model.VendaAberta;
 import br.com.mgpapelaria.util.CieloSdkUtil;
 import br.com.mgpapelaria.util.SharedPreferencesHelper;
 import butterknife.ButterKnife;
@@ -49,7 +51,7 @@ import static br.com.mgpapelaria.util.CieloSdkUtil.getCredentials;
 
 public class PagamentoActivity extends AppCompatActivity {
     public static final Integer PAGAMENTO_EFETUADO_RESULT = 1;
-    public static final String ORDER = "order";
+    public static final String VENDA_ABERTA = "venda_aberta";
     public static final String VALOR_PAGO = "valor_pago";
     public final String TAG = "PAYMENT_LISTENER";
     private Order order = null;
@@ -73,22 +75,20 @@ public class PagamentoActivity extends AppCompatActivity {
         this.pedidoDAO = db.pedidoDAO();
         this.pagamentoDAO = db.pagamentoDAO();
 
-        Bundle bundle = getIntent().getExtras();
-        if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
-            throw new RuntimeException("Valor pago é obrigatório");
-        }
-
-        this.valorPago = bundle.getLong(VALOR_PAGO);
-        if(bundle.containsKey(ORDER)){
-            this.order = (Order) bundle.getSerializable(ORDER);
-        }
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        this.configSDK(this::initFragment);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FormaPagamentoFragment fragment = new FormaPagamentoFragment();
+        fragment.setOptionListener(this::onOptionClicked);
+        fragmentTransaction.add(R.id.fragments_container, fragment);
+        fragmentTransaction.commit();
+
+        this.initConfigSDK();
     }
 
     @Override
@@ -109,17 +109,31 @@ public class PagamentoActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void initFragment(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        FormaPagamentoFragment fragment = new FormaPagamentoFragment();
-        fragment.setOptionListener(this::onOptionClicked);
-        fragmentTransaction.add(R.id.fragments_container, fragment);
-        fragmentTransaction.commit();
+    private void initConfigSDK(){
+        this.configSDK(() -> {
+            if(this.orderManager == null){
+                FirebaseCrashlytics.getInstance().log("Não iniciou o SDK de primeira!");
+                this.initConfigSDK();
+            }else{
+                try {
+                    this.criarPedido();
+                }catch (Exception e){;
+                    FirebaseCrashlytics.getInstance().log("Erro ao criar pedido!");
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition(0, 0);
+                }
+            }
+        });
     }
 
     private void onOptionClicked(String option){
+        if(this.order == null){
+            FirebaseCrashlytics.getInstance().log("Tentou continuar com pagamento com order nulo!");
+            return;
+        }
         PagamentoBaseFragment proximoFragment;
         switch (option){
             case FormaPagamentoFragment.CREDITO_OPTION:
@@ -144,6 +158,27 @@ public class PagamentoActivity extends AppCompatActivity {
             proximoFragment.setFormaPagamentoListener(this::defineFormaDePagamento);
             this.replaceFragment(proximoFragment);
         }
+    }
+
+    private void criarPedido(){
+        Bundle bundle = getIntent().getExtras();
+        if(bundle == null || !bundle.containsKey(VALOR_PAGO)){
+            throw new RuntimeException("Valor pago é obrigatório");
+        }
+
+        Order order;
+        this.valorPago = bundle.getLong(VALOR_PAGO);
+        if(bundle.containsKey(VENDA_ABERTA)){
+            VendaAberta vendaAberta = (VendaAberta) bundle.getSerializable(VENDA_ABERTA);
+            String orderName = vendaAberta.getCodNegocio().toString();
+            order = this.orderManager.createDraftOrder("Pedido: #" + orderName);
+            order.setNumber(orderName);
+        }else{
+            order = this.orderManager.createDraftOrder("Valor avulso");
+        }
+        order.addItem("000", "Produtos de papelaria", this.valorPago, 1, "QTD");
+
+        this.orderManager.updateOrder(order);
     }
 
     private void defineFormaDePagamento(PaymentCode paymentCode, Object args){
