@@ -217,7 +217,7 @@ public class PagamentoActivity extends AppCompatActivity {
         pedido.userId = SharedPreferencesHelper.getUserId(this);
         pedido.orderId = order.getId();
 
-        String nome = order.getPayments().get(0).getPaymentFields().get("clientName");
+        String nome = order.getPayments().size() > 0 ? order.getPayments().get(0).getPaymentFields().get("clientName") : null;
         if(nome == null || nome.equals("")){
             nome = order.getReference();
         }
