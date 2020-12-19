@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.maltaisn.calcdialog.CalcDialog;
 import com.maltaisn.calcdialog.CalcNumpadLayout;
 
@@ -228,6 +229,8 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
             intent.putExtra(PagamentoActivity.ORDER, this.criarPedido(this.vendaAberta));
             startActivityForResult(intent, PAGAMENTO_REQUEST);
         }catch (Exception e){;
+            FirebaseCrashlytics.getInstance().log("Erro no try catch do pinpad");
+            FirebaseCrashlytics.getInstance().recordException(e);
             finish();
             overridePendingTransition(0, 0);
             Intent intent = getIntent();
