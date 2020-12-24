@@ -206,7 +206,9 @@ public class PinpadActivity extends AppCompatActivity implements CalcDialog.Calc
 
         Intent intent = new Intent(this, PagamentoActivity.class);
         intent.putExtra(PagamentoActivity.VALOR_PAGO, this.valorLimpo);
-        intent.putExtra(PagamentoActivity.VENDA_ABERTA, this.vendaAberta);
+        if(this.vendaAberta != null){
+            intent.putExtra(PagamentoActivity.VENDA_ABERTA, this.vendaAberta);
+        }
         startActivityForResult(intent, PAGAMENTO_REQUEST);
     }
 

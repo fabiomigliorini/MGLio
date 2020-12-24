@@ -166,7 +166,7 @@ public class PagamentoActivity extends AppCompatActivity {
             throw new RuntimeException("Valor pago é obrigatório");
         }
 
-        Order order;
+        //Order order;
         this.valorPago = bundle.getLong(VALOR_PAGO);
         if(bundle.containsKey(VENDA_ABERTA)){
             VendaAberta vendaAberta = (VendaAberta) bundle.getSerializable(VENDA_ABERTA);
