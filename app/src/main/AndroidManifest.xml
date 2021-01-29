@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.OptionsActivity"></activity>
+        <activity android:name=".activity.OptionsActivity" />
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />

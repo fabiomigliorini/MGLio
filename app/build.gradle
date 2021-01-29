@@ -10,8 +10,8 @@ android {
         applicationId "br.com.mgpapelaria"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 117
-        versionName "1.1.17"
+        versionCode 120
+        versionName "1.1.20"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

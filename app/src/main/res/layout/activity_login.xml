@@ -69,6 +69,16 @@
                 android:layout_height="60dp"
                 android:text="ENTRAR"
                 android:textSize="18sp" />
+
+            <!--<com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/entrar_qr_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="@android:color/white"
+                app:icon="@drawable/ic_qrcode_scan_24"
+                android:text="ENTRAR COM QRCODE"
+                android:textSize="18sp" />-->
         </LinearLayout>
     </ScrollView>
 
